@@ -1,0 +1,41 @@
+# Publie le site sur GitHub Pages à chaque envoi sur la branche principale.
+# Dans le dépôt : Settings > Pages > Source = « GitHub Actions » (réglé le 30 septembre 2026).
+# Versions des actions vérifiées le 30 septembre 2026 : checkout v7, withastro/action v6
+# (Node 24 par défaut), deploy-pages v5.
+
+name: Publier sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule publication à la fois ; on n'annule pas celle en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v7
+      - name: Installer, construire et téléverser le site
+        uses: withastro/action@v6
+
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publier
+        id: deployment
+        uses: actions/deploy-pages@v5
