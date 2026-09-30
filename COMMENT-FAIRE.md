@@ -307,29 +307,14 @@ eux n'ont rien à optimiser.
 
 ---
 
-## Mettre le site sur Internet
+## Le site sur Internet
 
-Tant que vous n'avez pas fait ceci, le site n'existe que sur votre ordinateur.
+Le site est en ligne depuis le 30 septembre 2026 à l'adresse **https://didierdambreville.github.io**,
+hébergé par GitHub Pages (dépôt public `didierdambreville/didierdambreville.github.io`).
 
-L'hébergement retenu est **GitHub Pages** : gratuit, sans domaine à payer, et l'adresse sera
-`https://didierdambreville.github.io`.
-
-Trois étapes, une seule fois :
-
-1. Sur github.com, créez un dépôt nommé **exactement** `didierdambreville.github.io`. Le nom du
-   dépôt fait l'adresse du site : un autre nom donnerait une adresse plus longue et demanderait des
-   réglages supplémentaires.
-2. Envoyez-y le contenu de ce dossier.
-3. Dans le dépôt : **Settings**, puis **Pages**, puis **Source : GitHub Actions**.
-4. Toujours dans le dépôt, onglet **Actions** : GitHub vous proposera un modèle nommé **Astro**.
-   Cliquez sur « Configure », puis « Commit ». C'est la recette qui construira le site à votre
-   place. (Le fichier `deploy-workflow-a-placer.yml`, à la racine de ce dossier, contient la même
-   chose si vous préférez la coller vous-même.)
-
-Ensuite, chaque fois que vous enverrez une modification, le site se reconstruira et se republiera
-tout seul en deux ou trois minutes. Vous n'aurez plus jamais à y penser.
-
-Dites-le-moi quand vous en serez là : je peux préparer l'envoi.
+Chaque modification envoyée sur la branche `main` reconstruit et republie le site en moins d'une
+minute (`.github/workflows/deploy.yml`). Les envois se font depuis une session Claude : c'est là, et
+non dans une invite de commandes ordinaire du poste, que vit la connexion à GitHub.
 
 ---
 

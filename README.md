@@ -73,16 +73,14 @@ Toute pièce interactive porte une capture enregistrée (`apercu`) — la fiche 
 
 ## Mise en ligne — GitHub Pages
 
-Hébergement gratuit sur le domaine du compte : `https://didierdambreville.github.io`.
+En ligne depuis le 30 septembre 2026 : `https://didierdambreville.github.io`, dépôt public
+`didierdambreville/didierdambreville.github.io`, Pages en mode « GitHub Actions ». Chaque envoi sur
+`main` reconstruit et republie le site (`.github/workflows/deploy.yml`, actions `checkout` v7,
+`withastro/action` v6, `deploy-pages` v5).
 
-1. Créer un dépôt nommé **exactement** `didierdambreville.github.io` (le nom du dépôt fait
-   l'adresse). Y pousser ce dossier.
-2. Dans le dépôt : **Settings > Pages > Source = GitHub Actions**.
-3. Mettre en place le flux de publication. Le plus simple : onglet **Actions** du dépôt, modèle
-   **Astro**, « Configure », « Commit ». À défaut, créer `.github/workflows/deploy.yml` et y coller
-   le contenu de `deploy-workflow-a-placer.yml`, à la racine de ce projet.
-
-Ensuite, chaque envoi sur `main` reconstruit et republie le site.
+Envoi : `gh` sert de gestionnaire d'identifiants en configuration **locale** du dépôt
+(`credential.https://github.com.helper`, liste remise à zéro), faute de quoi le gestionnaire de
+Windows présente un ancien jeton dépourvu du droit `workflow`.
 
 Si le dépôt portait un autre nom, le site serait servi sous `/<nom-du-depot>/` et il faudrait
 ajouter `base: '/<nom-du-depot>'` dans `astro.config.mjs` — puis revoir toutes les adresses
