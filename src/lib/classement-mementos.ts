@@ -63,7 +63,7 @@ export const FAMILLES: Famille[] = [
   {
     numero: '03',
     nom: 'Économie et organisation',
-    rubriques: [{ id: 'economie', nom: 'Économie', sujets: ['Économie', 'Finance et gestion', 'Logistique'] }],
+    rubriques: [{ id: 'economie', nom: 'Économie', sujets: ['Économie', 'Finance et gestion', 'Logistique'] }], // 1 publié
   },
   {
     numero: '04',

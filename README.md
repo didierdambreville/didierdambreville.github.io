@@ -20,7 +20,7 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
 
 ## État au 30 septembre 2026
 
-- **Contenu publié** : les 13 mémentos (`src/data/mementos/`, fichiers dans `public/doc/mementos/`),
+- **Contenu publié** : les 14 mémentos (`src/data/mementos/`, fichiers dans `public/doc/mementos/`),
   classés selon `src/lib/classement-mementos.ts`. Import et contrôles : `importer-mementos.cmd`
   (`outils/importer-mementos.mjs`) — voir `COMMENT-FAIRE.md`, « Les mémentos ».
 - **Identité** : nom, adresses, réseaux et licence dans `src/lib/identite.ts`, et nulle part
