@@ -38,7 +38,7 @@ export const FAMILLES: Famille[] = [
         sujets: [
           'Génie civil',
           'Génie mécanique',
-          'Électricité',
+          'Électricité', // publié
           'Électronique', // Raspberry Pi, Arduino
           'Maçonnerie',
           'Traitement de l’eau',
