@@ -1,0 +1,57 @@
+# ⚠ CE FICHIER N'EST PAS À SA PLACE.
+#
+# Il doit vivre dans le dépôt sous  .github/workflows/deploy.yml
+# Je n'ai pas pu l'y écrire moi-même : le dossier .github est protégé contre
+# l'écriture à distance — un fichier de ce type déclenche l'exécution de code
+# sur les serveurs de GitHub, et cette protection est justifiée.
+#
+# Deux façons de le mettre en place, au choix :
+#
+#  1. Le plus simple — ne rien copier du tout. Dans le dépôt, ouvrez l'onglet
+#     Actions : GitHub propose un modèle « Astro » qui fait exactement ceci.
+#     Un clic sur « Configure », puis « Commit ».
+#
+#  2. Ou créez vous-même le fichier .github/workflows/deploy.yml dans le dépôt
+#     et collez-y tout ce qui suit cette ligne.
+#
+# Ce fichier-ci peut ensuite être supprimé.
+
+# Publie le site sur GitHub Pages à chaque envoi sur la branche principale.
+# Dans le dépôt : Settings > Pages > Source = "GitHub Actions".
+
+name: Publier sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule publication à la fois ; on n'annule pas celle en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v7
+      - name: Installer, construire et téléverser le site
+        uses: withastro/action@v6
+
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publier
+        id: deployment
+        uses: actions/deploy-pages@v5

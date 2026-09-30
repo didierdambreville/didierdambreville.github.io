@@ -1,0 +1,13 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { AUTEUR } from '../lib/identite';
+
+const entree = await getEntry('pages', 'mentions-legales');
+if (!entree) throw new Error('src/data/pages/mentions-legales.md est absent.');
+const { Content } = await render(entree);
+---
+<Base titre={`${entree.data.titre} — ${AUTEUR}`} description={entree.data.description}>
+  <h1>{entree.data.titre}</h1>
+  <Content />
+</Base>

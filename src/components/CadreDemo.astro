@@ -1,0 +1,32 @@
+---
+interface Props {
+  mode: 'interne' | 'externe' | 'aucun';
+  url?: string;
+  hauteur: number;
+  repli: string;
+  titre: string;
+  apercu?: string;
+}
+const { mode, url, hauteur, repli, titre, apercu } = Astro.props;
+---
+{
+  mode !== 'aucun' && url && (
+    <div class="cadre-demo">
+      <h2>Démonstration</h2>
+      <iframe
+        src={url}
+        title={`Démonstrateur : ${titre}`}
+        height={hauteur}
+        loading="lazy"
+        sandbox="allow-scripts"
+      />
+      <p class="cadre-demo__repli">{repli}</p>
+      {apercu && (
+        <p class="liens">
+          <a href={apercu}>Voir la capture enregistrée</a> — elle reste consultable si la
+          démonstration cesse de fonctionner.
+        </p>
+      )}
+    </div>
+  )
+}

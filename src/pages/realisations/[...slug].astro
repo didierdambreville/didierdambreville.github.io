@@ -1,0 +1,122 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+import { verifierIdentifiants } from '../../lib/identifiants';
+import CadreDemo from '../../components/CadreDemo.astro';
+import { LIBELLES_DISCIPLINE } from '../../content.config';
+
+export async function getStaticPaths() {
+  const realisations = await getCollection('realisations', (e) => !e.data.brouillon);
+  verifierIdentifiants(realisations);
+  return realisations.map((r) => ({ params: { slug: r.id }, props: { entree: r } }));
+}
+
+const { entree } = Astro.props;
+const d = entree.data;
+const { Content } = await render(entree);
+
+const notices = (
+  await Promise.all(d.documents.map((id) => getEntry('documents', id)))
+).filter((x) => x !== undefined);
+
+const dateFr = d.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: d.titre,
+  abstract: d.resume,
+  dateCreated: d.date.toISOString().slice(0, 10),
+  identifier: d.identifiant,
+  license: d.licence,
+  url: new URL(`/realisations/${entree.id}/`, Astro.site).href,
+};
+---
+<Base titre={`${d.titre} — ${AUTEUR}`} description={d.resume} jsonLd={jsonLd}>
+  <p class="etiquette">{LIBELLES_DISCIPLINE[d.discipline]}</p>
+  <h1>{d.titre}</h1>
+  <p class="chapeau">{d.resume}</p>
+
+  <figure>
+    <Image
+      src={d.couverture}
+      alt={d.couvertureAlt}
+      widths={[640, 960, 1280]}
+      sizes="(max-width: 74ch) 100vw, 74ch"
+      loading="eager"
+    />
+    {d.hauteRes && <figcaption><a href={d.hauteRes}>Télécharger en pleine résolution</a></figcaption>}
+  </figure>
+
+  <dl class="meta">
+    <dt>Date</dt><dd>{dateFr}</dd>
+    <dt>Rôle</dt><dd>{d.role.join(', ')}</dd>
+    {d.commanditaire && <dt>Commanditaire</dt>}
+    {d.commanditaire && <dd>{d.commanditaire}</dd>}
+    {d.techniques.length > 0 && <dt>Techniques</dt>}
+    {d.techniques.length > 0 && <dd>{d.techniques.join(', ')}</dd>}
+    <dt>Licence</dt><dd>{d.licence}</dd>
+    <dt>Identifiant</dt><dd><code>{d.identifiant}</code></dd>
+  </dl>
+
+  <Content />
+
+  {
+    d.demo && (
+      <CadreDemo
+        mode={d.demo.mode}
+        url={d.demo.url}
+        hauteur={d.demo.hauteur}
+        repli={d.demo.repli}
+        titre={d.titre}
+        apercu={d.apercu}
+      />
+    )
+  }
+
+  {
+    d.galerie.length > 0 && (
+      <section>
+        <h2>Planches</h2>
+        {d.galerie.map((g) => (
+          <figure>
+            <Image src={g.src} alt={g.legende} widths={[640, 960, 1280]} sizes="(max-width: 74ch) 100vw, 74ch" loading="lazy" />
+            <figcaption>{g.legende}</figcaption>
+          </figure>
+        ))}
+      </section>
+    )
+  }
+
+  {
+    notices.length > 0 && (
+      <section>
+        <h2>Documents</h2>
+        <ul class="liens">
+          {notices.map((n) => (
+            <li>
+              <a href={`/documents/${n.id}/`}>{n.data.titre}</a> — version {n.data.version}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    d.liens.length > 0 && (
+      <section>
+        <h2>Ailleurs</h2>
+        <ul class="liens">
+          {d.liens.map((l) => (
+            <li><a href={l.url} rel="noopener">{l.libelle}</a></li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <p class="liens"><a href="/realisations/">← Toutes les réalisations</a></p>
+</Base>

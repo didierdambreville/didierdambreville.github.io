@@ -1,0 +1,21 @@
+---
+import type { Memento } from '../lib/mementos';
+
+interface Props {
+  m: Memento;
+}
+const { m } = Astro.props;
+const d = m.data;
+---
+<li class="carte-titre">
+  <a href={`/mementos/${m.id}/`} aria-label={`Mémento — ${d.titre}, ${d.pages} pages`}>
+    <span class="carte-titre__surtitre">Mémento</span>
+    <span class="carte-titre__titre">{d.titre}</span>
+    <span class="carte-titre__filet" aria-hidden="true"></span>
+    <span class="carte-titre__sous">{d.sousTitre}</span>
+    <span class="carte-titre__pied">
+      {d.sujet && <>{d.sujet} · </>}{d.pages}&#160;pages
+    </span>
+    <img class="carte-titre__logo" src="/logo-or.svg" alt="" width="20" height="20" />
+  </a>
+</li>

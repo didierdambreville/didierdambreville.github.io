@@ -1,0 +1,29 @@
+---
+import { AUTEUR, RESEAUX, LICENCE } from '../lib/identite';
+
+const annee = new Date().getFullYear();
+---
+<footer class="pied">
+  <div class="enveloppe">
+    <ul class="reseaux" aria-label="Ailleurs sur le Web">
+      {
+        RESEAUX.map((r) => (
+          <li>
+            <a href={r.url} rel="me">{r.nom}</a>
+          </li>
+        ))
+      }
+      <li><a href="/rss.xml">Flux RSS</a></li>
+    </ul>
+    <p>
+      © {annee} {AUTEUR}. Sauf mention contraire, les contenus sont publiés sous licence
+      <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>&#160;: libres de copie, de
+      modification et de réutilisation, à condition de citer l'auteur.
+    </p>
+    <p>
+      Ce site ne dépose aucun cookie et ne charge aucune ressource tierce. Sa politique de sécurité
+      de contenu l'interdit&#160;: elle est inscrite en clair dans la source de chaque page.
+      <a href="/mentions-legales/">Mentions légales</a>
+    </p>
+  </div>
+</footer>

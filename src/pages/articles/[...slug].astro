@@ -1,0 +1,86 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+import { verifierIdentifiants } from '../../lib/identifiants';
+import { LIBELLES_RUBRIQUE } from '../../content.config';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', (e) => !e.data.brouillon);
+  verifierIdentifiants(articles);
+  return articles.map((a) => ({ params: { slug: a.id }, props: { entree: a } }));
+}
+
+const { entree } = Astro.props;
+const d = entree.data;
+const { Content } = await render(entree);
+
+const mots = (entree.body ?? '').split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.round(mots / 220));
+
+const dateFr = d.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.titre,
+  abstract: d.these,
+  datePublished: d.date.toISOString().slice(0, 10),
+  identifier: d.identifiant,
+  license: d.licence,
+  keywords: d.motsCles.join(', ') || undefined,
+  url: new URL(`/articles/${entree.id}/`, Astro.site).href,
+};
+---
+<Base titre={`${d.titre} — ${AUTEUR}`} description={d.these} jsonLd={jsonLd}>
+  <article>
+    <p class="etiquette">
+      {LIBELLES_RUBRIQUE[d.rubrique]} · {dateFr} · {minutes}&#160;min de lecture
+    </p>
+    <h1>{d.titre}</h1>
+    <p class="chapeau">{d.these}</p>
+
+    {
+      d.couverture && d.couvertureAlt && (
+        <figure>
+          <Image src={d.couverture} alt={d.couvertureAlt} widths={[640, 960, 1280]} sizes="(max-width: 74ch) 100vw, 74ch" loading="eager" />
+        </figure>
+      )
+    }
+
+    <Content />
+
+    {
+      d.prolonge && (
+        <p class="prolonge">
+          Cet article prolonge <a href={d.prolonge.url} rel="noopener">{d.prolonge.libelle}</a>.
+        </p>
+      )
+    }
+
+    {
+      d.sources.length > 0 && (
+        <section class="piliers">
+          <h2>Sources</h2>
+          <p class="piliers__note">
+            Ce ne sont pas des ornements&#160;: ce sont les fondations qui empêchent l'argument de
+            s'effondrer.
+          </p>
+          <ol>
+            {d.sources.map((s) => (
+              <li>
+                <a href={s.url} rel="noopener">{s.libelle}</a>
+                {s.note && <span class="piliers__glose"> — {s.note}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    <p class="liens">
+      {d.licence} · <a href="/articles/">Tous les articles</a>
+    </p>
+  </article>
+</Base>

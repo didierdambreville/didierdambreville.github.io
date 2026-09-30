@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="D. Dambreville">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.fr">
+<title>Mémento — Python</title>
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: #fff; color: #000; }
+body { font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 8.3pt; line-height: 1.16; }
+.page { width: 210mm; height: 297mm; padding: 7mm 8.5mm 5.5mm; display: flex; flex-direction: column;
+        overflow: hidden; break-after: page; page-break-after: always; }
+.page:last-child { break-after: auto; page-break-after: auto; }
+.tabs { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1mm; margin-bottom: 2mm; flex: none; }
+.tab { border: 0.6pt solid #000; border-radius: 1mm; padding: 0.5mm 1.1mm 0.4mm; font-size: 6.3pt; text-transform: uppercase;
+       letter-spacing: .02em; white-space: nowrap; overflow: hidden; }
+.tab.on { background: #000; color: #fff; font-weight: bold; }
+.cover { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2pt solid #000;
+         padding-bottom: 1.8mm; margin-bottom: 2.6mm; flex: none; gap: 4mm; }
+.kicker { font-size: 8pt; text-transform: uppercase; letter-spacing: .35em; font-weight: bold; }
+.cover h1 { font-family: Cambria, Georgia, serif; font-size: 30pt; line-height: 1; margin: 0.6mm 0 1mm; letter-spacing: .01em; }
+.sub { font-size: 9pt; letter-spacing: .02em; }
+.legend { border: 0.7pt solid #000; border-radius: 1.2mm; padding: 1.2mm 2mm; font-size: 7.4pt; line-height: 1.4; flex: none; }
+.ptitle { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2pt solid #000;
+          padding-bottom: 0.8mm; margin-bottom: 2.4mm; flex: none; }
+.ptitle h1 { font-family: Cambria, Georgia, serif; font-size: 16pt; margin: 0; }
+.ptitle .run { font-size: 7.2pt; text-transform: uppercase; letter-spacing: .12em; }
+.cols { flex: 1 1 auto; min-height: 0; display: grid; gap: 3mm; }
+.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.col { display: flex; flex-direction: column; gap: 2.2mm; min-height: 0; overflow: hidden; }
+.box { border: 0.7pt solid #000; border-radius: 1.2mm; overflow: hidden; flex: none; }
+.col > .box:last-child { flex: 1 1 auto; }
+.box h2 { margin: 0; background: #000; color: #fff; font-size: 8.1pt; text-transform: uppercase; letter-spacing: .06em;
+          padding: 0.7mm 2mm 0.5mm; }
+.box h2 .v { border-color: #fff; color: #fff; }
+.bd { padding: 1mm 1.5mm 1.2mm; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+td, th { padding: 0.25mm 0.9mm; vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+tbody tr:nth-child(even) td { background: #e8e8e8; }
+tr.sep td { background: none !important; font-weight: bold; font-size: 6.9pt; text-transform: uppercase; letter-spacing: .04em;
+            border-bottom: 0.6pt solid #000; padding: 1mm 0.9mm 0.2mm; }
+th { font-size: 6.8pt; text-transform: uppercase; letter-spacing: .02em; border-bottom: 0.8pt solid #000; padding-bottom: 0.4mm; }
+code, pre, kbd, .rv, td.k { font-family: Consolas, "DejaVu Sans Mono", "Courier New", monospace; }
+code { font-weight: bold; font-size: .94em; }
+code i, td.k i, pre i { font-weight: normal; }
+td.k { font-weight: bold; font-size: .92em; }
+td.k, .rv, tr.st .k { overflow-wrap: normal; word-break: normal; }
+tr.st .k { font-family: Consolas, "DejaVu Sans Mono", "Courier New", monospace; font-weight: bold; font-size: .92em; }
+tr.st .sr { padding-left: 3.2mm; }
+tr.st .ar, td .ar { font-weight: bold; }
+td.k code { font-size: 1em; }
+td:not(.k) code, .note code, li code { white-space: nowrap; }
+.rv { font-size: .92em; white-space: pre; }
+.d { font-size: .95em; }
+td .d::before { content: "· "; }
+kbd { display: inline-block; border: .6pt solid #000; border-radius: .7mm; padding: 0 .55mm; line-height: 1.12;
+      font-size: .84em; font-weight: bold; background: #fff; white-space: nowrap; box-shadow: 0 .35pt 0 #000; }
+pre.code { margin: .7mm 0; padding: .6mm 1.3mm; background: #efefef; border-left: 1.5pt solid #000;
+           font-size: 7pt; line-height: 1.19; white-space: pre; overflow: hidden; }
+.bd > pre.code:first-child { margin-top: 0; }
+pre.code b { font-weight: bold; }
+pre.code .cm { font-style: italic; color: #4a4a4a; }
+pre.code .res { font-weight: bold; }
+pre.code .ar { font-weight: bold; }
+pre.code .nl { font-weight: normal; font-size: .9em; }
+pre.code.sh { background: #fff; border: .6pt solid #000; border-left: 1.5pt solid #000; }
+pre.code.tb { font-size: 6.7pt; }
+pre.code.tree { background: #fff; border: 0; padding: 0 .5mm; font-size: 6.9pt; line-height: 1.16; }
+h3 { margin: 1.1mm 0 0.5mm; font-size: 7.3pt; text-transform: uppercase; letter-spacing: .04em;
+     border-bottom: 0.6pt solid #000; padding-bottom: 0.2mm; }
+.bd > h3:first-child { margin-top: 0; }
+.note { margin: 0.8mm 0 0; font-size: 7.7pt; }
+.note.first { margin-top: 0; margin-bottom: 0.7mm; }
+ul.lst { margin: 0.5mm 0 0; padding-left: 3.2mm; }
+ul.lst li { margin: 0 0 0.4mm; }
+ul.nums { list-style: none; margin: .6mm 0 0; padding: 0; }
+ul.nums li { margin: 0 0 .35mm; padding-left: 4.4mm; text-indent: -4.4mm; }
+.w, .n { display: inline-block; width: 1.3em; height: 1.3em; line-height: 1.3em; border-radius: 50%; background: #000; color: #fff;
+         font-weight: bold; text-align: center; font-size: .78em; vertical-align: .08em; font-style: normal; text-indent: 0;
+         font-family: Calibri, "Segoe UI", Arial, sans-serif; }
+.w { margin-right: .1em; }
+pre .n, pre .w { font-size: .92em; }
+.v { display: inline-block; border: .55pt solid #000; border-radius: .6mm; padding: 0 .45mm; font-size: 6.2pt; font-weight: bold;
+     line-height: 1.2; vertical-align: .06em; font-style: normal; letter-spacing: 0; text-transform: none;
+     font-family: Calibri, "Segoe UI", Arial, sans-serif; white-space: nowrap; text-indent: 0; }
+kbd { text-indent: 0; }
+sup { font-size: .68em; line-height: 0; }
+/* anatomie */
+.anat { display: flex; flex-wrap: wrap; gap: 1mm; margin: .3mm 0 1mm; justify-content: center; }
+.anat .seg { display: flex; flex-direction: column; align-items: center; }
+.anat .seg code { font-size: 9.6pt; padding: .2mm .6mm .5mm; border-bottom: 1.2pt solid #000; white-space: pre; }
+.anat .seg span { font-size: 6.3pt; margin-top: .4mm; text-transform: uppercase; letter-spacing: .02em; text-align: center; }
+/* mots réservés */
+table.kw td { padding-top: .35mm; padding-bottom: .35mm; }
+table.kw td:first-child { font-size: .95em; font-style: italic; }
+table.kw code { margin-right: .5em; display: inline-block; }
+/* priorité */
+.chain { line-height: 1.75; }
+.chain code { border: .5pt solid #000; border-radius: .6mm; padding: 0 .5mm; white-space: nowrap; }
+.chain .sep { font-weight: bold; }
+/* indices */
+.idxw { display: flex; align-items: center; justify-content: center; gap: 2mm; margin: 3.4mm 0 3.8mm; }
+.idxw .lab { font-family: Consolas, monospace; font-weight: bold; font-size: 9pt; }
+.idx { display: flex; }
+.idx .cell { position: relative; width: 6.6mm; height: 5.8mm; border: .8pt solid #000; border-right: 0;
+             display: flex; align-items: center; justify-content: center; }
+.idx .cell:last-child { border-right: .8pt solid #000; }
+.idx b { font-family: Consolas, monospace; font-size: 10.5pt; }
+.idx i { position: absolute; left: 0; transform: translateX(-50%); font-style: normal; font-family: Consolas, monospace;
+         font-size: 6.8pt; font-weight: bold; }
+.idx i.p { top: -3.3mm; }
+.idx i.m { bottom: -3.4mm; font-weight: normal; }
+.idx i.end { left: 100%; }
+/* tableaux particuliers */
+table.cmp td { font-size: .95em; }
+table.cmp th { text-transform: none; letter-spacing: 0; font-size: 7.2pt; }
+table.cmp td:first-child { font-weight: bold; }
+table.err td { padding-top: .45mm; padding-bottom: .45mm; }
+table.err td code.em { font-size: .9em; white-space: normal; font-weight: bold; }
+.rx { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .2mm 1.5mm; margin-bottom: .8mm; font-size: .95em; }
+.rx span { border-bottom: .4pt solid #999; padding: .15mm .2mm; white-space: nowrap; overflow: hidden; }
+.rx > span > code:first-child { display: inline-block; min-width: 3.4em; }
+.foot { display: flex; justify-content: space-between; font-size: 6.8pt; border-top: .6pt solid #000;
+        padding-top: .7mm; margin-top: 2mm; flex: none; letter-spacing: .02em; gap: 4mm; }
+.kicker .auteur { margin-left: 3mm; letter-spacing: .02em; text-transform: none; font-weight: normal; }
+</style>
+</head>
+<body>
+<div class="page p1"><nav class="tabs"><div class="tab on"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="cover">
+  <div class="brand">
+    <div class="kicker">Mémento<span class="auteur">Auteur&#160;: D.&#160;Dambreville · didierdambreville.github.io · licence CC&#160;BY&#160;4.0</span></div>
+    <h1>Python</h1>
+    <div class="sub">Syntaxe · types · collections · contrôle · fonctions · objets · exceptions · fichiers · bibliothèque standard</div>
+  </div>
+  <div class="legend">
+    <div><code>print(x)</code> chasse fixe, gras : code à taper tel quel</div>
+    <div><code><i>nom</i></code> italique : valeur à remplacer</div>
+    <div><code>→ 42</code> résultat obtenu, vérifié en exécutant l’exemple</div>
+    <div><code>⏎</code> retour à la ligne dans ce qui est affiché</div>
+    <div><span class="v">3.10+</span> version minimale de Python requise</div>
+    <div><span class="w">!</span> piège fréquent</div>
+  </div>
+</header><div class="cols c3"><div class="col"><section class="box "><h2>Lancer Python</h2><div class="bd"><table class="ct "><colgroup><col style="width:40%"><col style="width:60%"></colgroup><tbody><tr><td class="k">python</td><td>ouvrir l’interpréteur interactif ; Windows : aussi <code>py</code> ; Linux, macOS : souvent <code>python3</code></td></tr><tr><td class="k">python <i>prog</i>.py</td><td>exécuter un programme</td></tr><tr><td class="k">python -i <i>prog</i>.py</td><td>exécuter, puis rester dans l’interpréteur pour inspecter les variables</td></tr><tr><td class="k">python -m <i>module</i></td><td>lancer un module : <code>pip</code>, <code>venv</code>, <code>http.server</code>…</td></tr><tr><td class="k">python -c "<i>code</i>"</td><td>exécuter une seule ligne</td></tr><tr><td class="k">python -V</td><td>afficher la version installée</td></tr><tr><td class="k">exit()</td><td>quitter l’interpréteur ; <span class="v">3.13+</span> <code>exit</code> suffit ; ou <kbd>Ctrl+D</kbd> (Windows : <kbd>Ctrl+Z</kbd> puis <kbd>Entrée</kbd>)</td></tr><tr class="sep"><td colspan="2">Windows : gestionnaire d’installation <span class="v">3.14+</span></td></tr><tr><td class="k">py install 3.14</td><td>installer une version</td></tr><tr><td class="k">py list</td><td>lister les versions installées</td></tr><tr><td class="k">py -V:3.14 <i>prog</i>.py</td><td>lancer avec une version précise</td></tr><tr><td class="k">py help</td><td>toutes les commandes</td></tr></tbody></table><p class="note ">L’installateur Windows classique est déprécié depuis 3.14 ; il ne sera plus produit à partir de 3.16.</p></div></section><section class="box "><h2>L’interpréteur interactif</h2><div class="bd"><ul class="lst"><li><code>&gt;&gt;&gt;</code> invite ; <code>...</code> suite d’un bloc — une ligne vide le termine.</li><li><code>_</code> rappelle le dernier résultat affiché.</li><li><kbd>↑</kbd> <kbd>↓</kbd> historique ; <kbd>Tab</kbd> complète les noms.</li><li><code>help(len)</code> · <code>help("for")</code> : aide ; <code>dir(x)</code> : attributs de <code>x</code> ; <code>type(x)</code> : son type.</li><li><span class="v">3.13+</span> couleurs, <kbd>F1</kbd> aide, <kbd>F2</kbd> historique, <kbd>F3</kbd> mode collage.</li></ul></div></section><section class="box "><h2>Anatomie d’un programme</h2><div class="bd"><pre class="code ">"""Aire d'un disque."""      <span class="n">1</span>
+<b>import</b> math                  <span class="n">2</span>
+
+RAYON = 2.5                  <span class="n">3</span>
+
+<b>def</b> aire(r):                 <span class="n">4</span>
+    """Renvoie l'aire du disque."""
+    <b>return</b> math.pi * r ** 2  <span class="n">5</span>
+
+<b>if</b> __name__ == "__main__":   <span class="n">6</span>
+    print(f"{aire(RAYON):.2f}")  <span class="res"><span class="ar">→</span> 19.63</span></pre><ul class="nums"><li><span class="n">1</span> <b>docstring</b> : documentation du module, lue par <code>help()</code> ;</li><li><span class="n">2</span> <b>import</b> d’un module de la bibliothèque standard ;</li><li><span class="n">3</span> <b>constante</b> : nom en majuscules (simple convention) ;</li><li><span class="n">4</span> <b>définition de fonction</b> : <code>def</code>, nom, paramètres, deux-points ;</li><li><span class="n">5</span> le <b>bloc</b> est délimité par l’indentation : 4 espaces ;</li><li><span class="n">6</span> exécuté seulement si le fichier est <b>lancé</b>, pas s’il est <b>importé</b>.</li></ul></div></section></div><div class="col"><section class="box "><h2>Syntaxe de base</h2><div class="bd"><ul class="lst"><li>Un bloc s’ouvre par <code>:</code> et se délimite par l’<b>indentation</b> : 4 espaces, sans mélange avec des tabulations.</li><li>Une instruction par ligne, sans <code>;</code> final.</li><li><code>#</code> commente jusqu’à la fin de la ligne.</li><li>Ligne trop longue : la couper à l’intérieur de <code>( )</code>, <code>[ ]</code> ou <code>{ }</code> plutôt qu’avec <code>\</code>.</li><li>La casse compte : <code>nom</code> ≠ <code>Nom</code>.</li><li><code>pass</code> : bloc vide, à compléter plus tard.</li></ul></div></section><section class="box "><h2>Variables et affectation</h2><div class="bd"><p class="note first">Une variable est un <b>nom</b> attaché à un objet. Le type appartient à l’objet, pas au nom : c’est le <b>typage dynamique</b>.</p><table class="ct "><colgroup><col style="width:38%"><col style="width:62%"></colgroup><tbody><tr><td class="k">age = 36</td><td>créer, ou réaffecter</td></tr><tr><td class="k">a, b = 1, 2</td><td><span class="rv">(1, 2)</span> <span class="d">affectation multiple</span></td></tr><tr><td class="k">a, b = b, a</td><td><span class="rv">(2, 1)</span> <span class="d">échange, sans variable temporaire</span></td></tr><tr><td class="k">x = y = 0</td><td><span class="rv">(0, 0)</span> <span class="d">même valeur</span></td></tr><tr><td class="k">x += 5</td><td><span class="rv">5</span> <span class="d">équivaut à <code>x = x + 5</code> ; de même <code>-=</code> <code>*=</code> <code>/=</code>…</span></td></tr><tr><td class="k">type(3.5)</td><td><span class="rv">&lt;class 'float'&gt;</span> <span class="d">type de l’objet</span></td></tr><tr class="st"><td colspan="2"><div class="k">isinstance(5, int)</div><div class="sr"><span class="ar">→</span> <span class="rv">True</span> <span class="d">test de type</span></div></td></tr><tr><td class="k">del x</td><td>supprimer le nom</td></tr></tbody></table><h3>Nommage (PEP 8)</h3><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k">nombre_total</td><td>variable, fonction : <i>snake_case</i></td></tr><tr><td class="k">CompteBancaire</td><td>classe : <i>CapWords</i></td></tr><tr><td class="k">TAUX_MAX</td><td>constante</td></tr><tr><td class="k">_interne</td><td>usage interne (convention)</td></tr><tr><td class="k">__init__</td><td>méthode spéciale, dite « dunder »</td></tr><tr><td class="k">_</td><td>valeur ignorée : <code>for _ in range(3):</code></td></tr></tbody></table><p class="note ">Un nom : lettres, chiffres et <code>_</code>, sans chiffre en tête ni mot réservé.</p></div></section><section class="box "><h2>Les 35 mots réservés</h2><div class="bd"><table class="ct kw"><colgroup><col style="width:27%"><col style="width:73%"></colgroup><tbody><tr><td>Valeurs</td><td><code>False</code> <code>None</code> <code>True</code></td></tr><tr><td>Logique</td><td><code>and</code> <code>or</code> <code>not</code> <code>is</code> <code>in</code></td></tr><tr><td>Conditions</td><td><code>if</code> <code>elif</code> <code>else</code></td></tr><tr><td>Boucles</td><td><code>for</code> <code>while</code> <code>break</code> <code>continue</code></td></tr><tr><td>Fonctions</td><td><code>def</code> <code>return</code> <code>lambda</code> <code>yield</code> <code>global</code> <code>nonlocal</code></td></tr><tr><td>Classes</td><td><code>class</code></td></tr><tr><td>Exceptions</td><td><code>try</code> <code>except</code> <code>finally</code> <code>raise</code> <code>assert</code></td></tr><tr><td>Modules</td><td><code>import</code> <code>from</code> <code>as</code></td></tr><tr><td>Divers</td><td><code>with</code> <code>pass</code> <code>del</code></td></tr><tr><td>Asynchrone</td><td><code>async</code> <code>await</code></td></tr><tr><td>Contextuels</td><td><code>match</code> <code>case</code> <code>_</code> <code>type</code> <span class="d">réservés selon le contexte</span></td></tr></tbody></table></div></section></div><div class="col"><section class="box "><h2>Opérateurs</h2><div class="bd"><table class="ct "><colgroup><col style="width:40%"><col style="width:60%"></colgroup><tbody><tr class="sep"><td colspan="2">Arithmétique</td></tr><tr><td class="k">7 / 2</td><td><span class="rv">3.5</span> <span class="d">division : toujours un <code>float</code></span></td></tr><tr><td class="k">7 // 2</td><td><span class="rv">3</span> <span class="d">division entière (quotient)</span></td></tr><tr><td class="k">-7 // 2</td><td><span class="rv">-4</span> <span class="w">!</span> <span class="d">arrondi vers le bas</span></td></tr><tr><td class="k">7 % 3</td><td><span class="rv">1</span> <span class="d">reste (modulo)</span></td></tr><tr><td class="k">2 ** 10</td><td><span class="rv">1024</span> <span class="d">puissance</span></td></tr><tr><td class="k">-2 ** 2</td><td><span class="rv">-4</span> <span class="w">!</span> <span class="d"><code>**</code> passe avant le signe</span></td></tr><tr class="sep"><td colspan="2">Comparaison et logique</td></tr><tr><td class="k">3 == 3.0</td><td><span class="rv">True</span> <span class="d">égalité de valeur</span></td></tr><tr><td class="k">0 &lt; 5 &lt;= 10</td><td><span class="rv">True</span> <span class="d">comparaisons enchaînées</span></td></tr><tr><td class="k">x is None</td><td><span class="rv">True</span> <span class="d">identité : pour <code>None</code></span></td></tr><tr><td class="k">"ch" in "chat"</td><td><span class="rv">True</span> <span class="d">appartenance</span></td></tr><tr><td class="k">not 0</td><td><span class="rv">True</span> <span class="d">négation</span></td></tr><tr><td class="k">0 or "défaut"</td><td><span class="rv">'défaut'</span> <span class="d">1<sup>er</sup> opérande vrai</span></td></tr><tr><td class="k">"" and 1 / 0</td><td><span class="rv">''</span> <span class="d">court-circuit : <code>1 / 0</code> jamais évalué</span></td></tr><tr class="sep"><td colspan="2">Bit à bit</td></tr><tr class="st"><td colspan="2"><div class="k">6 &amp; 3, 6 | 3, 6 ^ 3</div><div class="sr"><span class="ar">→</span> <span class="rv">(2, 7, 5)</span> <span class="d">et, ou, ou exclusif</span></div></td></tr><tr><td class="k">1 &lt;&lt; 4, ~5</td><td><span class="rv">(16, -6)</span> <span class="d">décalage, inversion</span></td></tr></tbody></table></div></section><section class="box "><h2>Priorité, de la plus forte à la plus faible</h2><div class="bd"><div class="chain"><code>( )</code> <span class="sep">›</span> <code>**</code> <span class="sep">›</span> <code>+x -x ~x</code> <span class="sep">›</span> <code>* / // %</code> <span class="sep">›</span> <code>+ -</code> <span class="sep">›</span> <code>&lt;&lt; &gt;&gt;</code> <span class="sep">›</span> <code>&amp;</code> <span class="sep">›</span> <code>^</code> <span class="sep">›</span> <code>|</code> <span class="sep">›</span> <code>== &lt; in is…</code> <span class="sep">›</span> <code>not</code> <span class="sep">›</span> <code>and</code> <span class="sep">›</span> <code>or</code> <span class="sep">›</span> <code>a if c else b</code> <span class="sep">›</span> <code>lambda</code> <span class="sep">›</span> <code>:=</code></div><p class="note ">Dans le doute : des parenthèses. <code>2 + 3 * 4</code> → <code>14</code> ; <code>(2 + 3) * 4</code> → <code>20</code>.</p></div></section><section class="box "><h2>Afficher et saisir</h2><div class="bd"><pre class="code ">nom, age = "Alice", 36
+print("Bonjour", nom)
+<span class="res"><span class="ar">→</span> Bonjour Alice</span>
+print(nom, age, sep=" | ")
+<span class="res"><span class="ar">→</span> Alice | 36</span>
+print(f"{nom} a {age} ans")
+<span class="res"><span class="ar">→</span> Alice a 36 ans</span>
+print(f"{age=}")          <span class="res"><span class="ar">→</span> age=36</span>
+print("fin", end="!\n")   <span class="res"><span class="ar">→</span> fin!</span></pre><pre class="code ">texte = input("Âge ? ")  <span class="cm"># une chaîne</span>
+age = int(texte)         <span class="cm"># conversion</span></pre><p class="note "><code>input()</code> renvoie du texte : convertir avec <code>int()</code> ou <code>float()</code> avant de calculer.</p></div></section><section class="box "><h2>Vrai ou faux ?</h2><div class="bd"><p class="note first">Valent <b>faux</b> : <code>False</code>, <code>None</code>, <code>0</code>, <code>0.0</code>, <code>""</code>, <code>[]</code>, <code>()</code>, <code>{}</code>, <code>set()</code>, <code>range(0)</code>. Tout le reste vaut <b>vrai</b>.</p><table class="ct "><colgroup><col style="width:40%"><col style="width:60%"></colgroup><tbody><tr><td class="k">bool([])</td><td><span class="rv">False</span> <span class="d">liste vide</span></td></tr><tr><td class="k">bool("0")</td><td><span class="rv">True</span> <span class="w">!</span> <span class="d">chaîne non vide</span></td></tr><tr><td class="k">bool(" ")</td><td><span class="rv">True</span> <span class="w">!</span> <span class="d">une espace n’est pas rien</span></td></tr></tbody></table><p class="note ">D’où l’usage : <code>if liste:</code> plutôt que <code>if len(liste) &gt; 0:</code></p></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 1&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p2"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab on"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>2 · Nombres et chaînes de caractères</h1><span class="run">Mémento — Python</span></header><div class="cols c3"><div class="col"><section class="box "><h2>Types de base</h2><div class="bd"><table class="ct "><colgroup><col style="width:25%"><col style="width:75%"></colgroup><tbody><tr><td class="k">int</td><td><code>42</code> <code>-7</code> <code>1_000_000</code> <code>0xFF</code> <code>0b1010</code> — entiers, <b>sans limite</b> de taille</td></tr><tr><td class="k">float</td><td><code>3.14</code> <code>1e-3</code> <code>float("inf")</code> — à virgule flottante, ≈ 15 chiffres significatifs</td></tr><tr><td class="k">complex</td><td><code>2+3j</code> — <code>z.real</code>, <code>z.imag</code></td></tr><tr><td class="k">bool</td><td><code>True</code> <code>False</code> — sous-type de <code>int</code></td></tr><tr><td class="k">str</td><td><code>'a'</code> <code>"a"</code> <code>"""a"""</code> — texte Unicode, immuable</td></tr><tr><td class="k">bytes</td><td><code>b"abc"</code> — octets bruts (fichiers binaires, réseau)</td></tr><tr><td class="k">NoneType</td><td><code>None</code> — absence de valeur</td></tr></tbody></table><table class="ct ex"><colgroup><col style="width:40%"><col style="width:60%"></colgroup><tbody><tr class="st"><td colspan="2"><div class="k">2 ** 100</div><div class="sr"><span class="ar">→</span> <span class="rv">1267650600228229401496703205376</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">0xFF, 0b1010, 1_000</div><div class="sr"><span class="ar">→</span> <span class="rv">(255, 10, 1000)</span> <span class="d">hexadécimal, binaire, séparateur</span></div></td></tr><tr><td class="k">True + True</td><td><span class="rv">2</span> <span class="d"><code>True</code> vaut 1</span></td></tr></tbody></table></div></section><section class="box "><h2>Calculer</h2><div class="bd"><table class="ct "><colgroup><col style="width:52%"><col style="width:48%"></colgroup><tbody><tr><td class="k">abs(-3.5)</td><td><span class="rv">3.5</span> <span class="d">valeur absolue</span></td></tr><tr><td class="k">divmod(17, 5)</td><td><span class="rv">(3, 2)</span> <span class="d">quotient, reste</span></td></tr><tr><td class="k">round(3.14159, 2)</td><td><span class="rv">3.14</span></td></tr><tr class="st"><td colspan="2"><div class="k">round(2.5), round(3.5)</div><div class="sr"><span class="ar">→</span> <span class="rv">(2, 4)</span> <span class="w">!</span> <span class="d">arrondi au pair le plus proche</span></div></td></tr><tr><td class="k">max(3, 7, 1)</td><td><span class="rv">7</span> <span class="d">et <code>min</code></span></td></tr><tr><td class="k">sum([1, 2, 3])</td><td><span class="rv">6</span></td></tr><tr><td class="k">pow(2, 10, 1000)</td><td><span class="rv">24</span> <span class="d">2<sup>10</sup> modulo 1000</span></td></tr><tr class="sep"><td colspan="2">Module math (<code>import math</code>)</td></tr><tr class="st"><td colspan="2"><div class="k">math.sqrt(2)</div><div class="sr"><span class="ar">→</span> <span class="rv">1.4142135623730951</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">math.floor(-2.5), math.ceil(2.1)</div><div class="sr"><span class="ar">→</span> <span class="rv">(-3, 3)</span> <span class="d">vers le bas, vers le haut</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">math.gcd(12, 18), math.lcm(4, 6)</div><div class="sr"><span class="ar">→</span> <span class="rv">(6, 12)</span> <span class="d">PGCD, PPCM</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">math.factorial(5), math.comb(5, 2)</div><div class="sr"><span class="ar">→</span> <span class="rv">(120, 10)</span> <span class="d">5 !, combinaisons</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">math.log10(1000), math.log2(8)</div><div class="sr"><span class="ar">→</span> <span class="rv">(3.0, 3.0)</span> <span class="d">logarithmes ; <code>math.log(x)</code> : népérien</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">math.dist((0, 0), (3, 4))</div><div class="sr"><span class="ar">→</span> <span class="rv">5.0</span> <span class="d">distance</span></div></td></tr><tr><td class="k">math.pi · math.e · math.inf</td><td>constantes</td></tr></tbody></table></div></section><section class="box "><h2>Le piège des flottants</h2><div class="bd"><pre class="code ">0.1 + 0.2         <span class="res"><span class="ar">→</span> 0.30000000000000004</span>
+0.1 + 0.2 == 0.3  <span class="res"><span class="ar">→</span> False</span> <span class="w">!</span>
+<b>import</b> math
+math.isclose(0.1 + 0.2, 0.3)  <span class="res"><span class="ar">→</span> True</span>
+<b>from</b> decimal <b>import</b> Decimal
+Decimal("0.1") + Decimal("0.2")
+<span class="res"><span class="ar">→</span> Decimal('0.3')</span>
+<b>from</b> fractions <b>import</b> Fraction
+Fraction(1, 3) + Fraction(1, 6)
+<span class="res"><span class="ar">→</span> Fraction(1, 2)</span></pre><p class="note ">Les <code>float</code> sont stockés en binaire : 0,1 n’y a pas de valeur exacte. Comparer avec <code>math.isclose</code> ; pour de l’argent, <code>Decimal</code> construit à partir d’une <b>chaîne</b> (<code>Decimal(0.1)</code> hérite de l’erreur).</p></div></section></div><div class="col"><section class="box "><h2>Chaînes de caractères</h2><div class="bd"><table class="ct "><colgroup><col style="width:38%"><col style="width:62%"></colgroup><tbody><tr><td class="k">"l'été" · 'dit "oui"'</td><td>guillemets simples ou doubles, au choix</td></tr><tr><td class="k">"""…"""</td><td>chaîne sur plusieurs lignes</td></tr><tr><td class="k">\n \t \\ \" \u00e9</td><td>saut de ligne, tabulation, <code>\</code>, <code>"</code>, caractère par son code (é)</td></tr><tr><td class="k">r"C:\temp\new"</td><td>chaîne <b>brute</b> : <code>\</code> non interprété (chemins Windows, expressions régulières)</td></tr></tbody></table><table class="ct "><colgroup><col style="width:38%"><col style="width:62%"></colgroup><tbody><tr><td class="k">"ab" + "cd"</td><td><span class="rv">'abcd'</span> <span class="d">concaténation</span></td></tr><tr><td class="k">"ab" * 3</td><td><span class="rv">'ababab'</span> <span class="d">répétition</span></td></tr><tr><td class="k">len("été")</td><td><span class="rv">3</span> <span class="d">longueur en caractères</span></td></tr><tr><td class="k">"Z" &lt; "a"</td><td><span class="rv">True</span> <span class="w">!</span> <span class="d">ordre des codes : majuscules d’abord</span></td></tr><tr><td class="k">s[0] = "J"</td><td><span class="rv">TypeError</span> <span class="d">immuable : on crée une nouvelle chaîne</span></td></tr></tbody></table></div></section><section class="box "><h2>Méthodes de chaînes</h2><div class="bd"><p class="note first">Elles renvoient une <b>nouvelle</b> chaîne : <code>s.upper()</code> ne modifie pas <code>s</code>.</p><table class="ct "><colgroup><col style="width:55%"><col style="width:45%"></colgroup><tbody><tr><td class="k">"été".upper()</td><td><span class="rv">'ÉTÉ'</span> <span class="d">aussi <code>lower()</code></span></td></tr><tr class="st"><td colspan="2"><div class="k">"le petit prince".title()</div><div class="sr"><span class="ar">→</span> <span class="rv">'Le Petit Prince'</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">"bonjour".capitalize()</div><div class="sr"><span class="ar">→</span> <span class="rv">'Bonjour'</span></div></td></tr><tr><td class="k">"  a b  ".strip()</td><td><span class="rv">'a b'</span> <span class="d">aussi <code>lstrip</code>, <code>rstrip</code></span></td></tr><tr class="st"><td colspan="2"><div class="k">"a,b,,c".split(",")</div><div class="sr"><span class="ar">→</span> <span class="rv">['a', 'b', '', 'c']</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">"un  deux\ttrois".split()</div><div class="sr"><span class="ar">→</span> <span class="rv">['un', 'deux', 'trois']</span> <span class="d">sans argument : tout blanc</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">" - ".join(["a", "b", "c"])</div><div class="sr"><span class="ar">→</span> <span class="rv">'a - b - c'</span> <span class="d">inverse de <code>split</code></span></div></td></tr><tr class="st"><td colspan="2"><div class="k">"chat".replace("a", "o")</div><div class="sr"><span class="ar">→</span> <span class="rv">'chot'</span></div></td></tr><tr><td class="k">"banane".count("an")</td><td><span class="rv">2</span></td></tr><tr><td class="k">"banane".find("n")</td><td><span class="rv">2</span> <span class="d"><code>-1</code> si absent</span></td></tr><tr><td class="k">"banane".index("z")</td><td><span class="rv">ValueError</span> <span class="d">si absent</span></td></tr><tr class="st"><td colspan="2"><div class="k">"img.png".endswith(".png")</div><div class="sr"><span class="ar">→</span> <span class="rv">True</span> <span class="d">et <code>startswith</code></span></div></td></tr><tr class="st"><td colspan="2"><div class="k">"img.png".removesuffix(".png")</div><div class="sr"><span class="ar">→</span> <span class="rv">'img'</span> <span class="d"><span class="v">3.9+</span> et <code>removeprefix</code></span></div></td></tr><tr class="st"><td colspan="2"><div class="k">"clé=val".partition("=")</div><div class="sr"><span class="ar">→</span> <span class="rv">('clé', '=', 'val')</span></div></td></tr><tr><td class="k">"7".zfill(3)</td><td><span class="rv">'007'</span></td></tr><tr class="st"><td colspan="2"><div class="k">"titre".center(9, "*")</div><div class="sr"><span class="ar">→</span> <span class="rv">'**titre**'</span> <span class="d">et <code>ljust</code>, <code>rjust</code></span></div></td></tr><tr><td class="k">"123".isdigit()</td><td><span class="rv">True</span> <span class="d">et <code>isalpha</code>, <code>isspace</code>…</span></td></tr><tr><td class="k">"Straße".casefold()</td><td><span class="rv">'strasse'</span> <span class="d">comparer sans la casse</span></td></tr></tbody></table></div></section></div><div class="col"><section class="box "><h2>Conversions</h2><div class="bd"><table class="ct "><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody><tr><td class="k">int("42")</td><td><span class="rv">42</span></td></tr><tr><td class="k">int(3.99)</td><td><span class="rv">3</span> <span class="d">troncature vers zéro</span></td></tr><tr><td class="k">int("ff", 16)</td><td><span class="rv">255</span> <span class="d">lecture en base 16</span></td></tr><tr><td class="k">float("2.5")</td><td><span class="rv">2.5</span></td></tr><tr><td class="k">float("2,5")</td><td><span class="rv">ValueError</span> <span class="w">!</span> <span class="d">virgule décimale refusée</span></td></tr><tr><td class="k">int("abc")</td><td><span class="rv">ValueError</span> <span class="d">texte non numérique</span></td></tr><tr><td class="k">str(42)</td><td><span class="rv">'42'</span></td></tr><tr class="st"><td colspan="2"><div class="k">ord("é"), chr(65)</div><div class="sr"><span class="ar">→</span> <span class="rv">(233, 'A')</span> <span class="d">code Unicode ↔ caractère</span></div></td></tr><tr><td class="k">hex(255), bin(5)</td><td><span class="rv">('0xff', '0b101')</span></td></tr><tr><td class="k">list("abc")</td><td><span class="rv">['a', 'b', 'c']</span></td></tr></tbody></table></div></section><section class="box "><h2>Mettre en forme : f-strings</h2><div class="bd"><div class="anat small"><div class="seg"><code>f"{</code><span>&nbsp;</span></div><div class="seg"><code>valeur</code><span>expression</span></div><div class="seg"><code>!r</code><span>conversion</span></div><div class="seg"><code>:</code><span>&nbsp;</span></div><div class="seg"><code>&gt;10.2f</code><span>format</span></div><div class="seg"><code>}"</code><span>&nbsp;</span></div></div><p class="note first">Après <code>:</code>, dans l’ordre : remplissage, alignement (<code>&lt;</code> <code>^</code> <code>&gt;</code>), signe, largeur, séparateur (<code>,</code> ou <code>_</code>), précision (<code>.2</code>), type (<code>f</code> <code>d</code> <code>%</code> <code>e</code> <code>x</code> <code>b</code>).</p><table class="ct "><colgroup><col style="width:52%"><col style="width:48%"></colgroup><tbody><tr><td class="k">f"{x:.2f}"</td><td><span class="rv">'3.14'</span> <span class="d">2 décimales</span></td></tr><tr><td class="k">f"{x:8.3f}"</td><td><span class="rv">'   3.142'</span> <span class="d">largeur 8</span></td></tr><tr><td class="k">f"{n:,}"</td><td><span class="rv">'1,234,567'</span> <span class="d">milliers</span></td></tr><tr class="st"><td colspan="2"><div class="k">f"{n:,}".replace(",", " ")</div><div class="sr"><span class="ar">→</span> <span class="rv">'1 234 567'</span> <span class="d">à la française</span></div></td></tr><tr><td class="k">f"{0.256:.1%}"</td><td><span class="rv">'25.6%'</span> <span class="d">pourcentage</span></td></tr><tr><td class="k">f"{42:05d}"</td><td><span class="rv">'00042'</span> <span class="d">zéros en tête</span></td></tr><tr><td class="k">f"{nom:&lt;6}|"</td><td><span class="rv">'Ada   |'</span> <span class="d">à gauche</span></td></tr><tr><td class="k">f"{nom:&gt;6}|"</td><td><span class="rv">'   Ada|'</span> <span class="d">à droite</span></td></tr><tr><td class="k">f"{nom:*^7}"</td><td><span class="rv">'**Ada**'</span> <span class="d">centré, remplissage</span></td></tr><tr class="st"><td colspan="2"><div class="k">f"{255:x}", f"{5:08b}"</div><div class="sr"><span class="ar">→</span> <span class="rv">('ff', '00000101')</span> <span class="d">hexadécimal, binaire</span></div></td></tr><tr><td class="k">f"{nom!r}"</td><td><span class="rv">"'Ada'"</span> <span class="d">avec <code>repr()</code></span></td></tr><tr><td class="k">f"{x=:.1f}"</td><td><span class="rv">'x=3.1'</span> <span class="d">débogage <span class="v">3.8+</span></span></td></tr><tr><td class="k">f"{{x}}"</td><td><span class="rv">'{x}'</span> <span class="d">accolades littérales</span></td></tr></tbody></table><p class="note ">Anciennes syntaxes, encore rencontrées : <code>"{:.2f}".format(x)</code> et <code>"%.2f" % x</code>. <span class="v">3.14+</span> <code>t"…"</code> crée un gabarit (<code>Template</code>), pas une chaîne : il sert aux bibliothèques qui doivent traiter les valeurs insérées.</p></div></section><section class="box "><h2>Texte, octets, encodages</h2><div class="bd"><p class="note first"><code>str</code> : des caractères ; fichiers et réseau : des <b>octets</b> (<code>bytes</code>).</p><table class="ct "><colgroup><col style="width:58%"><col style="width:42%"></colgroup><tbody><tr><td class="k">"é".encode("utf-8")</td><td><span class="rv">b'\xc3\xa9'</span> <span class="d">texte → octets</span></td></tr><tr class="st"><td colspan="2"><div class="k">b"\xc3\xa9".decode("utf-8")</div><div class="sr"><span class="ar">→</span> <span class="rv">'é'</span> <span class="d">octets → texte</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">len("é"), len("é".encode())</div><div class="sr"><span class="ar">→</span> <span class="rv">(1, 2)</span> <span class="d">1 caractère, 2 octets</span></div></td></tr><tr><td class="k">"\u00e9" == "e\u0301"</td><td><span class="rv">False</span> <span class="w">!</span> <span class="d">é précomposé ≠ e + accent</span></td></tr><tr class="st"><td colspan="2"><div class="k">unicodedata.normalize("NFC", "e\u0301") == "é"</div><div class="sr"><span class="ar">→</span> <span class="rv">True</span> <span class="d">normaliser avant de comparer</span></div></td></tr></tbody></table></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 2&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p3"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab on"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>3 · Collections : listes, dictionnaires, ensembles, tuples</h1><span class="run">Mémento — Python</span></header><div class="cols c3"><div class="col"><section class="box "><h2>Choisir sa collection</h2><div class="bd"><table class="ct cmp"><colgroup><col style="width:17%"><col style="width:29%"><col style="width:18%"><col style="width:18%"><col style="width:18%"></colgroup><thead><tr><th>Type</th><th>Écriture</th><th>Ordre</th><th>Modif.</th><th>Doubl.</th></tr></thead><tbody><tr><td class="k">list</td><td><code>[1, 2, 2]</code></td><td>oui</td><td>oui</td><td>oui</td></tr><tr><td class="k">tuple</td><td><code>(1, 2, 2)</code></td><td>oui</td><td>non</td><td>oui</td></tr><tr><td class="k">dict</td><td><code>{"a": 1}</code></td><td>oui*</td><td>oui</td><td>clés : non</td></tr><tr><td class="k">set</td><td><code>{1, 2}</code></td><td>non</td><td>oui</td><td>non</td></tr><tr><td class="k">str</td><td><code>"abc"</code></td><td>oui</td><td>non</td><td>oui</td></tr></tbody></table><p class="note ">* ordre d’insertion, garanti depuis 3.7. Modif. : modifiable ; Doubl. : doublons admis. <code>frozenset</code> : ensemble non modifiable, donc hachable.</p><ul class="lst"><li><b>list</b> : suite d’éléments qu’on ajoute, retire, trie.</li><li><b>tuple</b> : enregistrement fixe (coordonnées, retour multiple) ; peut servir de clé.</li><li><b>dict</b> : retrouver une valeur par sa clé, en temps constant.</li><li><b>set</b> : tester l’appartenance, dédoublonner, comparer des groupes.</li></ul><p class="note "><span class="w">!</span> <code>{}</code> est un dict vide ; ensemble vide : <code>set()</code>. Tuple d’un seul élément : <code>(1,)</code> — c’est la virgule qui fait le tuple.</p></div></section><section class="box "><h2>Listes</h2><div class="bd"><p class="note first">Chaque ligne part de <code>L = [3, 1, 4]</code>.</p><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k">L.append(1)</td><td><span class="rv">[3, 1, 4, 1]</span> <span class="d">ajouter à la fin</span></td></tr><tr class="st"><td colspan="2"><div class="k">L.extend([5, 9])</div><div class="sr"><span class="ar">→</span> <span class="rv">[3, 1, 4, 5, 9]</span> <span class="d">ajouter plusieurs</span></div></td></tr><tr><td class="k">L.insert(0, 7)</td><td><span class="rv">[7, 3, 1, 4]</span> <span class="d">insérer à l’indice 0</span></td></tr><tr><td class="k">L.pop()</td><td><span class="rv">4</span> <span class="d">retire et renvoie le dernier</span></td></tr><tr><td class="k">L.pop(0)</td><td><span class="rv">3</span> <span class="d">… ou celui de l’indice 0</span></td></tr><tr><td class="k">L.remove(1)</td><td><span class="rv">[3, 4]</span> <span class="d">1<sup>re</sup> occurrence ; <code>ValueError</code> si absente</span></td></tr><tr><td class="k">L[1] = 9</td><td><span class="rv">[3, 9, 4]</span> <span class="d">remplacer</span></td></tr><tr><td class="k">del L[0]</td><td><span class="rv">[1, 4]</span> <span class="d">supprimer par indice</span></td></tr><tr><td class="k">L[1:] = []</td><td><span class="rv">[3]</span> <span class="d">remplacer une tranche</span></td></tr><tr><td class="k">L.index(4)</td><td><span class="rv">2</span> <span class="d">position</span></td></tr><tr><td class="k">L.sort()</td><td><span class="rv">[1, 3, 4]</span> <span class="d">tri <b>sur place</b>, renvoie <code>None</code></span></td></tr><tr><td class="k">sorted(L)</td><td><span class="rv">[1, 3, 4]</span> <span class="d"><b>nouvelle</b> liste, <code>L</code> intacte</span></td></tr><tr class="st"><td colspan="2"><div class="k">L.sort(reverse=True)</div><div class="sr"><span class="ar">→</span> <span class="rv">[4, 3, 1]</span> <span class="d">ordre décroissant</span></div></td></tr><tr><td class="k">L.reverse()</td><td><span class="rv">[4, 1, 3]</span> <span class="d">inverser</span></td></tr><tr><td class="k">L = L.sort()</td><td><span class="rv">None</span> <span class="w">!</span> <span class="d">piège classique</span></td></tr><tr><td class="k">L + [1, 5]</td><td><span class="rv">[3, 1, 4, 1, 5]</span> <span class="d">concaténer</span></td></tr><tr><td class="k">[0] * 3</td><td><span class="rv">[0, 0, 0]</span></td></tr><tr class="st"><td colspan="2"><div class="k">4 in L, len(L), sum(L)</div><div class="sr"><span class="ar">→</span> <span class="rv">(True, 3, 8)</span> <span class="d">et <code>min</code>, <code>max</code></span></div></td></tr><tr><td class="k">L.copy()</td><td><span class="rv">[3, 1, 4]</span> <span class="d">copie (ou <code>L[:]</code>)</span></td></tr></tbody></table><h3>Trier avec une clé</h3><pre class="code ">mots = ["Kiwi", "ail", "pomme", "figue"]
+sorted(mots)           <span class="cm"># A-Z avant a-z</span>
+<span class="res"><span class="ar">→</span> ['Kiwi', 'ail', 'figue', 'pomme']</span> <span class="w">!</span>
+sorted(mots, key=str.lower)
+<span class="res"><span class="ar">→</span> ['ail', 'figue', 'Kiwi', 'pomme']</span>
+sorted(mots, key=len)
+<span class="res"><span class="ar">→</span> ['ail', 'Kiwi', 'pomme', 'figue']</span></pre><p class="note ">Le tri est <b>stable</b> : à clé égale, l’ordre d’origine est conservé (<code>pomme</code> avant <code>figue</code>).</p></div></section></div><div class="col"><section class="box "><h2>Dictionnaires</h2><div class="bd"><p class="note first">Chaque ligne part de <code>d = {"a": 1, "b": 2}</code>.</p><table class="ct "><colgroup><col style="width:47%"><col style="width:53%"></colgroup><tbody><tr><td class="k">d["a"]</td><td><span class="rv">1</span> <span class="d">lire</span></td></tr><tr><td class="k">d["z"]</td><td><span class="rv">KeyError</span> <span class="w">!</span> <span class="d">clé absente</span></td></tr><tr><td class="k">d.get("z")</td><td><span class="rv">None</span> <span class="d">sans erreur</span></td></tr><tr><td class="k">d.get("z", 0)</td><td><span class="rv">0</span> <span class="d">valeur par défaut</span></td></tr><tr class="st"><td colspan="2"><div class="k">d["c"] = 3</div><div class="sr"><span class="ar">→</span> <span class="rv">{'a': 1, 'b': 2, 'c': 3}</span> <span class="d">ajoute ou remplace</span></div></td></tr><tr><td class="k">del d["a"]</td><td><span class="rv">{'b': 2}</span></td></tr><tr><td class="k">d.pop("a")</td><td><span class="rv">1</span> <span class="d">retire et renvoie</span></td></tr><tr><td class="k">"a" in d</td><td><span class="rv">True</span> <span class="d">teste les <b>clés</b></span></td></tr><tr><td class="k">list(d)</td><td><span class="rv">['a', 'b']</span> <span class="d">les clés</span></td></tr><tr><td class="k">list(d.values())</td><td><span class="rv">[1, 2]</span></td></tr><tr class="st"><td colspan="2"><div class="k">list(d.items())</div><div class="sr"><span class="ar">→</span> <span class="rv">[('a', 1), ('b', 2)]</span></div></td></tr><tr><td class="k">d | {"b": 9}</td><td><span class="rv">{'a': 1, 'b': 9}</span> <span class="d">fusion <span class="v">3.9+</span></span></td></tr><tr class="st"><td colspan="2"><div class="k">d.update(c=3)</div><div class="sr"><span class="ar">→</span> <span class="rv">{'a': 1, 'b': 2, 'c': 3}</span> <span class="d">fusion sur place</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">d.setdefault("l", []).append(5)</div><div class="sr"><span class="ar">→</span> <span class="rv">{'a': 1, 'b': 2, 'l': [5]}</span> <span class="d">crée si absent</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">dict(zip("xy", [1, 2]))</div><div class="sr"><span class="ar">→</span> <span class="rv">{'x': 1, 'y': 2}</span> <span class="d">à partir de deux listes</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">dict.fromkeys("xy", 0)</div><div class="sr"><span class="ar">→</span> <span class="rv">{'x': 0, 'y': 0}</span></div></td></tr><tr><td class="k">{[1]: "x"}</td><td><span class="rv">TypeError</span> <span class="w">!</span> <span class="d">une liste ne peut être clé</span></td></tr></tbody></table><pre class="code "><b>for</b> cle, valeur <b>in</b> d.items():
+    print(cle, valeur)      <span class="res"><span class="ar">→</span> a 1 <span class="nl">⏎</span> b 2</span></pre><p class="note ">Clés : objets <b>hachables</b>, donc immuables (<code>str</code>, <code>int</code>, <code>tuple</code>…).</p></div></section><section class="box "><h2>Ensembles</h2><div class="bd"><p class="note first">Avec <code>a = {1, 2, 3}</code> et <code>b = {3, 4}</code> :</p><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k">a | b</td><td><span class="rv">{1, 2, 3, 4}</span> <span class="d">union</span></td></tr><tr><td class="k">a &amp; b</td><td><span class="rv">{3}</span> <span class="d">intersection</span></td></tr><tr><td class="k">a - b</td><td><span class="rv">{1, 2}</span> <span class="d">différence</span></td></tr><tr><td class="k">a ^ b</td><td><span class="rv">{1, 2, 4}</span> <span class="d">différence symétrique</span></td></tr><tr><td class="k">{1, 2} &lt;= a</td><td><span class="rv">True</span> <span class="d">inclusion</span></td></tr><tr><td class="k">a.add(9)</td><td><span class="rv">{1, 2, 3, 9}</span> <span class="d">ajouter</span></td></tr><tr><td class="k">a.discard(7)</td><td><span class="rv">{1, 2, 3}</span> <span class="d">retirer sans erreur</span></td></tr><tr><td class="k">a.remove(7)</td><td><span class="rv">KeyError</span> <span class="d">si absent</span></td></tr><tr><td class="k">set([3, 1, 3, 2])</td><td><span class="rv">{1, 2, 3}</span> <span class="d">dédoublonner</span></td></tr><tr class="st"><td colspan="2"><div class="k">list(dict.fromkeys([3, 1, 3]))</div><div class="sr"><span class="ar">→</span> <span class="rv">[3, 1]</span> <span class="d">… en gardant l’ordre</span></div></td></tr></tbody></table><p class="note ">Pas d’indice, ordre non garanti ; éléments hachables seulement.</p></div></section></div><div class="col"><section class="box "><h2>Indices et tranches</h2><div class="bd"><div class="idxw"><span class="lab">s =</span><div class="idx"><div class="cell"><i class="p">0</i><b>P</b><i class="m">-6</i></div><div class="cell"><i class="p">1</i><b>Y</b><i class="m">-5</i></div><div class="cell"><i class="p">2</i><b>T</b><i class="m">-4</i></div><div class="cell"><i class="p">3</i><b>H</b><i class="m">-3</i></div><div class="cell"><i class="p">4</i><b>O</b><i class="m">-2</i></div><div class="cell"><i class="p">5</i><b>N</b><i class="m">-1</i><i class="p end">6</i></div></div></div><p class="note first">Les indices désignent les <b>bords</b> des cases ; comptés depuis la fin, ils sont négatifs. Syntaxe : <code>s[début:fin:pas]</code>, <b>fin exclue</b>.</p><table class="ct "><colgroup><col style="width:30%"><col style="width:70%"></colgroup><tbody><tr><td class="k">s[0]</td><td><span class="rv">'P'</span> <span class="d">premier</span></td></tr><tr><td class="k">s[-1]</td><td><span class="rv">'N'</span> <span class="d">dernier</span></td></tr><tr><td class="k">s[1:4]</td><td><span class="rv">'YTH'</span> <span class="d">de 1 inclus à 4 exclu</span></td></tr><tr><td class="k">s[:2]</td><td><span class="rv">'PY'</span> <span class="d">les 2 premiers</span></td></tr><tr><td class="k">s[2:]</td><td><span class="rv">'THON'</span> <span class="d">à partir de l’indice 2</span></td></tr><tr><td class="k">s[-3:]</td><td><span class="rv">'HON'</span> <span class="d">les 3 derniers</span></td></tr><tr><td class="k">s[::2]</td><td><span class="rv">'PTO'</span> <span class="d">un sur deux</span></td></tr><tr><td class="k">s[::-1]</td><td><span class="rv">'NOHTYP'</span> <span class="d">à l’envers</span></td></tr><tr><td class="k">s[10]</td><td><span class="rv">IndexError</span> <span class="w">!</span> <span class="d">hors limites…</span></td></tr><tr><td class="k">s[2:10]</td><td><span class="rv">'THON'</span> <span class="d">… mais une tranche tolère</span></td></tr></tbody></table><p class="note ">Valable pour toute séquence : chaînes, listes, tuples.</p></div></section><section class="box "><h2>Tuples et déballage</h2><div class="bd"><pre class="code ">point = (3, 4)
+x, y = point                <span class="cm"># déballage</span>
+x                           <span class="res"><span class="ar">→</span> 3</span>
+premier, *reste = [1, 2, 3, 4]
+reste                       <span class="res"><span class="ar">→</span> [2, 3, 4]</span>
+*debut, dernier = "abc"
+debut                       <span class="res"><span class="ar">→</span> ['a', 'b']</span>
+a, _ = (10, "x")            <span class="cm"># _ : ignoré</span>
+<b>def</b> bornes(L):
+    <b>return</b> min(L), max(L)   <span class="cm"># un tuple</span>
+bas, haut = bornes([4, 1, 7])
+bas, haut                   <span class="res"><span class="ar">→</span> (1, 7)</span></pre></div></section><section class="box "><h2>Compréhensions</h2><div class="bd"><div class="anat small"><div class="seg"><code>[x * 2</code><span>expression</span></div><div class="seg"><code>for x in L</code><span>boucle</span></div><div class="seg"><code>if x &gt; 0]</code><span>filtre (facultatif)</span></div></div><pre class="code ">[x ** 2 <b>for</b> x <b>in</b> range(5)]
+<span class="res"><span class="ar">→</span> [0, 1, 4, 9, 16]</span>
+[x <b>for</b> x <b>in</b> range(10) <b>if</b> x % 3 == 0]
+<span class="res"><span class="ar">→</span> [0, 3, 6, 9]</span>
+[x <b>if</b> x &gt; 0 <b>else</b> 0 <b>for</b> x <b>in</b> [-2, 5, -1]]
+<span class="res"><span class="ar">→</span> [0, 5, 0]</span>
+{m: len(m) <b>for</b> m <b>in</b> ["un", "deux"]}
+<span class="res"><span class="ar">→</span> {'un': 2, 'deux': 4}</span>
+{x % 3 <b>for</b> x <b>in</b> range(10)}
+<span class="res"><span class="ar">→</span> {0, 1, 2}</span>
+sum(x ** 2 <b>for</b> x <b>in</b> range(4))      <span class="res"><span class="ar">→</span> 14</span>
+[f"{i}{j}" <b>for</b> i <b>in</b> "ab" <b>for</b> j <b>in</b> "12"]
+<span class="res"><span class="ar">→</span> ['a1', 'a2', 'b1', 'b2']</span></pre><p class="note "><code>if</code> <b>après</b> <code>for</code> : filtre. <code>… if … else …</code> <b>avant</b> <code>for</code> : transforme chaque élément. Sans crochets, entre parenthèses : une <b>expression génératrice</b>, calculée à la demande, sans liste en mémoire.</p></div></section><section class="box "><h2>Références et copies</h2><div class="bd"><pre class="code ">a = [1, 2]
+b = a             <span class="cm"># deux noms, UN objet</span>
+b.append(3)
+a                 <span class="res"><span class="ar">→</span> [1, 2, 3]</span> <span class="w">!</span>
+c = a.copy()      <span class="cm"># ou list(a), a[:]</span>
+c == a, c <b>is</b> a    <span class="res"><span class="ar">→</span> (True, False)</span>
+m = [[0] * 2] * 2 <span class="cm"># 2 fois la même ligne</span>
+m[0][0] = 1
+m                 <span class="res"><span class="ar">→</span> [[1, 0], [1, 0]]</span> <span class="w">!</span>
+<span class="cm"># correct : une ligne par tour</span>
+m = [[0] * 2 <b>for</b> _ <b>in</b> range(2)]
+<b>import</b> copy
+m2 = copy.deepcopy(m)  <span class="cm"># copie profonde</span></pre><p class="note "><code>==</code> compare les valeurs, <code>is</code> l’identité. <b>Immuables</b> : <code>int</code>, <code>float</code>, <code>str</code>, <code>tuple</code>, <code>frozenset</code>, <code>bytes</code>. <b>Modifiables</b> : <code>list</code>, <code>dict</code>, <code>set</code>, la plupart des objets. <code>copy()</code> ne copie qu’un niveau.</p></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 3&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p4"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab on"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>4 · Conditions, boucles, itération</h1><span class="run">Mémento — Python</span></header><div class="cols c3"><div class="col"><section class="box "><h2>Conditions</h2><div class="bd"><pre class="code ">note = 13
+<b>if</b> note &gt;= 16:
+    mention = "très bien"
+<b>elif</b> note &gt;= 14:
+    mention = "bien"
+<b>elif</b> note &gt;= 12:
+    mention = "assez bien"
+<b>else</b>:
+    mention = "aucune"
+mention             <span class="res"><span class="ar">→</span> 'assez bien'</span>
+age = 20
+s = "majeur" <b>if</b> age &gt;= 18 <b>else</b> "mineur"
+s                   <span class="res"><span class="ar">→</span> 'majeur'</span></pre><h3>Tests idiomatiques</h3><table class="ct "><colgroup><col style="width:58%"><col style="width:42%"></colgroup><tbody><tr><td class="k">if x:</td><td><code>x</code> non vide, non nul</td></tr><tr><td class="k">if not liste:</td><td>liste vide</td></tr><tr><td class="k">if x is None:</td><td>jamais <code>== None</code></td></tr><tr><td class="k">if 0 &lt;= n &lt; 10:</td><td>encadrement</td></tr><tr><td class="k">if rep in ("o", "oui"):</td><td>plusieurs valeurs</td></tr><tr><td class="k">if isinstance(x, (int, float)):</td><td>type</td></tr></tbody></table></div></section><section class="box "><h2>match : filtrage par motif <span class="v">3.10+</span></h2><div class="bd"><pre class="code "><b>def</b> analyser(cmd):
+    <b>match</b> cmd.split():
+        <b>case</b> ["aller", direction]:
+            <b>return</b> f"vers {direction}"
+        <b>case</b> ["prendre", *obj]:
+            <b>return</b> f"{len(obj)} objets"
+        <b>case</b> ["quitter" | "q"]:
+            <b>return</b> "fin"
+        <b>case</b> [n] <b>if</b> n.isdigit():
+            <b>return</b> f"code {n}"
+        <b>case</b> _:
+            <b>return</b> "inconnu"
+
+analyser("aller nord")   <span class="res"><span class="ar">→</span> 'vers nord'</span>
+analyser("prendre a b")  <span class="res"><span class="ar">→</span> '2 objets'</span>
+analyser("q")            <span class="res"><span class="ar">→</span> 'fin'</span>
+analyser("42")           <span class="res"><span class="ar">→</span> 'code 42'</span>
+analyser("")             <span class="res"><span class="ar">→</span> 'inconnu'</span></pre><ul class="lst"><li>Motifs : littéral <code>case 0:</code>, alternative <code>|</code>, capture <code>x</code>, séquence <code>[a, *reste]</code>, dictionnaire <code>{"type": t}</code>, classe <code>Point(x=0)</code>, garde <code>if</code>.</li><li><code>case _:</code> attrape tout le reste.</li><li><span class="w">!</span> Un nom seul <b>capture</b>, il ne compare pas : <code>case ROUGE:</code> attrape tout. Comparer à une constante : nom pointé, <code>case Couleur.ROUGE:</code></li></ul></div></section><section class="box "><h2>Opérateur morse := <span class="v">3.8+</span></h2><div class="bd"><pre class="code ">mots = "un deux trois quatre".split()
+<span class="cm"># affecte n, puis le compare</span>
+<b>if</b> (n := len(mots)) &gt; 3:
+    print(n, "mots")     <span class="res"><span class="ar">→</span> 4 mots</span></pre><p class="note ">Utile dans <code>while (ligne := f.readline()):</code> ; à réserver aux cas où il évite une répétition.</p></div></section><section class="box "><h2>Redemander jusqu’à une saisie valide</h2><div class="bd"><pre class="code "><b>while</b> <b>True</b>:
+    texte = input("Note (0-20) ? ")
+    <b>try</b>:                  <span class="cm"># voir page 7</span>
+        note = int(texte)
+    <b>except</b> ValueError:
+        print("Un entier, svp.")
+        <b>continue</b>          <span class="cm"># redemander</span>
+    <b>if</b> 0 &lt;= note &lt;= 20:
+        <b>break</b>             <span class="cm"># valide</span>
+    print("Hors limites.")</pre></div></section></div><div class="col"><section class="box "><h2>Boucle for</h2><div class="bd"><pre class="code "><b>for</b> lettre <b>in</b> "abc":
+    print(lettre, end=" ")   <span class="res"><span class="ar">→</span> a b c</span></pre><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k">list(range(5))</td><td><span class="rv">[0, 1, 2, 3, 4]</span> <span class="d">5 exclu</span></td></tr><tr><td class="k">list(range(2, 6))</td><td><span class="rv">[2, 3, 4, 5]</span></td></tr><tr class="st"><td colspan="2"><div class="k">list(range(0, 10, 3))</div><div class="sr"><span class="ar">→</span> <span class="rv">[0, 3, 6, 9]</span> <span class="d">pas de 3</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">list(range(3, 0, -1))</div><div class="sr"><span class="ar">→</span> <span class="rv">[3, 2, 1]</span> <span class="d">à rebours</span></div></td></tr></tbody></table><h3>Outils de parcours</h3><table class="ct "><colgroup><col style="width:55%"><col style="width:45%"></colgroup><tbody><tr class="st"><td colspan="2"><div class="k">list(enumerate("ab", 1))</div><div class="sr"><span class="ar">→</span> <span class="rv">[(1, 'a'), (2, 'b')]</span> <span class="d">numéro + élément</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">list(zip("ab", [1, 2, 3]))</div><div class="sr"><span class="ar">→</span> <span class="rv">[('a', 1), ('b', 2)]</span> <span class="d">s’arrête au plus court ; <code>strict=True</code> <span class="v">3.10+</span> : erreur si longueurs différentes</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">list(reversed([1, 2, 3]))</div><div class="sr"><span class="ar">→</span> <span class="rv">[3, 2, 1]</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">any(x &gt; 2 for x in [1, 3])</div><div class="sr"><span class="ar">→</span> <span class="rv">True</span> <span class="d">au moins un</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">all(x &gt; 2 for x in [1, 3])</div><div class="sr"><span class="ar">→</span> <span class="rv">False</span> <span class="d">tous</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">list(map(str.upper, "ab"))</div><div class="sr"><span class="ar">→</span> <span class="rv">['A', 'B']</span> <span class="d">appliquer</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">list(filter(str.isdigit, "a1b2"))</div><div class="sr"><span class="ar">→</span> <span class="rv">['1', '2']</span> <span class="d">filtrer</span></div></td></tr><tr class="st"><td colspan="2"><div class="k">max(["kiwi", "ananas"], key=len)</div><div class="sr"><span class="ar">→</span> <span class="rv">'ananas'</span> <span class="d">selon un critère</span></div></td></tr></tbody></table><pre class="code ">noms = ["Ana", "Léo"]
+notes = [15, 12]
+<b>for</b> nom, note <b>in</b> zip(noms, notes):
+    print(nom, note)  <span class="res"><span class="ar">→</span> Ana 15 <span class="nl">⏎</span> Léo 12</span></pre></div></section><section class="box "><h2>while, break, continue, else</h2><div class="bd"><pre class="code ">n = 0
+<b>while</b> n &lt; 3:     <span class="cm"># tant que c'est vrai</span>
+    n += 1       <span class="cm"># sinon : sans fin</span>
+n                <span class="res"><span class="ar">→</span> 3</span>
+<b>for</b> x <b>in</b> [4, 9, 15, 7]:
+    <b>if</b> x % 2 == 0:
+        <b>continue</b> <span class="cm"># tour suivant</span>
+    <b>if</b> x &gt; 10:
+        <b>break</b>    <span class="cm"># sortie de boucle</span>
+    print(x)     <span class="res"><span class="ar">→</span> 9</span>
+<b>else</b>:
+    print("fini")  <span class="cm"># si aucun break</span></pre><ul class="lst"><li>Boucle sans fin volontaire : <code>while True:</code> … <code>if <i>condition</i>: break</code>.</li><li><kbd>Ctrl+C</kbd> interrompt un programme bloqué (<code>KeyboardInterrupt</code>).</li><li><span class="w">!</span> Ne pas modifier une liste pendant qu’on la parcourt : parcourir une copie (<code>for x in L[:]</code>) ou construire une nouvelle liste.</li></ul></div></section><section class="box "><h2>Pièges courants</h2><div class="bd"><table class="ct "><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody><tr><td class="k">x == 1 or 2</td><td><span class="rv">2</span> <span class="w">!</span> <span class="d">toujours vrai ! → <code>x in (1, 2)</code></span></td></tr><tr class="st"><td colspan="2"><div class="k">list(range(1, 4))</div><div class="sr"><span class="ar">→</span> <span class="rv">[1, 2, 3]</span> <span class="d">fin exclue : 1 à 10 → <code>range(1, 11)</code></span></div></td></tr><tr><td class="k">0.1 + 0.2 == 0.3</td><td><span class="rv">False</span> <span class="w">!</span> <span class="d">flottants : <code>math.isclose</code></span></td></tr><tr><td class="k">for i in range(len(L)):</td><td>fonctionne, mais <code>for x in L:</code> ou <code>enumerate(L)</code> est plus clair</td></tr></tbody></table><p class="note "><code>if x = 5:</code> → <code>SyntaxError</code> : <code>=</code> affecte, <code>==</code> compare.</p></div></section></div><div class="col"><section class="box "><h2>Recettes courantes</h2><div class="bd"><pre class="code ">L = [3, 1, 3, 2]
+d = {"a": 3, "b": 7, "c": 5}
+M = [[1, 2], [3, 4]]
+<span class="cm"># compter les occurrences</span>
+<b>from</b> collections <b>import</b> Counter
+Counter("abracadabra").most_common(2)
+<span class="res"><span class="ar">→</span> [('a', 5), ('b', 2)]</span>
+<span class="cm"># clé de la plus grande valeur</span>
+max(d, key=d.get)            <span class="res"><span class="ar">→</span> 'b'</span>
+<span class="cm"># trier un dict par valeur</span>
+sorted(d.items(), key=<b>lambda</b> kv: kv[1])
+<span class="res"><span class="ar">→</span> [('a', 3), ('c', 5), ('b', 7)]</span>
+<span class="cm"># inverser un dict</span>
+{v: k <b>for</b> k, v <b>in</b> d.items()}
+<span class="res"><span class="ar">→</span> {3: 'a', 7: 'b', 5: 'c'}</span>
+<span class="cm"># aplatir une liste de listes</span>
+[x <b>for</b> ligne <b>in</b> M <b>for</b> x <b>in</b> ligne]
+<span class="res"><span class="ar">→</span> [1, 2, 3, 4]</span>
+<span class="cm"># transposer une matrice</span>
+list(zip(*M))       <span class="res"><span class="ar">→</span> [(1, 3), (2, 4)]</span>
+<span class="cm"># dédoublonner en gardant l'ordre</span>
+list(dict.fromkeys(L))       <span class="res"><span class="ar">→</span> [3, 1, 2]</span>
+<span class="cm"># compter à la main</span>
+cpt = {}
+<b>for</b> c <b>in</b> "abca":
+    cpt[c] = cpt.get(c, 0) + 1
+cpt
+<span class="res"><span class="ar">→</span> {'a': 2, 'b': 1, 'c': 1}</span>
+<span class="cm"># indice du maximum</span>
+L.index(max(L))              <span class="res"><span class="ar">→</span> 0</span>
+<span class="cm"># découper en paquets (3.12+)</span>
+<b>from</b> itertools <b>import</b> batched
+list(batched("abcde", 2))
+<span class="res"><span class="ar">→</span> [('a', 'b'), ('c', 'd'), ('e',)]</span></pre></div></section><section class="box "><h2>Motifs de boucle</h2><div class="bd"><pre class="code ">notes = [12, 8, 15, 9]
+total = 0             <span class="cm"># accumulateur</span>
+<b>for</b> n <b>in</b> notes:
+    total += n
+total                 <span class="res"><span class="ar">→</span> 44</span>
+nb = 0                <span class="cm"># compteur</span>
+<b>for</b> n <b>in</b> notes:
+    <b>if</b> n &gt;= 10:
+        nb += 1
+nb                    <span class="res"><span class="ar">→</span> 2</span>
+m = <b>None</b>              <span class="cm"># meilleur vu</span>
+<b>for</b> n <b>in</b> notes:
+    <b>if</b> m <b>is</b> <b>None</b> <b>or</b> n &gt; m:
+        m = n
+m                     <span class="res"><span class="ar">→</span> 15</span></pre><p class="note ">Formes courtes : <code>sum(notes)</code>, <code>sum(n &gt;= 10 for n in notes)</code>, <code>max(notes)</code>.</p></div></section><section class="box "><h2>Itérateurs et générateurs</h2><div class="bd"><pre class="code ">it = iter([10, 20])
+next(it), next(it)     <span class="res"><span class="ar">→</span> (10, 20)</span>
+next(it)               <span class="res"><span class="ar">→</span> StopIteration</span>
+
+<b>def</b> rebours(n):        <span class="cm"># génératrice</span>
+    <b>while</b> n &gt; 0:
+        <b>yield</b> n        <span class="cm"># donne, attend</span>
+        n -= 1
+list(rebours(3))       <span class="res"><span class="ar">→</span> [3, 2, 1]</span>
+<span class="cm"># expression génératrice :</span>
+<span class="cm"># rien n'est calculé d'avance</span>
+carres = (x * x <b>for</b> x <b>in</b> range(10**9))
+next(carres), next(carres)  <span class="res"><span class="ar">→</span> (0, 1)</span></pre><p class="note "><code>for</code> appelle <code>iter()</code>, puis <code>next()</code> jusqu’à <code>StopIteration</code>. Un générateur fournit ses valeurs <b>à la demande</b> : mémoire constante, mais un seul parcours. <code>yield from <i>autre</i></code> délègue à un autre itérable.</p></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 4&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p5"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab on"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>5 · Fonctions et modules</h1><span class="run">Mémento — Python</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Définir et appeler une fonction</h2><div class="bd"><pre class="code "><b>def</b> prix_ttc(ht, taux=0.20):                       <span class="n">1</span>
+    """Renvoie le prix TTC arrondi au centime."""  <span class="n">2</span>
+    <b>return</b> round(ht * (1 + taux), 2)               <span class="n">3</span>
+
+prix_ttc(100)                  <span class="res"><span class="ar">→</span> 120.0</span>
+prix_ttc(100, 0.055)           <span class="res"><span class="ar">→</span> 105.5</span>
+prix_ttc(taux=0.1, ht=50)      <span class="res"><span class="ar">→</span> 55.0</span></pre><ul class="nums"><li><span class="n">1</span> <code>def</code>, nom, paramètres ; <code>taux</code> a une <b>valeur par défaut</b> ;</li><li><span class="n">2</span> docstring : ce que fait la fonction, affichée par <code>help(prix_ttc)</code> ;</li><li><span class="n">3</span> <code>return</code> renvoie la valeur et <b>termine</b> la fonction ; sans <code>return</code>, elle renvoie <code>None</code>.</li></ul><p class="note ">À l’appel : arguments <b>positionnels</b> (par rang) d’abord, puis <b>nommés</b> (<code>taux=0.1</code>), dans n’importe quel ordre.</p></div></section><section class="box "><h2>Paramètres : toutes les formes</h2><div class="bd"><pre class="code "><b>def</b> f(a, b=2, *args, c, d=4, **kwargs):
+    <b>return</b> a, b, args, c, d, kwargs
+
+f(1, c=3)                  <span class="res"><span class="ar">→</span> (1, 2, (), 3, 4, {})</span>
+f(1, 5, 6, 7, c=3, e=8)    <span class="res"><span class="ar">→</span> (1, 5, (6, 7), 3, 4, {'e': 8})</span>
+nombres, options = [1, 5], {"c": 3}
+f(*nombres, **options)     <span class="res"><span class="ar">→</span> (1, 5, (), 3, 4, {})</span>
+f(1)                       <span class="res"><span class="ar">→</span> TypeError</span> <span class="w">!</span></pre><table class="ct "><colgroup><col style="width:32%"><col style="width:68%"></colgroup><tbody><tr><td class="k">a</td><td>positionnel ou nommé</td></tr><tr><td class="k">b=2</td><td>valeur par défaut</td></tr><tr><td class="k">*args</td><td>positionnels en surplus, reçus dans un <b>tuple</b></td></tr><tr><td class="k">c, d=4</td><td>après <code>*args</code> (ou un <code>*</code> seul) : <b>nommés obligatoirement</b></td></tr><tr><td class="k">**kwargs</td><td>nommés en surplus, reçus dans un <b>dict</b></td></tr><tr><td class="k">def g(x, /, y):</td><td><code>x</code> positionnel uniquement <span class="v">3.8+</span></td></tr><tr><td class="k">def h(x, *, y):</td><td><code>y</code> nommé uniquement</td></tr><tr><td class="k">f(*liste, **dico)</td><td>à l’appel : <b>déballer</b> une liste, un dict</td></tr></tbody></table></div></section><section class="box "><h2>Portée des variables</h2><div class="bd"><p class="note first">Un nom est cherché dans l’ordre <b>L</b>ocal → fonction <b>E</b>nglobante → <b>G</b>lobal (module) → <b>B</b>uilt-in (fonctions natives) : règle <b>LEGB</b>.</p><pre class="code ">compteur = 0
+<b>def</b> incrementer():
+    <b>global</b> compteur       <span class="cm"># sans cela : UnboundLocalError</span>
+    compteur += 1
+incrementer()
+compteur                  <span class="res"><span class="ar">→</span> 1</span>
+
+<b>def</b> fabrique():
+    total = 0
+    <b>def</b> ajouter(n):
+        <b>nonlocal</b> total    <span class="cm"># variable de la fonction englobante</span>
+        total += n
+        <b>return</b> total
+    <b>return</b> ajouter        <span class="cm"># une « fermeture » (closure)</span>
+acc = fabrique()
+acc(5), acc(3)            <span class="res"><span class="ar">→</span> (5, 8)</span></pre><p class="note ">Préférer paramètres et valeurs de retour à <code>global</code> : le code reste lisible et testable.</p></div></section><section class="box "><h2>Modules et import</h2><div class="bd"><pre class="code "><b>import</b> math                   <span class="cm"># puis : math.sqrt(2)</span>
+<b>from</b> math <b>import</b> sqrt, pi     <span class="cm"># puis : sqrt(2)</span>
+<b>import</b> datetime <b>as</b> dt         <span class="cm"># alias : dt.date(2026, 1, 15)</span></pre><ul class="lst"><li>Un <b>module</b> est un fichier <code>.py</code> : <code>import outils</code> charge <code>outils.py</code> ; un <b>paquet</b> est un dossier de modules.</li><li>Imports en tête de fichier : bibliothèque standard, puis paquets tiers, puis modules du projet.</li><li>Éviter <code>from module import *</code> : on ne sait plus d’où viennent les noms.</li><li><span class="w">!</span> Ne pas nommer un fichier comme un module existant (<code>random.py</code>, <code>csv.py</code>…) : il masque le vrai.</li><li><code>if __name__ == "__main__":</code> protège le code à n’exécuter qu’au lancement direct (page 1).</li><li>Python cherche les modules dans le dossier du script, puis dans <code>sys.path</code>.</li></ul></div></section></div><div class="col"><section class="box "><h2>lambda et fonctions en argument</h2><div class="bd"><pre class="code ">double = <b>lambda</b> x: 2 * x          <span class="cm"># fonction anonyme</span>
+double(4)                         <span class="res"><span class="ar">→</span> 8</span>
+mots = ["kiwi", "Ail", "banane"]
+sorted(mots, key=str.lower)       <span class="res"><span class="ar">→</span> ['Ail', 'banane', 'kiwi']</span>
+sorted(mots, key=<b>lambda</b> m: m[-1]) <span class="res"><span class="ar">→</span> ['banane', 'kiwi', 'Ail']</span>
+ops = {"+": <b>lambda</b> a, b: a + b, "*": <b>lambda</b> a, b: a * b}
+ops["*"](3, 4)                    <span class="res"><span class="ar">→</span> 12</span></pre><p class="note ">Une fonction est un objet : on peut la ranger dans une variable, un dict, la passer en argument. PEP 8 : <code>lambda</code> pour une expression courte passée en argument, <code>def</code> sinon.</p></div></section><section class="box "><h2>Piège : valeur par défaut modifiable</h2><div class="bd"><pre class="code "><b>def</b> ajouter(x, L=[]):     <span class="cm"># liste créée UNE fois</span>
+    L.append(x)
+    <b>return</b> L
+ajouter(1)                <span class="res"><span class="ar">→</span> [1]</span>
+ajouter(2)                <span class="res"><span class="ar">→</span> [1, 2]</span> <span class="w">!</span>
+
+<b>def</b> ajouter(x, L=<b>None</b>):   <span class="cm"># la bonne forme</span>
+    <b>if</b> L <b>is</b> <b>None</b>:
+        L = []            <span class="cm"># nouvelle liste à chaque appel</span>
+    L.append(x)
+    <b>return</b> L
+ajouter(1), ajouter(2)    <span class="res"><span class="ar">→</span> ([1], [2])</span></pre><p class="note ">La valeur par défaut est évaluée <b>une seule fois</b>, à la définition de la fonction.</p></div></section><section class="box "><h2>Récursivité</h2><div class="bd"><pre class="code "><b>def</b> factorielle(n):
+    <b>if</b> n &lt;= 1:                 <span class="cm"># cas de base : indispensable</span>
+        <b>return</b> 1
+    <b>return</b> n * factorielle(n - 1)
+factorielle(5)                 <span class="res"><span class="ar">→</span> 120</span>
+<b>import</b> sys
+sys.getrecursionlimit()        <span class="res"><span class="ar">→</span> 1000</span></pre><p class="note ">Au-delà de la limite (1 000 appels imbriqués par défaut) : <code>RecursionError</code>. Une boucle est souvent plus sûre.</p></div></section><section class="box "><h2>Décorateurs</h2><div class="bd"><pre class="code "><b>import</b> functools, time
+
+<b>def</b> chronometrer(f):
+    <b>@</b>functools.wraps(f)            <span class="cm"># conserve nom et docstring</span>
+    <b>def</b> enveloppe(*args, **kwargs):
+        t0 = time.perf_counter()
+        resultat = f(*args, **kwargs)
+        duree = time.perf_counter() - t0
+        print(f"{f.__name__} : {duree:.3f} s")
+        <b>return</b> resultat
+    <b>return</b> enveloppe
+
+<b>@</b>chronometrer               <span class="cm"># somme = chronometrer(somme)</span>
+<b>def</b> somme(n):
+    <b>return</b> sum(range(n))
+
+<b>@</b>functools.cache                   <span class="cm"># mémorise les résultats</span>
+<b>def</b> fib(n):
+    <b>return</b> n <b>if</b> n &lt; 2 <b>else</b> fib(n - 1) + fib(n - 2)
+fib(80)                            <span class="res"><span class="ar">→</span> 23416728348467685</span></pre><p class="note ">Un décorateur prend une fonction et en renvoie une autre qui l’enveloppe : chronométrer, journaliser, mettre en cache, contrôler l’accès. <code>@functools.lru_cache(maxsize=128)</code> : cache de taille bornée.</p></div></section><section class="box "><h2>Annotations de type</h2><div class="bd"><pre class="code "><b>def</b> moyenne(notes: list[float]) -&gt; float:
+    <b>return</b> sum(notes) / len(notes)
+moyenne([12.0, 15.0])              <span class="res"><span class="ar">→</span> 13.5</span>
+
+age: int = 36
+nom: str | <b>None</b> = <b>None</b>             <span class="cm"># « ou » entre types (3.10+)</span>
+<b>type</b> Point = tuple[float, float]   <span class="cm"># alias de type (3.12+)</span>
+moyenne("abc")                     <span class="res"><span class="ar">→</span> TypeError</span></pre><p class="note ">Python <b>ne vérifie pas</b> les annotations à l’exécution (l’erreur ci-dessus vient de <code>sum</code>) : elles documentent et servent aux outils externes (mypy, pyright) et aux éditeurs.</p></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 5&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p6"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab on"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>6 · Classes et objets</h1><span class="run">Mémento — Python</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Définir une classe</h2><div class="bd"><pre class="code "><b>class</b> Compte:
+    """Compte bancaire simple."""
+    nb_comptes = 0                      <span class="cm"># attribut de classe</span>
+
+    <b>def</b> __init__(self, titulaire, solde=0):
+        self.titulaire = titulaire      <span class="cm"># attributs d'instance</span>
+        self.solde = solde
+        Compte.nb_comptes += 1
+
+    <b>def</b> deposer(self, montant):         <span class="cm"># méthode</span>
+        <b>if</b> montant &lt;= 0:
+            <b>raise</b> ValueError("montant positif attendu")
+        self.solde += montant
+        <b>return</b> self.solde
+
+    <b>def</b> __repr__(self):                 <span class="cm"># affichage technique</span>
+        <b>return</b> f"Compte({self.titulaire!r}, {self.solde})"
+
+c = Compte("Alice", 100)    <span class="cm"># crée l'objet, puis appelle __init__</span>
+c.deposer(50)               <span class="res"><span class="ar">→</span> 150</span>
+c.solde                     <span class="res"><span class="ar">→</span> 150</span>
+c                           <span class="res"><span class="ar">→</span> Compte('Alice', 150)</span>
+Compte.nb_comptes           <span class="res"><span class="ar">→</span> 1</span></pre><table class="ct "><colgroup><col style="width:24%"><col style="width:76%"></colgroup><tbody><tr><td><b>classe</b></td><td>le modèle : <code>Compte</code></td></tr><tr><td><b>instance</b>, objet</td><td>un exemplaire : <code>c</code></td></tr><tr><td><b>attribut</b></td><td>une donnée de l’objet : <code>c.solde</code></td></tr><tr><td><b>méthode</b></td><td>une fonction de la classe : <code>c.deposer(50)</code> équivaut à <code>Compte.deposer(c, 50)</code></td></tr><tr><td class="k">self</td><td>l’instance concernée ; premier paramètre de chaque méthode (nom conventionnel)</td></tr><tr><td class="k">__init__</td><td>initialise l’objet juste après sa création</td></tr><tr><td class="k">_solde · __solde</td><td>usage interne (convention) · nom « brouillé » en <code>_Compte__solde</code></td></tr></tbody></table></div></section><section class="box "><h2>Héritage</h2><div class="bd"><pre class="code "><b>class</b> CompteEpargne(Compte):            <span class="cm"># hérite de Compte</span>
+    <b>def</b> __init__(self, titulaire, solde=0, plafond=10_000):
+        super().__init__(titulaire, solde)   <span class="cm"># le parent d'abord</span>
+        self.plafond = plafond
+
+    <b>def</b> deposer(self, montant):         <span class="cm"># redéfinition</span>
+        <b>if</b> self.solde + montant &gt; self.plafond:
+            <b>raise</b> ValueError("plafond dépassé")
+        <b>return</b> super().deposer(montant)
+
+e = CompteEpargne("Bob", 9_900)
+e.deposer(50)               <span class="res"><span class="ar">→</span> 9950</span>
+e.deposer(100)              <span class="res"><span class="ar">→</span> ValueError: plafond dépassé</span>
+isinstance(e, Compte)       <span class="res"><span class="ar">→</span> True</span>
+[k.__name__ <b>for</b> k <b>in</b> CompteEpargne.__mro__]
+<span class="res"><span class="ar">→</span> ['CompteEpargne', 'Compte', 'object']</span></pre><p class="note "><code>super()</code> appelle la version de la classe parente, selon l’ordre de résolution des méthodes (<code>__mro__</code>). Héritage = relation « <b>est un</b> » ; pour « <b>a un</b> », préférer la <b>composition</b> : un attribut qui contient un autre objet.</p></div></section><section class="box "><h2>Tout est objet : introspection</h2><div class="bd"><table class="ct "><colgroup><col style="width:48%"><col style="width:52%"></colgroup><tbody><tr><td class="k">type(42)</td><td><span class="rv">&lt;class 'int'&gt;</span> <span class="d">classe de l’objet</span></td></tr><tr><td class="k">isinstance(True, int)</td><td><span class="rv">True</span> <span class="d">tient compte de l’héritage</span></td></tr><tr><td class="k">hasattr("", "upper")</td><td><span class="rv">True</span> <span class="d">possède cet attribut ?</span></td></tr><tr><td class="k">getattr(3, "real", None)</td><td><span class="rv">3</span> <span class="d">attribut par son nom, avec défaut</span></td></tr><tr><td class="k">callable(len)</td><td><span class="rv">True</span> <span class="d">appelable ?</span></td></tr><tr><td class="k">dir(x) · vars(x) · id(x)</td><td>attributs · dict des attributs · identité</td></tr></tbody></table><p class="note "><b>Typage canard</b> : peu importe la classe d’un objet, pourvu qu’il possède les méthodes attendues.</p></div></section><section class="box "><h2>Énumérations</h2><div class="bd"><pre class="code "><b>from</b> enum <b>import</b> Enum, auto
+<b>class</b> Couleur(Enum):
+    ROUGE = auto()
+    VERT = auto()
+Couleur.VERT                  <span class="res"><span class="ar">→</span> &lt;Couleur.VERT: 2&gt;</span>
+Couleur.VERT.name             <span class="res"><span class="ar">→</span> 'VERT'</span>
+Couleur(1)                    <span class="res"><span class="ar">→</span> &lt;Couleur.ROUGE: 1&gt;</span>
+[c.name <b>for</b> c <b>in</b> Couleur]     <span class="res"><span class="ar">→</span> ['ROUGE', 'VERT']</span></pre></div></section></div><div class="col"><section class="box "><h2>Propriétés, méthodes de classe et statiques</h2><div class="bd"><pre class="code "><b>class</b> Temperature:
+    <b>def</b> __init__(self, celsius):
+        self.celsius = celsius          <span class="cm"># passe par le setter</span>
+
+    <b>@</b>property                           <span class="cm"># lecture : t.celsius</span>
+    <b>def</b> celsius(self):
+        <b>return</b> self._celsius
+
+    <b>@</b>celsius.setter                     <span class="cm"># écriture</span>
+    <b>def</b> celsius(self, valeur):
+        <b>if</b> valeur &lt; -273.15:
+            <b>raise</b> ValueError("sous le zéro absolu")
+        self._celsius = valeur
+
+    <b>@</b>property
+    <b>def</b> fahrenheit(self):               <span class="cm"># attribut calculé</span>
+        <b>return</b> self._celsius * 9 / 5 + 32
+
+    <b>@</b>classmethod                        <span class="cm"># autre constructeur</span>
+    <b>def</b> depuis_fahrenheit(cls, f):
+        <b>return</b> cls((f - 32) * 5 / 9)
+
+    <b>@</b>staticmethod                       <span class="cm"># ni self ni cls</span>
+    <b>def</b> gele(celsius):
+        <b>return</b> celsius &lt;= 0
+
+Temperature(25).fahrenheit              <span class="res"><span class="ar">→</span> 77.0</span>
+Temperature.depuis_fahrenheit(212).celsius   <span class="res"><span class="ar">→</span> 100.0</span>
+Temperature.gele(-3)                    <span class="res"><span class="ar">→</span> True</span>
+Temperature(-300)   <span class="res"><span class="ar">→</span> ValueError: sous le zéro absolu</span></pre></div></section><section class="box "><h2>Méthodes spéciales</h2><div class="bd"><p class="note first">Elles branchent un objet sur la syntaxe du langage.</p><table class="ct "><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody><tr><td class="k">__init__(self, …)</td><td><code>C(…)</code> : initialisation</td></tr><tr><td class="k">__repr__(self)</td><td><code>repr(x)</code>, interpréteur : non ambigu</td></tr><tr><td class="k">__str__(self)</td><td><code>str(x)</code>, <code>print(x)</code> : lisible</td></tr><tr><td class="k">__eq__(self, o)</td><td><code>x == y</code></td></tr><tr><td class="k">__lt__(self, o)</td><td><code>x &lt; y</code>, donc <code>sorted()</code></td></tr><tr><td class="k">__hash__(self)</td><td>clé de dict, élément de set</td></tr><tr><td class="k">__len__(self)</td><td><code>len(x)</code></td></tr><tr><td class="k">__bool__(self)</td><td><code>if x:</code></td></tr><tr><td class="k">__getitem__(self, i)</td><td><code>x[i]</code></td></tr><tr><td class="k">__contains__(self, v)</td><td><code>v in x</code></td></tr><tr><td class="k">__iter__(self)</td><td><code>for v in x:</code></td></tr><tr><td class="k">__add__(self, o)</td><td><code>x + y</code> ; aussi <code>__sub__</code>, <code>__mul__</code>…</td></tr><tr><td class="k">__call__(self, …)</td><td><code>x(…)</code> : objet appelable</td></tr><tr><td class="k">__enter__, __exit__</td><td><code>with x:</code> : gestionnaire de contexte</td></tr></tbody></table></div></section><section class="box "><h2>Classes de données : dataclasses</h2><div class="bd"><pre class="code "><b>from</b> dataclasses <b>import</b> dataclass, field, asdict
+
+<b>@</b>dataclass(frozen=<b>True</b>)       <span class="cm"># frozen : immuable, hachable</span>
+<b>class</b> Point:
+    x: float
+    y: float = 0.0
+
+p = Point(1.5)
+p                             <span class="res"><span class="ar">→</span> Point(x=1.5, y=0.0)</span>
+p == Point(1.5, 0)            <span class="res"><span class="ar">→</span> True</span>
+asdict(p)                     <span class="res"><span class="ar">→</span> {'x': 1.5, 'y': 0.0}</span>
+p.x = 2                       <span class="res"><span class="ar">→</span> FrozenInstanceError</span> <span class="w">!</span>
+
+<b>@</b>dataclass(order=<b>True</b>)        <span class="cm"># order : &lt;, &gt;, sorted()</span>
+<b>class</b> Tache:
+    priorite: int
+    titre: str = ""
+    tags: list[str] = field(default_factory=list)
+sorted([Tache(2, "b"), Tache(1, "a")])[0].titre   <span class="res"><span class="ar">→</span> 'a'</span></pre><p class="note "><code>@dataclass</code> écrit pour vous <code>__init__</code>, <code>__repr__</code> et <code>__eq__</code>. Valeur par défaut modifiable : <code>field(default_factory=list)</code>.</p></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 6&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p7"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab on"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>7 · Erreurs, exceptions et fichiers</h1><span class="run">Mémento — Python</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Gérer les exceptions</h2><div class="bd"><pre class="code "><b>def</b> diviser(texte):
+    <b>try</b>:
+        n = int(texte)          <span class="cm"># peut lever ValueError</span>
+        r = 100 / n             <span class="cm"># peut lever ZeroDivisionError</span>
+    <b>except</b> ValueError:
+        print("pas un entier")
+    <b>except</b> ZeroDivisionError <b>as</b> e:   <span class="cm"># e : l'objet exception</span>
+        print("erreur :", e)
+    <b>else</b>:                       <span class="cm"># seulement si aucune exception</span>
+        print("résultat :", r)
+    <b>finally</b>:                    <span class="cm"># dans tous les cas</span>
+        print("fin")
+
+diviser("4")        <span class="res"><span class="ar">→</span> résultat : 25.0 <span class="nl">⏎</span> fin</span>
+diviser("0")        <span class="res"><span class="ar">→</span> erreur : division by zero <span class="nl">⏎</span> fin</span>
+diviser("x")        <span class="res"><span class="ar">→</span> pas un entier <span class="nl">⏎</span> fin</span></pre><h3>Lever une exception</h3><pre class="code "><b>class</b> SoldeInsuffisant(Exception):     <span class="cm"># exception personnalisée</span>
+    """Le solde ne couvre pas le retrait."""
+
+<b>def</b> retirer(solde, montant):
+    <b>if</b> montant &gt; solde:
+        <b>raise</b> SoldeInsuffisant(f"il manque {montant - solde} €")
+    <b>return</b> solde - montant
+
+<b>try</b>:
+    retirer(50, 70)
+<b>except</b> SoldeInsuffisant <b>as</b> e:
+    print("Refusé :", e)        <span class="res"><span class="ar">→</span> Refusé : il manque 20 €</span></pre><ul class="lst"><li>Attraper des exceptions <b>précises</b> ; jamais de <code>except:</code> nu, qui avale tout, même <kbd>Ctrl+C</kbd>.</li><li><code>raise</code> seul, dans un <code>except</code> : relance l’exception en cours ; <code>raise Autre("…") from e</code> : nouvelle exception, cause conservée.</li><li><code>except (ValueError, TypeError):</code> plusieurs types ; <span class="v">3.14+</span> parenthèses facultatives sans <code>as</code>.</li><li><code>assert x &gt; 0, "message"</code> : contrôle de développement, ignoré avec <code>python -O</code>.</li></ul></div></section><section class="box "><h2>Hiérarchie des exceptions</h2><div class="bd"><pre class="code sh tree">BaseException
+ +-- KeyboardInterrupt      Ctrl+C
+ +-- SystemExit             sys.exit()
+ +-- Exception              celles qu'on attrape
+      +-- ArithmeticError
+      |    +-- ZeroDivisionError
+      +-- LookupError
+      |    +-- IndexError   indice hors limites
+      |    +-- KeyError     clé absente
+      +-- NameError
+      |    +-- UnboundLocalError
+      +-- ImportError
+      |    +-- ModuleNotFoundError
+      +-- OSError           système, fichiers
+      |    +-- FileNotFoundError
+      |    +-- PermissionError
+      +-- RuntimeError
+      |    +-- RecursionError
+      +-- AttributeError, TypeError, ValueError…</pre><p class="note "><code>except LookupError:</code> attrape à la fois <code>IndexError</code> et <code>KeyError</code>.</p></div></section><section class="box "><h2>Lire un message d’erreur</h2><div class="bd"><pre class="code "><b>def</b> moyenne(notes):
+    <b>return</b> sum(notes) / len(notes)
+print(moyenne([]))</pre><pre class="code sh tb">Traceback (most recent call last):
+  File "moyenne.py", line 3, in &lt;module&gt;
+    print(moyenne([]))
+          ~~~~~~~^^^^
+  File "moyenne.py", line 2, in moyenne
+    return sum(notes) / len(notes)
+           ~~~~~~~~~~~^~~~~~~~~~~~
+ZeroDivisionError: division by zero</pre><ul class="nums"><li><span class="n">1</span> lire d’abord la <b>dernière ligne</b> : le type d’erreur et son message ;</li><li><span class="n">2</span> remonter : chaque « File … line … » est un appel ; le plus <b>bas</b> est l’endroit où l’erreur s’est produite ;</li><li><span class="n">3</span> les <code>~</code> et <code>^</code> soulignent l’expression fautive <span class="v">3.11+</span>.</li></ul><p class="note ">Chemin du fichier abrégé ; la dernière ligne se copie telle quelle dans un moteur de recherche.</p></div></section></div><div class="col"><section class="box "><h2>Erreurs fréquentes</h2><div class="bd"><table class="ct err"><colgroup><col style="width:60%"><col style="width:40%"></colgroup><tbody><tr><td><code class="em">SyntaxError: expected ':'</code></td><td>deux-points oublié après <code>if</code>, <code>for</code>, <code>def</code>…</td></tr><tr><td><code class="em">IndentationError: expected an indented block…</code></td><td>bloc non indenté ; tabulations et espaces mélangés</td></tr><tr><td><code class="em">NameError: name 'nmbre' is not defined</code></td><td>faute de frappe, variable jamais définie, import oublié</td></tr><tr><td><code class="em">TypeError: can only concatenate str (not "int") to str</code></td><td>convertir : <code>str(36)</code>, ou une f-string</td></tr><tr><td><code class="em">TypeError: 'NoneType' object is not subscriptable</code></td><td>une fonction a renvoyé <code>None</code></td></tr><tr><td><code class="em">ValueError: invalid literal for int() with base 10: '12,5'</code></td><td>texte non convertible</td></tr><tr><td><code class="em">IndexError: list index out of range</code></td><td>indice ≥ <code>len(L)</code></td></tr><tr><td><code class="em">KeyError: 'nom'</code></td><td>clé absente : <code>d.get("nom")</code></td></tr><tr><td><code class="em">AttributeError: 'list' object has no attribute 'push'</code></td><td>méthode inexistante : <code>dir(x)</code></td></tr><tr><td><code class="em">UnboundLocalError: cannot access local variable 'x'…</code></td><td>affectation dans la fonction : <code>global</code> ou paramètre</td></tr><tr><td><code class="em">FileNotFoundError: [Errno 2] No such file or directory: 'absent.txt'</code></td><td>chemin relatif au <b>dossier courant</b> (<code>Path.cwd()</code>)</td></tr><tr><td><code class="em">ModuleNotFoundError: No module named 'paquet_absent'</code></td><td>non installé <b>dans cet environnement</b> : <code>python -m pip install …</code></td></tr><tr><td><code class="em">UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe9…</code></td><td>mauvais encodage : préciser <code>encoding=</code></td></tr></tbody></table></div></section><section class="box "><h2>Fichiers texte</h2><div class="bd"><pre class="code "><span class="cm"># écrire : le fichier est créé, ou ÉCRASÉ s'il existe</span>
+<b>with</b> open("notes.txt", "w", encoding="utf-8") <b>as</b> f:
+    f.write("12\n")
+    print("15", file=f)            <span class="cm"># print vers un fichier</span>
+<span class="cm"># ajouter à la fin</span>
+<b>with</b> open("notes.txt", "a", encoding="utf-8") <b>as</b> f:
+    f.write("18\n")
+<span class="cm"># lire ligne à ligne ; fermeture automatique en fin de bloc</span>
+<b>with</b> open("notes.txt", encoding="utf-8") <b>as</b> f:
+    notes = [int(ligne) <b>for</b> ligne <b>in</b> f]
+notes                              <span class="res"><span class="ar">→</span> [12, 15, 18]</span></pre><div class="rx"><span><code>"r"</code> lecture (défaut)</span><span><code>"w"</code> écriture, <b>écrase</b> <span class="w">!</span></span><span><code>"a"</code> ajout en fin</span><span><code>"x"</code> création seule</span><span><code>"rb"</code> <code>"wb"</code> binaire</span><span><code>f.read()</code> tout le texte</span><span><code>f.readline()</code> ligne suivante</span><span><code>f.readlines()</code> liste des lignes</span><span><code>f.write(s)</code> sans <code>\n</code> ajouté</span><span><code>print(…, file=f)</code> avec <code>\n</code></span></div><p class="note ">Toujours préciser <code>encoding="utf-8"</code> : jusqu’à 3.14, le défaut sous Windows dépend du système (souvent <code>cp1252</code>) ; UTF-8 devient le défaut avec Python 3.15 (PEP&nbsp;686).</p></div></section><section class="box "><h2>pathlib : les chemins</h2><div class="bd"><pre class="code "><b>from</b> pathlib <b>import</b> Path
+p = Path("donnees") / "notes.txt"   <span class="cm"># / assemble les chemins</span>
+p.name, p.stem, p.suffix    <span class="res"><span class="ar">→</span> ('notes.txt', 'notes', '.txt')</span>
+p.parent.name               <span class="res"><span class="ar">→</span> 'donnees'</span>
+p.parent.mkdir(parents=<b>True</b>, exist_ok=<b>True</b>)
+p.write_text("12\n15\n", encoding="utf-8")        <span class="res"><span class="ar">→</span> 6</span>
+p.read_text(encoding="utf-8").split()             <span class="res"><span class="ar">→</span> ['12', '15']</span>
+p.exists()                  <span class="res"><span class="ar">→</span> True</span>
+[f.name <b>for</b> f <b>in</b> Path("donnees").glob("*.txt")]   <span class="res"><span class="ar">→</span> ['notes.txt']</span></pre><p class="note ">Aussi : <code>Path.cwd()</code> dossier courant, <code>Path.home()</code> dossier personnel, <code>p.resolve()</code> chemin absolu, <code>rglob("*.py")</code> recherche récursive, <code>p.rename(q)</code>, <code>p.unlink()</code> suppression <span class="w">!</span>. Sous Windows : <code>Path(r"C:\Users\…")</code> ou barres obliques <code>"C:/Users/…"</code>.</p></div></section></div></div><footer class="foot"><span>Mémento — Python · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 7&nbsp;/&nbsp;8</span></footer></div>
+<div class="page p8"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Nombres, texte</div><div class="tab"><b>3</b>&nbsp; Collections</div><div class="tab"><b>4</b>&nbsp; Contrôle</div><div class="tab"><b>5</b>&nbsp; Fonctions</div><div class="tab"><b>6</b>&nbsp; Objets</div><div class="tab"><b>7</b>&nbsp; Erreurs, fichiers</div><div class="tab on"><b>8</b>&nbsp; Bibliothèque</div></nav>
+<header class="ptitle"><h1>8 · Environnements, données, bibliothèque standard</h1><span class="run">Mémento — Python</span></header><div class="cols c3"><div class="col"><section class="box "><h2>Environnements virtuels et pip</h2><div class="bd"><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k">python -m venv .venv</td><td>créer l’environnement du projet (une fois)</td></tr><tr class="st"><td colspan="2"><div class="k">.venv\Scripts\activate</div><div class="sr">activer : Windows (PowerShell : <code>Activate.ps1</code>)</div></td></tr><tr><td class="k">source .venv/bin/activate</td><td>activer : Linux, macOS</td></tr><tr><td class="k">deactivate</td><td>désactiver</td></tr><tr><td class="k">python -m pip install <i>paquet</i></td><td>installer depuis PyPI</td></tr><tr><td class="k">pip install -U <i>paquet</i></td><td>mettre à jour</td></tr><tr><td class="k">pip list · pip show <i>paquet</i></td><td>paquets installés · détails</td></tr><tr><td class="k">pip freeze &gt; requirements.txt</td><td>figer les versions</td></tr><tr><td class="k">pip install -r requirements.txt</td><td>réinstaller à l’identique</td></tr></tbody></table><ul class="lst"><li>Un environnement <b>par projet</b> : les versions ne se contredisent pas d’un projet à l’autre.</li><li><code>python -m pip</code> installe pour <b>ce</b> Python-là, sans ambiguïté.</li><li><span class="w">!</span> Vérifier le nom exact d’un paquet sur pypi.org : des paquets malveillants imitent les noms connus.</li><li>Si PowerShell refuse l’activation : <code>Get-Help about_Execution_Policies</code>.</li><li>Outils tiers répandus : uv, Poetry, pipx.</li></ul></div></section><section class="box "><h2>Bibliothèque standard : l’essentiel</h2><div class="bd"><table class="ct "><colgroup><col style="width:47%"><col style="width:53%"></colgroup><tbody><tr><td class="k">os · sys</td><td>système : <code>os.environ</code>, <code>sys.argv</code>, <code>sys.exit()</code></td></tr><tr><td class="k">pathlib · shutil · zipfile</td><td>chemins ; copier, déplacer des dossiers ; archives</td></tr><tr><td class="k">datetime · time · zoneinfo</td><td>dates, durées, pauses (<code>time.sleep</code>), fuseaux</td></tr><tr><td class="k">math · random · statistics</td><td>calcul, hasard, moyenne, médiane, écart type</td></tr><tr><td class="k">decimal · fractions</td><td>calcul exact</td></tr><tr><td class="k">collections · itertools · functools</td><td>structures et outils d’itération, voir ci-dessous</td></tr><tr><td class="k">re</td><td>expressions régulières</td></tr><tr><td class="k">json · csv · tomllib</td><td>formats de données (TOML : <span class="v">3.11+</span>)</td></tr><tr><td class="k">sqlite3</td><td>base de données SQL dans un simple fichier</td></tr><tr><td class="k">logging</td><td>journal d’exécution, au lieu de <code>print</code></td></tr><tr><td class="k">argparse</td><td>options de la ligne de commande</td></tr><tr><td class="k">subprocess</td><td>lancer d’autres programmes</td></tr><tr><td class="k">urllib.request</td><td>requêtes HTTP simples</td></tr><tr><td class="k">unittest · doctest</td><td>tests automatiques</td></tr><tr><td class="k">secrets · hashlib</td><td>jetons sûrs ; empreintes (hachage)</td></tr><tr><td class="k">tkinter</td><td>interfaces graphiques simples</td></tr></tbody></table><p class="note "><span class="w">!</span> <code>random</code> ne convient pas à la sécurité : pour un mot de passe ou un jeton, <code>secrets</code>.</p></div></section></div><div class="col"><section class="box "><h2>JSON et CSV</h2><div class="bd"><pre class="code "><b>import</b> json
+d = {"nom": "Élise", "notes": [12, 15]}
+s = json.dumps(d, ensure_ascii=<b>False</b>)
+s
+<span class="res"><span class="ar">→</span> '{"nom": "Élise", "notes": [12, 15]}'</span>
+json.loads(s) == d              <span class="res"><span class="ar">→</span> True</span>
+<b>with</b> open("d.json", "w",
+          encoding="utf-8") <b>as</b> f:
+    json.dump(d, f, ensure_ascii=<b>False</b>,
+              indent=2)
+<b>with</b> open("d.json",
+          encoding="utf-8") <b>as</b> f:
+    d = json.load(f)
+
+<b>import</b> csv
+<b>with</b> open("n.csv", "w", newline="",
+          encoding="utf-8") <b>as</b> f:
+    w = csv.writer(f, delimiter=";")
+    w.writerow(["nom", "note"])
+    w.writerow(["Élise", 15])
+<b>with</b> open("n.csv", newline="",
+          encoding="utf-8") <b>as</b> f:
+    lignes = list(csv.DictReader(
+        f, delimiter=";"))
+lignes[0]
+<span class="res"><span class="ar">→</span> {'nom': 'Élise', 'note': '15'}</span></pre><p class="note ">JSON ↔ Python : objet ↔ <code>dict</code>, tableau ↔ <code>list</code>, <code>true</code> / <code>null</code> ↔ <code>True</code> / <code>None</code>. CSV : tout est lu comme <b>texte</b> (<code>'15'</code>) ; <code>newline=""</code> obligatoire. Excel en français attend souvent <code>;</code> et lit mieux les accents en <code>encoding="utf-8-sig"</code>.</p></div></section><section class="box "><h2>collections et itertools</h2><div class="bd"><pre class="code "><b>from</b> collections <b>import</b> Counter
+Counter([1, 2, 2, 3, 2]).most_common(1)
+<span class="res"><span class="ar">→</span> [(2, 3)]</span>
+<b>from</b> collections <b>import</b> defaultdict
+groupes = defaultdict(list)
+groupes["a"].append(1)    <span class="cm"># clé créée</span>
+dict(groupes)             <span class="res"><span class="ar">→</span> {'a': [1]}</span>
+<b>from</b> collections <b>import</b> deque
+q = deque([1, 2], maxlen=3)
+q.appendleft(0)
+q.append(3)               <span class="cm"># 3 au plus</span>
+q
+<span class="res"><span class="ar">→</span> deque([1, 2, 3], maxlen=3)</span>
+q.popleft()               <span class="res"><span class="ar">→</span> 1</span>
+<b>from</b> itertools <b>import</b> combinations
+list(combinations("abc", 2))
+<span class="res"><span class="ar">→</span> [('a', 'b'), ('a', 'c'), ('b', 'c')]</span>
+<b>from</b> itertools <b>import</b> permutations
+len(list(permutations("abcd")))  <span class="res"><span class="ar">→</span> 24</span>
+<b>from</b> itertools <b>import</b> product
+list(product([0, 1], repeat=2))
+<span class="res"><span class="ar">→</span> [(0, 0), (0, 1), (1, 0), (1, 1)]</span>
+<b>from</b> itertools <b>import</b> accumulate
+list(accumulate([1, 2, 3, 4]))
+<span class="res"><span class="ar">→</span> [1, 3, 6, 10]</span></pre></div></section><section class="box "><h2>Dates et heures</h2><div class="bd"><pre class="code "><b>from</b> datetime <b>import</b> date, datetime
+<b>from</b> datetime <b>import</b> timedelta
+d = date(2026, 1, 15)
+d + timedelta(days=30)
+<span class="res"><span class="ar">→</span> datetime.date(2026, 2, 14)</span>
+(date(2026, 12, 25) - d).days  <span class="res"><span class="ar">→</span> 344</span>
+d.weekday()          <span class="res"><span class="ar">→</span> 3</span>
+d.strftime("%d/%m/%Y")  <span class="res"><span class="ar">→</span> '15/01/2026'</span>
+d.isoformat()           <span class="res"><span class="ar">→</span> '2026-01-15'</span>
+datetime.strptime("15/01/2026 14:30",
+                  "%d/%m/%Y %H:%M")
+<span class="res"><span class="ar">→</span> datetime.datetime(2026, 1, 15, 14, 30)</span></pre><p class="note "><code>weekday()</code> : lundi = 0. <code>date.today()</code>, <code>datetime.now()</code> : aujourd’hui, maintenant. Codes : <code>%Y</code> année, <code>%m</code> mois, <code>%d</code> jour, <code>%H</code> <code>%M</code> <code>%S</code> heure, minute, seconde, <code>%A</code> nom du jour (anglais par défaut).</p><p class="note ">Fuseaux : <code>ZoneInfo("Europe/Paris")</code> du module <code>zoneinfo</code> ; sous Windows, installer d’abord le paquet <code>tzdata</code>.</p></div></section></div><div class="col"><section class="box "><h2>Expressions régulières : re</h2><div class="bd"><div class="rx"><span><code>.</code> tout caractère</span><span><code>\d</code> chiffre</span><span><code>\w</code> lettre, chiffre, _</span><span><code>\s</code> blanc</span><span><code>[aeiou]</code> l’un de</span><span><code>[^0-9]</code> sauf</span><span><code>*</code> 0 ou plus</span><span><code>+</code> 1 ou plus</span><span><code>?</code> 0 ou 1</span><span><code>{2,4}</code> de 2 à 4</span><span><code>^ $</code> début, fin</span><span><code>\b</code> limite de mot</span><span><code>( )</code> groupe</span><span><code>|</code> ou</span><span><code>*?</code> non gourmand</span><span><code>\.</code> point littéral</span></div><pre class="code "><b>import</b> re
+re.findall(r"\d+", "a1b22c333")
+<span class="res"><span class="ar">→</span> ['1', '22', '333']</span>
+re.sub(r"\s+", " ", "a  b\t c")
+<span class="res"><span class="ar">→</span> 'a b c'</span>
+motif = r"(\d\d)/(\d\d)/(\d{4})"
+m = re.search(motif, "le 15/01/2026")
+m.group(3)                   <span class="res"><span class="ar">→</span> '2026'</span>
+bool(re.fullmatch(r"[A-Z]\d+", "B123"))
+<span class="res"><span class="ar">→</span> True</span></pre><p class="note ">Toujours des chaînes brutes <code>r"…"</code>. <code>search</code> cherche partout, <code>match</code> au début, <code>fullmatch</code> sur toute la chaîne.</p></div></section><section class="box "><h2>Tester, déboguer, mesurer</h2><div class="bd"><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k">breakpoint()</td><td>pause dans le débogueur : <kbd>n</kbd> ligne suivante, <kbd>s</kbd> entrer, <kbd>c</kbd> continuer, <code>p x</code> afficher, <kbd>q</kbd> quitter</td></tr><tr><td class="k">python -m pdb <i>prog</i>.py</td><td>déboguer dès la première ligne</td></tr><tr><td class="k">print(f"{x=}")</td><td>affichage de débogage</td></tr><tr><td class="k">python -m unittest</td><td>lancer les tests <code>unittest</code></td></tr><tr><td class="k">python -m pytest</td><td>lancer les tests <code>pytest</code> (paquet tiers)</td></tr><tr><td class="k">python -m timeit "sum(range(1000))"</td><td>mesurer une durée</td></tr><tr class="st"><td colspan="2"><div class="k">logging.basicConfig(level=logging.INFO)</div><div class="sr">journal avec niveaux</div></td></tr></tbody></table><pre class="code "><span class="cm"># fichier test_calcul.py</span>
+<span class="cm"># lancer : python -m pytest</span>
+<b>from</b> calcul <b>import</b> moyenne
+
+<b>def</b> test_moyenne():
+    <b>assert</b> moyenne([10, 20]) == 15</pre></div></section><section class="box "><h2>Style : PEP 8 et bonnes pratiques</h2><div class="bd"><ul class="lst"><li>4 espaces par niveau ; lignes de 79 caractères au plus.</li><li><code>snake_case</code> pour variables et fonctions, <code>CapWords</code> pour les classes, <code>MAJUSCULES</code> pour les constantes.</li><li>Deux lignes vides entre fonctions et classes de premier niveau.</li><li><code>is None</code> plutôt que <code>== None</code> ; <code>if liste:</code> plutôt que <code>if len(liste) &gt; 0:</code></li><li><code>with</code> pour les fichiers ; f-strings pour mettre en forme.</li><li>Fonctions courtes, noms explicites, docstrings.</li><li>Formatage et analyse automatiques : Ruff, Black ; types : mypy (outils tiers).</li><li><code>import this</code> : les principes de Python (PEP&nbsp;20).</li></ul></div></section></div></div><footer class="foot"><span>Rédigé pour Python 3.14 (version stable en septembre 2026 ; 3.15 attendue le 1<sup>er</sup> octobre 2026). Exemples exécutés et vérifiés avec Python 3.14.7 ; commentaires : synthèse sans source citée. Référence : docs.python.org · v1.1 — septembre 2026</span><span>didierdambreville.github.io · 8&nbsp;/&nbsp;8</span></footer></div>
+
+</body>
+</html>

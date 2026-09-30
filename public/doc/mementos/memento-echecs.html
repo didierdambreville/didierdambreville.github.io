@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="D. Dambreville">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.fr">
+<title>Mémento — Échecs</title>
+<!--
+  Source du mémento imprimable « Échecs » (A4, 8 pages, noir et blanc).
+  Diagrammes : chaque <div class="dg"> est dessiné par le script en fin de page à partir de ses attributs :
+    data-fen  position (FEN)            data-a  coups clés, flèches pleines (ex. "d5c7,e1e8")
+    data-d    menaces, flèches tirets   data-c  cercles (cibles)      data-k  points (cases clés)
+    data-x    croix (coup à éviter)   data-sq  carré en tirets (ex. "b4f8")   data-t  trait : w, b ou vide
+  Positions et lignes vérifiées par programme (légalité, mats) le 2026-09-29.
+-->
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: #fff; color: #000; }
+body { font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 9.2pt; line-height: 1.2; }
+.page { width: 210mm; height: 297mm; padding: 7mm 8.5mm 5.5mm; display: flex; flex-direction: column;
+        overflow: hidden; break-after: page; page-break-after: always; }
+.page:last-child { break-after: auto; page-break-after: auto; }
+.tabs { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1mm; margin-bottom: 2mm; flex: none; }
+.tab { border: 0.6pt solid #000; border-radius: 1mm; padding: 0.5mm 1.2mm 0.4mm; font-size: 6.7pt; text-transform: uppercase;
+       letter-spacing: .02em; white-space: nowrap; overflow: hidden; }
+.tab.on { background: #000; color: #fff; font-weight: bold; }
+.cover { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2pt solid #000;
+         padding-bottom: 1.8mm; margin-bottom: 2.6mm; flex: none; }
+.kicker { font-size: 8pt; text-transform: uppercase; letter-spacing: .35em; font-weight: bold; }
+.cover h1 { font-family: Cambria, Georgia, serif; font-size: 30pt; line-height: 1; margin: 0.6mm 0 1mm; letter-spacing: .01em; }
+.sub { font-size: 9pt; letter-spacing: .02em; }
+.legend { border: 0.7pt solid #000; border-radius: 1.2mm; padding: 1.2mm 2mm; font-size: 7.5pt; line-height: 1.38; }
+.legend svg { width: 3.2mm; height: 3.2mm; vertical-align: -0.6mm; }
+.ptitle { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2pt solid #000;
+          padding-bottom: 0.8mm; margin-bottom: 2.4mm; flex: none; }
+.ptitle h1 { font-family: Cambria, Georgia, serif; font-size: 16pt; margin: 0; }
+.ptitle .run { font-size: 7.2pt; text-transform: uppercase; letter-spacing: .12em; }
+.cols { flex: 1 1 auto; min-height: 0; display: grid; gap: 3mm; }
+.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.col { display: flex; flex-direction: column; gap: 2.2mm; min-height: 0; overflow: hidden; }
+.box { border: 0.7pt solid #000; border-radius: 1.2mm; overflow: hidden; flex: none; }
+.page > .box { margin-bottom: 2.2mm; }
+.box.grow { flex: 1 1 auto; }
+.box h2 { margin: 0; background: #000; color: #fff; font-size: 8.4pt; text-transform: uppercase; letter-spacing: .06em;
+          padding: 0.7mm 2mm 0.5mm; }
+.box h2 .lc { text-transform: none; letter-spacing: .02em; font-weight: normal; }
+.bd { padding: 1.1mm 1.6mm 1.3mm; }
+.intro { border: 0.7pt solid #000; border-radius: 1.2mm; padding: 1.2mm 2mm; margin-bottom: 2.2mm; flex: none; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+td, th { padding: 0.35mm 0.9mm; vertical-align: top; text-align: left; }
+tbody tr:nth-child(even) td { background: #e9e9e9; }
+th { font-size: 7pt; text-transform: uppercase; letter-spacing: .03em; border-bottom: 0.8pt solid #000; padding-bottom: 0.4mm; }
+td.b, table.fb td:first-child { font-weight: bold; }
+table.nt td:first-child { white-space: nowrap; }
+table.op td { padding-top: 0.45mm; padding-bottom: 0.45mm; }
+table.op td:nth-child(2) { font-size: .96em; }
+h3 { margin: 1.3mm 0 0.5mm; font-size: 7.6pt; text-transform: uppercase; letter-spacing: .04em;
+     border-bottom: 0.6pt solid #000; padding-bottom: 0.2mm; }
+.bd > h3:first-child { margin-top: 0.2mm; }
+p { margin: 0 0 0.8mm; }
+p:last-child { margin-bottom: 0; }
+ul.lst, ol.lst { margin: 0; padding-left: 3.4mm; }
+ul.lst li, ol.lst li { margin: 0 0 0.6mm; }
+ol.num { list-style: none; margin: 0; padding: 0; counter-reset: n; }
+ol.num li { counter-increment: n; position: relative; padding-left: 4.6mm; margin: 0 0 0.9mm; }
+ol.num li::before { content: counter(n); position: absolute; left: 0; top: 0.1mm; width: 3.4mm; height: 3.4mm; line-height: 3.5mm;
+                    border-radius: 50%; background: #000; color: #fff; font-size: 6.6pt; font-weight: bold; text-align: center; }
+.note { font-size: 7.6pt; margin-top: 0.9mm; }
+.sm { font-size: .88em; }
+.pc { font-family: "DejaVu Sans", "Segoe UI Symbol", serif; font-size: 1.12em; line-height: 1; }
+.mv { font-weight: bold; white-space: nowrap; }
+.w { display: inline-block; width: 1.3em; height: 1.3em; line-height: 1.3em; border-radius: 50%; background: #000; color: #fff;
+     font-weight: bold; text-align: center; font-size: .78em; vertical-align: .08em; margin-right: .2em; font-style: normal; }
+/* grilles à rangées égales */
+.grid { flex: 1 1 auto; min-height: 0; display: grid; gap: 2.2mm 3mm; }
+.g23 { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); }
+.g33 { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); }
+.g33a { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto minmax(0, 1fr); }
+.fc { grid-auto-flow: column; }
+.grid > .box { display: flex; flex-direction: column; min-height: 0; }
+.grid > .box > .bd { flex: 1 1 auto; min-height: 0; }
+/* cartes à diagramme */
+.cg { display: grid; grid-template-columns: 50mm minmax(0, 1fr); gap: 2.4mm; align-items: start; }
+.cg .tx p { margin-bottom: 0.9mm; }
+.def { font-style: italic; }
+.rep { border-top: 0.4pt solid #999; padding-top: 0.6mm; font-size: 7.7pt; }
+.rep::before { content: "▸ "; }
+.dg svg { display: block; width: 100%; height: auto; }
+.mat .bd { display: flex; flex-direction: column; align-items: center; }
+.mat .dg { width: 58mm; margin-bottom: 1mm; }
+.mat .bd p { align-self: stretch; }
+.dgc { width: 46mm; margin: 0.6mm auto 1.2mm; }
+.dgs { width: 31mm; float: left; margin: 0.4mm 2mm 0.6mm 0; }
+.clr::after { content: ""; display: block; clear: both; }
+.foot { display: flex; justify-content: space-between; font-size: 6.8pt; border-top: .6pt solid #000;
+        padding-top: .7mm; margin-top: 2mm; flex: none; letter-spacing: .02em; }
+.dk { fill: #bdbdbd; }
+.p7 { font-size: 8.6pt; }
+.p8 .mat .dg { width: 50mm; }
+.kicker .auteur { margin-left: 3mm; letter-spacing: .02em; text-transform: none; font-weight: normal; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 — RÈGLES ============================ -->
+<div class="page">
+<nav class="tabs"><div class="tab on"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="cover">
+  <div>
+    <div class="kicker">Mémento<span class="auteur">Auteur&#160;: D.&#160;Dambreville · didierdambreville.github.io · licence CC&#160;BY&#160;4.0</span></div>
+    <h1>Échecs</h1>
+    <div class="sub">Règles · méthode · tactique · mats · stratégie · ouvertures · finales</div>
+  </div>
+  <div class="legend">
+    <div><b>Diagrammes</b> : les Blancs jouent vers le haut de la page</div>
+    <div><svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.6" fill="#fff" stroke="#000" stroke-width="1.2"/></svg> trait aux Blancs · <svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.6" fill="#000"/></svg> trait aux Noirs (sous la colonne a)</div>
+    <div><svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="7" y2="5" stroke="#000" stroke-width="2"/><polygon points="10,5 5,1.5 5,8.5"/></svg> coup à jouer · <svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="7" y2="5" stroke="#000" stroke-width="1.2" stroke-dasharray="2 1.3"/><polygon points="10,5 6,2 6,8"/></svg> menace, ligne d’attaque</div>
+    <div><svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.8" fill="none" stroke="#000" stroke-width="1.1"/></svg> cible · <svg viewBox="0 0 10 10"><path d="M2 2L8 8M8 2L2 8" stroke="#000" stroke-width="1.5"/></svg> case à éviter (piège)</div>
+    <div><b>!</b> bon coup · <b>?</b> erreur · <b>+</b> échec · <b>#</b> mat</div>
+  </div>
+</header>
+<div class="cols c3">
+ <div class="col">
+  <section class="box"><h2>L’échiquier</h2><div class="bd">
+    <div class="dg dgc" data-fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -" data-t="w"></div>
+    <ul class="lst">
+      <li>Case <b>h1 blanche</b>, à la droite de chaque joueur.</li>
+      <li>La <b>dame sur sa couleur</b> : dame blanche en d1 (case blanche), dame noire en d8 (case noire).</li>
+      <li>8 <b>colonnes</b> (a → h), 8 <b>rangées</b> (1 → 8), des <b>diagonales</b>. Aile roi : colonnes e à h ; aile dame : a à d.</li>
+      <li>Les Blancs jouent le premier coup ; puis un coup chacun, obligatoirement.</li>
+    </ul>
+  </div></section>
+  <section class="box"><h2>Les pièces</h2><div class="bd">
+    <table><colgroup><col style="width:28%"><col style="width:57%"><col style="width:15%"></colgroup>
+    <thead><tr><th>Pièce</th><th>Déplacement</th><th>Valeur</th></tr></thead><tbody>
+    <tr><td class="b"><span class="pc">♔</span> Roi R</td><td>Une case dans toutes les directions ; jamais sur une case attaquée</td><td>—</td></tr>
+    <tr><td class="b"><span class="pc">♕</span> Dame D</td><td>Colonnes, rangées et diagonales, à toute distance</td><td><b>9</b></td></tr>
+    <tr><td class="b"><span class="pc">♖</span> Tour T</td><td>Colonnes et rangées</td><td><b>5</b></td></tr>
+    <tr><td class="b"><span class="pc">♗</span> Fou F</td><td>Diagonales : il reste toujours sur sa couleur</td><td><b>3</b></td></tr>
+    <tr><td class="b"><span class="pc">♘</span> Cavalier C</td><td>En « L » (deux cases puis une de côté) ; saute par-dessus les pièces ; change de couleur à chaque saut</td><td><b>3</b></td></tr>
+    <tr><td class="b"><span class="pc">♙</span> Pion</td><td>Avance d’une case (deux au premier coup) ; prend en diagonale vers l’avant ; ne recule jamais</td><td><b>1</b></td></tr>
+    </tbody></table>
+    <p class="note">Valeurs indicatives : la position prime. La paire de fous vaut souvent un peu plus que deux pièces mineures quelconques ; en finale, le roi devient une pièce d’attaque.</p>
+  </div></section>
+  <section class="box grow"><h2>Les trois temps d’une partie</h2><div class="bd">
+    <table class="fb"><colgroup><col style="width:29%"><col style="width:71%"></colgroup><tbody>
+    <tr><td>Ouverture</td><td>Développer, roquer, disputer le centre (p. 6 et 7).</td></tr>
+    <tr><td>Milieu de partie</td><td>Plans et tactique : l’essentiel se décide souvent ici (p. 2 à 6).</td></tr>
+    <tr><td>Finale</td><td>Peu de pièces : le roi s’active, les pions passés décident (p. 8).</td></tr>
+    </tbody></table>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Coups spéciaux</h2><div class="bd">
+    <h3>Roque</h3>
+    <p>Le roi se déplace de deux cases vers une tour, qui passe de l’autre côté du roi. <b>O-O</b> (petit roque) : roi en g1, tour en f1 · <b>O-O-O</b> (grand roque) : roi en c1, tour en d1 (Noirs : g8/f8, c8/d8). Toucher le roi en premier.</p>
+    <p>Interdit si le roi ou cette tour a déjà bougé, si une pièce est entre eux, si le roi est en échec, <b>traverse</b> ou <b>atteint</b> une case attaquée. La tour, elle, peut être attaquée.</p>
+    <h3>Prise en passant</h3>
+    <div class="clr"><div class="dg dgs" data-fen="4k3/8/8/3pP3/8/8/8/4K3 w - d6" data-d="d7d5" data-a="e5d6" data-c="d5" data-t="w"></div>
+    <p>Un pion qui avance de deux cases et s’arrête à côté d’un pion adverse peut être pris comme s’il n’avait avancé que d’une case — au coup immédiatement suivant, sinon jamais. Ici, après …d7-d5 : <span class="mv">exd6 e.p.</span></p></div>
+    <h3>Promotion</h3>
+    <p>Le pion qui atteint la dernière rangée est remplacé, dans le même coup, par une dame, une tour, un fou ou un cavalier de sa couleur, au choix, même si cette pièce est encore sur l’échiquier. Presque toujours une dame ; une autre pièce pour éviter un pat ou donner un échec de cavalier.</p>
+  </div></section>
+  <section class="box grow"><h2>Échec et fin de partie</h2><div class="bd">
+    <h3>Parer un échec : trois moyens</h3>
+    <p>Prendre la pièce qui donne échec · s’interposer · déplacer le roi. Contre un échec double, seul le roi peut bouger.</p>
+    <h3>Gain</h3>
+    <p><b>Mat</b> : le roi est en échec et aucun coup légal ne le pare. <b>Abandon</b>. <b>Temps dépassé</b> — sauf si l’adversaire ne peut plus mater par aucune suite de coups légaux : nulle.</p>
+    <h3>Nulle</h3>
+    <ul class="lst">
+      <li><b>Pat</b> : le camp au trait n’a aucun coup légal et son roi n’est pas en échec.</li>
+      <li><b>Accord</b> : proposer la nulle après avoir joué son coup, avant d’appuyer sur la pendule.</li>
+      <li><b>Répétition</b> de la même position (même camp au trait) : 3 fois, sur réclamation ; 5 fois, automatique.</li>
+      <li><b>50 coups</b> de chaque camp sans prise ni coup de pion : sur réclamation ; 75 coups : automatique.</li>
+      <li><b>Position morte</b> : plus aucun mat possible (roi contre roi ; roi et fou, ou roi et cavalier, contre roi).</li>
+    </ul>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Notation algébrique</h2><div class="bd">
+    <table class="nt"><colgroup><col style="width:30%"><col style="width:44%"><col style="width:26%"></colgroup>
+    <thead><tr><th>Signe</th><th>Sens</th><th>Exemple</th></tr></thead><tbody>
+    <tr><td class="b">e4</td><td>Case : colonne puis rangée</td><td>e4, h7</td></tr>
+    <tr><td class="b">R D T F C</td><td>Pièce qui joue ; pion : pas de lettre</td><td>Cf3 · e4</td></tr>
+    <tr><td class="b">x</td><td>Prise (pion : colonne de départ)</td><td>Fxc6 · exd5</td></tr>
+    <tr><td class="b">+ &nbsp; #</td><td>Échec · mat</td><td>Dh5+ · Dxf7#</td></tr>
+    <tr><td class="b">O-O<br>O-O-O</td><td>Petit roque<br>Grand roque</td><td></td></tr>
+    <tr><td class="b">=D</td><td>Promotion</td><td>e8=D</td></tr>
+    <tr><td class="b">e.p.</td><td>Prise en passant</td><td>exd6 e.p.</td></tr>
+    <tr><td class="b">Cbd2 · T1e2</td><td colspan="2">Deux pièces peuvent aller sur la case : préciser la colonne, sinon la rangée de départ</td></tr>
+    </tbody></table>
+    <p class="note"><b>1.e4 e5 2.Cf3</b> : numéro, coup blanc, coup noir. <span class="mv">12…Fxf2</span> : les points de suspension signalent un coup noir.<br>
+    <b>!</b> bon · <b>!!</b> excellent · <b>?</b> erreur · <b>??</b> gaffe · <b>!?</b> intéressant · <b>?!</b> douteux</p>
+  </div></section>
+  <section class="box"><h2>Notation anglaise <span class="lc">— logiciels, PGN</span></h2><div class="bd">
+    <table><colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>
+    <thead><tr><th>Pièce</th><th>Français</th><th>Anglais</th></tr></thead><tbody>
+    <tr><td>Roi</td><td class="b">R</td><td class="b">K <span class="sm">(king)</span></td></tr>
+    <tr><td>Dame</td><td class="b">D</td><td class="b">Q <span class="sm">(queen)</span></td></tr>
+    <tr><td>Tour</td><td class="b">T</td><td class="b">R <span class="sm">(rook)</span></td></tr>
+    <tr><td>Fou</td><td class="b">F</td><td class="b">B <span class="sm">(bishop)</span></td></tr>
+    <tr><td>Cavalier</td><td class="b">C</td><td class="b">N <span class="sm">(knight)</span></td></tr>
+    </tbody></table>
+    <p class="note"><span class="w">!</span> « R » désigne le roi en français, la tour en anglais. <b>PGN</b> : format texte d’une partie ; <b>FEN</b> : une position décrite en une ligne.</p>
+  </div></section>
+  <section class="box grow"><h2>À l’échiquier <span class="lc">— Lois de la FIDE</span></h2><div class="bd">
+    <ul class="lst">
+      <li><b>Pièce touchée, pièce jouée</b> : toucher une de ses pièces oblige à la jouer ; une pièce adverse, à la prendre, si c’est légal.</li>
+      <li><b>« J’adoube »</b> : l’annoncer avant d’ajuster une pièce sur sa case.</li>
+      <li>Pièce <b>lâchée</b> sur une case, coup légal : le coup est joué.</li>
+      <li>Appuyer sur la pendule avec la main qui a joué le coup.</li>
+      <li><b>Coup illégal</b> en partie longue : deux minutes ajoutées à l’adversaire ; au deuxième, partie perdue (règles propres au rapide et au blitz).</li>
+    </ul>
+  </div></section>
+ </div>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 1 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 2 — MÉTHODE ============================ -->
+<div class="page">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab on"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>2 · Méthode : penser un coup, conduire une partie</h1><span class="run">Routine · évaluation · échanges · temps</span></header>
+<div class="cols c3">
+ <div class="col">
+  <section class="box"><h2>Avant chaque coup</h2><div class="bd">
+    <ol class="num">
+      <li><b>Qu’a changé le dernier coup adverse ?</b> Nouvelle menace, ligne ouverte, case abandonnée, pièce laissée sans défense.</li>
+      <li><b>Coups forçants, pour les deux camps</b> : échecs, prises, menaces — dans cet ordre. Ce sont eux qui laissent le moins de choix.</li>
+      <li><b>Choisir deux ou trois coups candidats</b>, pas un seul.</li>
+      <li><b>Calculer chacun</b> jusqu’à une position calme, en retenant la meilleure réponse adverse, non la plus commode.</li>
+      <li><b>Contrôle anti-gaffe</b> : après mon coup, qu’est-ce qui est en prise ? Quel échec, quelle fourchette, quelle ligne vers mon roi ?</li>
+      <li><b>Jouer.</b> Sans rien de concret, améliorer sa pièce la moins active.</li>
+    </ol>
+  </div></section>
+  <section class="box"><h2>Signaux tactiques <span class="lc">— où chercher</span></h2><div class="bd">
+    <table><colgroup><col style="width:55%"><col style="width:45%"></colgroup>
+    <thead><tr><th>Signal</th><th>Motif possible</th></tr></thead><tbody>
+    <tr><td>Roi exposé, ou enfermé derrière ses pions</td><td>Échecs, mat du couloir</td></tr>
+    <tr><td>Pièce non défendue (« en l’air »)</td><td>Attaque double</td></tr>
+    <tr><td>Deux pièces sur une même ligne (colonne, rangée, diagonale)</td><td>Clouage, enfilade, rayons X</td></tr>
+    <tr><td>Deux pièces à un saut de cavalier d’une même case</td><td>Fourchette</td></tr>
+    <tr><td>Un défenseur qui garde deux choses</td><td>Surcharge, déviation</td></tr>
+    <tr><td>Une pièce sans case de retraite</td><td>Pièce enfermée</td></tr>
+    <tr><td>Une pièce masquée derrière une autre</td><td>Découverte</td></tr>
+    </tbody></table>
+    <p class="note">Les mêmes signaux, chez soi, désignent ses propres faiblesses : les corriger avant qu’ils ne servent à l’adversaire.</p>
+  </div></section>
+  <section class="box grow"><h2>Face à une menace</h2><div class="bd">
+    <p>D’abord vérifier qu’elle est réelle, en la calculant. Puis, du plus actif au plus passif :</p>
+    <ol class="num">
+      <li>Contre-attaquer plus fort (échec, menace plus grave) ;</li>
+      <li>prendre la pièce qui menace ;</li>
+      <li>déplacer la pièce visée ;</li>
+      <li>la défendre, ou s’interposer.</li>
+    </ol>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Compter une prise</h2><div class="bd">
+    <ul class="lst">
+      <li>Compter les <b>attaquants</b> et les <b>défenseurs</b> de la case : plus d’attaquants que de défenseurs, la prise gagne en général.</li>
+      <li>Prendre d’abord avec la pièce <b>la moins précieuse</b>.</li>
+      <li>Compter la <b>valeur</b>, pas seulement le nombre : prendre un pion défendu avec la dame perd la dame.</li>
+      <li>Chercher les défenseurs cachés (rayons X) et les faux défenseurs (pièce clouée, surchargée).</li>
+      <li>Avant de reprendre : un <b>coup intermédiaire</b> est-il plus fort ?</li>
+    </ul>
+  </div></section>
+  <section class="box"><h2>Évaluer une position</h2><div class="bd">
+    <table><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+    <thead><tr><th>Critère</th><th>Questions</th></tr></thead><tbody>
+    <tr><td class="b">Matériel</td><td>Qui en a plus ? Qui a la paire de fous ?</td></tr>
+    <tr><td class="b">Sécurité des rois</td><td>Roqué ? Pions du roque avancés ou manquants ? Colonnes ou diagonales ouvertes vers lui ?</td></tr>
+    <tr><td class="b">Activité</td><td>Quelles pièces jouent vraiment ? Laquelle est la plus mauvaise ?</td></tr>
+    <tr><td class="b">Structure de pions</td><td>Pions isolés, doublés, arriérés, passés ? Cases faibles (p. 6) ?</td></tr>
+    <tr><td class="b">Centre et espace</td><td>Qui contrôle e4, d4, e5, d5 ? Qui a le plus de place derrière ses pions ?</td></tr>
+    <tr><td class="b">Initiative</td><td>Qui menace ? Qui en est réduit à répondre ?</td></tr>
+    </tbody></table>
+    <p class="note"><b>Le plan naît de l’évaluation</b> : jouer là où l’on est plus fort, viser la faiblesse adverse, améliorer ce qui est mal placé. Un plan simple et suivi vaut mieux qu’une suite de coups sans lien.</p>
+    <h3>Pièges de raisonnement</h3>
+    <ul class="lst">
+      <li>Jouer « d’espoir » : compter sur le fait que l’adversaire ne verra pas la menace.</li>
+      <li>Ne regarder que ses propres idées : la routine commence par celles de l’adversaire.</li>
+      <li>S’arrêter au premier bon coup : « quand vous voyez un bon coup, cherchez-en un meilleur » (adage).</li>
+    </ul>
+  </div></section>
+  <section class="box grow"><h2>Où trouver les coups candidats</h2><div class="bd">
+    <ul class="lst">
+      <li>Les coups <b>forçants</b> : échecs, prises, menaces.</li>
+      <li>Les réponses aux <b>menaces adverses</b>.</li>
+      <li>Les coups de <b>plan</b> : améliorer une pièce, pousser un pion thématique, occuper une colonne.</li>
+      <li>Les coups de <b>prophylaxie</b> : empêcher le projet adverse (p. 6).</li>
+    </ul>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Échanger ou non ?</h2><div class="bd">
+    <h3>Échanger</h3>
+    <ul class="lst">
+      <li>Avec un avantage matériel : échanger les <b>pièces</b>, garder les pions.</li>
+      <li>Quand on manque d’espace, pour respirer.</li>
+      <li>Pour éliminer une pièce adverse très active ou un défenseur clé.</li>
+      <li>Pour entrer dans une finale gagnante.</li>
+    </ul>
+    <h3>Éviter</h3>
+    <ul class="lst">
+      <li>Quand on attaque le roi : chaque échange soulage le défenseur.</li>
+      <li>Avec moins de matériel : garder les pièces, échanger plutôt les pions.</li>
+      <li>Quand l’échange développe l’adversaire ou lui ouvre une colonne.</li>
+    </ul>
+  </div></section>
+  <section class="box"><h2>La pendule</h2><div class="bd">
+    <ul class="lst">
+      <li>Jouer vite ce que l’on connaît ; garder du temps pour les <b>positions critiques</b>.</li>
+      <li>Position critique : juste après une prise, avant une décision <b>irréversible</b> (poussée de pion, échange, roque, sacrifice), quand le plan doit changer.</li>
+      <li>Éviter la crise de temps (le <i>zeitnot</i>) : garder une réserve pour la fin.</li>
+      <li>Avec incrément, chaque coup rapporte du temps : précieux en finale.</li>
+    </ul>
+  </div></section>
+  <section class="box"><h2>Après la partie</h2><div class="bd">
+    <ol class="num">
+      <li>Noter la partie, ou l’exporter en PGN.</li>
+      <li>L’analyser <b>d’abord sans moteur</b> : moments critiques, plans, doutes ressentis pendant la partie.</li>
+      <li>Puis avec le moteur : comprendre <b>pourquoi</b> un coup est meilleur, ne pas seulement lire l’évaluation.</li>
+      <li>Nommer l’erreur : tactique, calcul, stratégie, ouverture, finale, temps, psychologie.</li>
+      <li>En tirer un <b>principe</b> et vérifier s’il revient d’une partie à l’autre.</li>
+    </ol>
+    <p class="note">Une défaite analysée apprend plus qu’une victoire oubliée.</p>
+  </div></section>
+  <section class="box grow"><h2>S’entraîner</h2><div class="bd">
+    <ul class="lst">
+      <li><b>Tactique</b> : quelques problèmes chaque jour, en calculant jusqu’au bout avant de jouer le premier coup.</li>
+      <li><b>Parties à cadence lente</b> : elles laissent le temps d’appliquer la routine.</li>
+      <li><b>Finales élémentaires</b> (p. 8) : jusqu’à les jouer sans hésiter.</li>
+      <li><b>Parties commentées</b> : les rejouer en devinant les coups.</li>
+    </ul>
+  </div></section>
+ </div>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 2 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 3 — TACTIQUE (1) ============================ -->
+<div class="page">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab on"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>3 · Tactique (1) : attaques multiples et motifs de ligne</h1><span class="run">Trait aux Blancs</span></header>
+<div class="intro"><b>Tactique</b> : suite de coups <b>forcés</b> qui gagne du matériel ou donne mat. <b>Motif</b> : configuration type qui la rend possible. <b>Combinaison</b> : enchaînement de motifs, souvent avec un sacrifice. La <b>stratégie</b> (p. 6) prépare le terrain ; la tactique encaisse.</div>
+<div class="grid g23 fc">
+  <section class="box"><h2>Fourchette</h2><div class="bd cg">
+    <div class="dg" data-fen="r3k2r/pp3ppp/8/3N4/8/8/PPP2PPP/6K1 w - -" data-a="d5c7" data-d="c7a8,c7e8" data-c="a8,e8" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Une seule pièce attaque deux cibles, ou davantage. Avec échec, la fourchette est forcée.</p>
+      <p><span class="mv">Cc7+ !</span> attaque le roi et la tour a8. Les Noirs doivent parer l’échec : <span class="mv">Cxa8</span>.</p>
+      <p class="rep">Le cavalier ne peut être pris en retour par aucune de ses cibles. Toutes les pièces font fourchette, le pion aussi : e4-e5 contre un cavalier f6 et un fou d6.</p>
+    </div></div></section>
+  <section class="box"><h2>Clouage</h2><div class="bd cg">
+    <div class="dg" data-fen="r3kb1r/pp1q1ppp/4pn2/8/3P4/2N5/PPP2PPP/R1BQKB1R w KQkq -" data-a="f1b5" data-d="b5e8" data-c="d7" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Une pièce ne peut pas quitter sa ligne (roi derrière : clouage <b>absolu</b>) ou ne le doit pas (pièce plus précieuse derrière : clouage <b>relatif</b>).</p>
+      <p><span class="mv">Fb5 !</span> cloue la dame sur le roi : elle ne peut que prendre le fou (<span class="mv">…Dxb5 Cxb5</span>) ou tomber. Dame contre fou.</p>
+      <p class="rep">Attaquer la pièce clouée plus de fois qu’elle n’est défendue ; un pion suffit souvent.</p>
+    </div></div></section>
+  <section class="box"><h2>Découverte</h2><div class="bd cg">
+    <div class="dg" data-fen="rnbqkbnr/pppp1ppp/8/4N3/8/8/PPP2PPP/RNBQR1K1 w kq -" data-a="e5c6" data-d="e1e8,c6d8" data-c="d8" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Une pièce s’écarte et démasque l’attaque d’une pièce de son camp. Si la pièce démasquée donne échec : <b>échec à la découverte</b>.</p>
+      <p><span class="mv">Cc6+ !</span> : la tour e1 donne échec, le cavalier attaque la dame. Toute parade (<span class="mv">…De7</span>, <span class="mv">…Fe7</span>, <span class="mv">…Ce7</span>) perd la dame.</p>
+      <p class="rep">La pièce qui bouge a le champ libre : l’adversaire doit d’abord parer l’échec.</p>
+    </div></div></section>
+  <section class="box"><h2>Attaque double</h2><div class="bd cg">
+    <div class="dg" data-fen="rnbqkb1r/ppp2ppp/4p3/8/4n3/2P2N2/PP3PPP/RNBQKB1R w KQkq -" data-a="d1a4" data-d="a4e8,a4e4" data-c="e4" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Un même coup crée deux menaces. La dame, qui va dans toutes les directions, y excelle.</p>
+      <p><span class="mv">Da4+ !</span> donne échec et attaque le cavalier e4, non défendu. Quelle que soit la parade, <span class="mv">Dxe4</span>.</p>
+      <p class="rep">Pièce non défendue + roi exposé : chercher le coup qui touche les deux.</p>
+    </div></div></section>
+  <section class="box"><h2>Enfilade</h2><div class="bd cg">
+    <div class="dg" data-fen="8/2k4r/6p1/5p2/7P/5PP1/6K1/R7 w - -" data-a="a1a7" data-d="a7h7" data-c="h7" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Clouage inversé : la pièce la plus précieuse est <b>devant</b> ; attaquée, elle s’écarte et livre celle de derrière.</p>
+      <p><span class="mv">Ta7+ !</span> : le roi doit quitter la 7<sup>e</sup> rangée, puis <span class="mv">Txh7</span>.</p>
+      <p class="rep">Ne pas aligner son roi et une pièce lourde sur une ligne ouverte.</p>
+    </div></div></section>
+  <section class="box"><h2>Échec double</h2><div class="bd cg">
+    <div class="dg" data-fen="rnb1kb1r/pp3ppp/2p5/4q3/4n3/3Q4/PPPB1PPP/2KR1BNR w kq -" data-a="d3d8" data-d="d2g5" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Deux pièces donnent échec ensemble : ni prise ni interposition ne suffisent, seul le roi peut bouger.</p>
+      <p>Réti – Tartakower, Vienne 1910 : <span class="mv">9.Dd8+ !! Rxd8 10.Fg5+</span> (échec du fou et de la tour d1) <span class="mv">10…Rc7 11.Fd8#</span> ; ou <span class="mv">10…Re8 11.Td8#</span>.</p>
+      <p class="rep">Sacrifice, attraction, échec double, mat : une combinaison complète.</p>
+    </div></div></section>
+</div>
+<div class="cols c2" style="flex:none; margin-top:2.2mm">
+  <section class="box"><h2>Autres motifs de ligne</h2><div class="bd">
+    <ul class="lst">
+      <li><b>Rayons X</b> : une pièce agit à travers une autre, pour attaquer ou défendre une case située au-delà. Deux tours doublées : celle de derrière défend à travers celle de devant.</li>
+      <li>Seuls le <b>fou</b>, la <b>tour</b> et la <b>dame</b> produisent clouage, enfilade et rayons X.</li>
+      <li><b>Batterie</b> : deux pièces alignées sur une même ligne (dame et fou, deux tours). Pour mater en h7, la dame devant, soutenue par le fou (p. 4).</li>
+    </ul>
+  </div></section>
+  <section class="box"><h2>Se défendre</h2><div class="bd">
+    <table><colgroup><col style="width:24%"><col style="width:76%"></colgroup><tbody>
+    <tr><td class="b">Fourchette</td><td>Repérer d’avance les cases de fourchette ; défendre l’une des cibles par l’autre ; contre-échec.</td></tr>
+    <tr><td class="b">Clouage</td><td>S’interposer, déplacer la pièce de derrière, chasser la pièce qui cloue (…h6 contre Fg5).</td></tr>
+    <tr><td class="b">Enfilade</td><td>Écarter à temps roi et dame des lignes ouvertes.</td></tr>
+    <tr><td class="b">Découverte</td><td>Repérer les batteries adverses : ce qui est derrière la pièce qui bouge.</td></tr>
+    </tbody></table>
+  </div></section>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 3 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 4 — TACTIQUE (2) ============================ -->
+<div class="page">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab on"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>4 · Tactique (2) : neutraliser les défenseurs</h1><span class="run">Trait aux Blancs, sauf mention</span></header>
+<div class="intro">Une cible bien défendue n’est pas perdue pour autant : on <b>prend</b> le défenseur, on le <b>chasse</b>, on le <b>surcharge</b>, on l’<b>attire</b> ailleurs ou on le <b>coupe</b> de ce qu’il garde. Première question : <b>qui défend quoi ?</b></div>
+<div class="grid g23 fc">
+  <section class="box"><h2>Élimination du défenseur</h2><div class="bd cg">
+    <div class="dg" data-fen="r1bq1rk1/pp2bppp/2p1pn2/3p2B1/3P4/2P1P3/PPQ2PPP/RB3RK1 w - -" data-a="g5f6" data-d="c2h7" data-c="h7" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Prendre, ou échanger, la pièce qui garde la cible.</p>
+      <p><span class="mv">Fxf6 !</span> : le cavalier gardait h7. Sur <span class="mv">…Fxf6</span>, <span class="mv">…Dxf6</span> ou <span class="mv">…gxf6</span> : <span class="mv">Dxh7#</span> (la dame est soutenue par le fou b1).</p>
+      <p class="rep">Au mieux (…g6 ou …Te8), les Noirs perdent une pièce.</p>
+    </div></div></section>
+  <section class="box"><h2>Surcharge</h2><div class="bd cg">
+    <div class="dg" data-fen="3r2k1/pp3ppp/8/8/3b4/8/PQ3PPP/4R1K1 w - -" data-a="b2d4" data-d="e1e8" data-c="d8" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Un défenseur a deux tâches ; on l’oblige à en abandonner une.</p>
+      <p>La tour d8 garde à la fois le fou d4 et la 8<sup>e</sup> rangée. <span class="mv">Dxd4 !</span> : si <span class="mv">…Txd4</span>, <span class="mv">Te8#</span> ; sinon, le fou est perdu.</p>
+      <p class="rep">Recenser les tâches de chaque défenseur : plus d’une, c’est une cible.</p>
+    </div></div></section>
+  <section class="box"><h2>Interception</h2><div class="bd cg">
+    <div class="dg" data-fen="r7/4P1k1/6p1/7p/8/7P/6PK/3R4 w - -" data-a="d1d8" data-d="a8e8" data-c="e8" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Placer une pièce sur la ligne qui relie un défenseur à ce qu’il défend.</p>
+      <p><span class="mv">Td8 !</span> coupe la tour a8 de la case e8. Si <span class="mv">…Txd8</span>, <span class="mv">exd8=D</span> ; si <span class="mv">…Rf7</span>, <span class="mv">Txa8</span> ; sinon <span class="mv">e8=D</span>.</p>
+      <p class="rep">Motif fréquent avec un pion prêt à la promotion.</p>
+    </div></div></section>
+  <section class="box"><h2>Déviation</h2><div class="bd cg">
+    <div class="dg" data-fen="r1bq1rk1/pp2bppp/2p1pn2/8/3PP3/2NQ4/PPB2PPP/R1B2RK1 w - -" data-a="e4e5" data-d="d3h7" data-c="f6,h7" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Chasser un défenseur de son poste en l’attaquant.</p>
+      <p><span class="mv">e5 !</span> chasse le cavalier f6, gardien de h7, et ouvre la diagonale de la dame. S’il part : <span class="mv">Dxh7#</span> (sauf <span class="mv">…Ce4</span>, qui bloque mais perd le cavalier) ; s’il reste : <span class="mv">exf6</span>.</p>
+      <p class="rep">Même cible, même défenseur qu’à gauche : on peut le prendre ou le chasser.</p>
+    </div></div></section>
+  <section class="box"><h2>Attraction</h2><div class="bd cg">
+    <div class="dg" data-fen="rnb1kb1r/pppp1ppp/5n2/8/2B1P1q1/2NP1N2/PPP2PPP/R1BQ1RK1 w kq -" data-a="c4f7" data-d="f3e5" data-c="f7,g4" data-t="w"></div>
+    <div class="tx">
+      <p class="def">Sacrifier pour attirer une pièce adverse, souvent le roi, sur une case où un autre motif la frappe.</p>
+      <p><span class="mv">Fxf7+ ! Rxf7 Ce5+</span> : fourchette du roi et de la dame g4, puis <span class="mv">Cxg4</span> ; après <span class="mv">…Cxg4 Dxg4</span>, dame et pion contre deux pièces mineures.</p>
+      <p class="rep">Le sacrifice sert à mettre la cible sur la bonne case.</p>
+    </div></div></section>
+  <section class="box"><h2>Pièce enfermée <span class="lc">— trait aux Noirs</span></h2><div class="bd cg">
+    <div class="dg" data-fen="2kr4/Bpp2ppp/8/8/8/8/5PPP/5RK1 b - -" data-a="b7b6" data-c="a7" data-t="b"></div>
+    <div class="tx">
+      <p class="def">Une pièce attaquée n’a plus aucune case de fuite sûre.</p>
+      <p>Le fou vient de prendre a7. <span class="mv">…b6 !</span> l’enferme (<span class="mv">Fb8 Rxb8</span> ; <span class="mv">Fxb6 cxb6</span>) et <span class="mv">…Rb7</span> le gagne.</p>
+      <p class="rep">Avant de prendre un pion au bord, vérifier la sortie.</p>
+    </div></div></section>
+</div>
+<div class="cols c2" style="flex:none; margin-top:2.2mm">
+  <section class="box"><h2>Temps et sacrifice</h2><div class="bd">
+    <ul class="lst">
+      <li><b>Coup intermédiaire</b> : au milieu d’un échange, au lieu de la reprise attendue, jouer d’abord un coup plus fort — échec, menace — auquel l’adversaire doit répondre ; reprendre ensuite.</li>
+      <li><b>Sacrifice</b> : céder du matériel pour davantage — mat, matériel, attaque décisive. Suite forcée : c’est un calcul ; sinon, c’est un pari.</li>
+      <li><b>Desperado</b> : une pièce perdue de toute façon se vend le plus cher possible.</li>
+    </ul>
+  </div></section>
+  <section class="box"><h2>Calculer une combinaison</h2><div class="bd">
+    <ol class="num">
+      <li>Coups forçants d’abord : l’adversaire a alors peu de réponses.</li>
+      <li>Pour chaque coup, la meilleure défense, y compris ses échecs et contre-attaques.</li>
+      <li>Voir la position finale et la compter : matériel, mat, pièces en prise.</li>
+      <li>Un motif n’est pas une garantie : le calcul décide.</li>
+    </ol>
+  </div></section>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 4 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 5 — MATS ============================ -->
+<div class="page">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab on"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>5 · Mats typiques</h1><span class="run">Trait aux Blancs · reconnaître le dessin</span></header>
+<div class="grid g33 fc">
+  <section class="box mat"><h2>Mat du couloir</h2><div class="bd">
+    <div class="dg" data-fen="6k1/5ppp/8/8/8/8/2r2PPP/4R1K1 w - -" data-a="e1e8" data-t="w"></div>
+    <p>Roi enfermé derrière ses propres pions sur la rangée du fond : <span class="mv">Te8#</span>. Parade préventive : ouvrir à temps une case de fuite (h3, h6) ou garder la rangée.</p>
+  </div></section>
+  <section class="box mat"><h2>Mat d’Anastasie</h2><div class="bd">
+    <div class="dg" data-fen="r4r1k/pp2N1pp/2p5/7Q/8/4R3/5PPP/6K1 w - -" data-a="h5h7" data-d="e3h3" data-t="w"></div>
+    <p>Cavalier en e7 (il garde g8 et g6), tour sur la colonne h : <span class="mv">1.Dxh7+ !! Rxh7 2.Th3#</span>.</p>
+  </div></section>
+  <section class="box mat"><h2>Mat de l’épaulette</h2><div class="bd">
+    <div class="dg" data-fen="3rkr2/pp4pp/2p5/8/8/1Q6/5PPP/6K1 w - -" data-a="b3e6" data-t="w"></div>
+    <p>Roi encadré par ses deux tours, comme par des épaulettes : <span class="mv">De6#</span>. Les pièces du défenseur lui ôtent ses cases.</p>
+  </div></section>
+  <section class="box mat"><h2>Mat à l’étouffée</h2><div class="bd">
+    <div class="dg" data-fen="4r2k/6pp/1q5N/3Q4/8/8/5PPP/6K1 w - -" data-a="d5g8" data-d="h6f7" data-t="w"></div>
+    <p>Le roi est bloqué par ses propres pièces ; le cavalier donne mat : <span class="mv">1.Dg8+ !! Txg8 2.Cf7#</span>.</p>
+  </div></section>
+  <section class="box mat"><h2>Mat des Arabes</h2><div class="bd">
+    <div class="dg" data-fen="1r5k/pp1R4/5N2/8/8/8/5PPP/6K1 w - -" data-a="d7h7" data-t="w"></div>
+    <p>Tour et cavalier : la tour mate en h7, protégée par le cavalier f6, qui garde aussi g8 : <span class="mv">Th7#</span>.</p>
+  </div></section>
+  <section class="box mat"><h2>Mat de l’escalier</h2><div class="bd">
+    <div class="dg" data-fen="6k1/R7/8/8/8/8/8/1R4K1 w - -" data-a="b1b8" data-d="a7h7" data-t="w"></div>
+    <p>Deux pièces lourdes en alternance : l’une coupe une rangée, l’autre donne échec sur la suivante, marche après marche : <span class="mv">Tb8#</span>.</p>
+  </div></section>
+  <section class="box mat"><h2>Mat de Boden</h2><div class="bd">
+    <div class="dg" data-fen="2kr3r/pp1nqppp/2n1p3/8/5B2/5Q2/PPP1BPPP/R5K1 w - -" data-a="f3c6" data-d="e2a6,f4b8" data-t="w"></div>
+    <p>Deux fous sur des diagonales croisées : <span class="mv">1.Dxc6+ ! bxc6</span> (le pion b7 est dévié) <span class="mv">2.Fa6#</span>.</p>
+  </div></section>
+  <section class="box mat"><h2>Baiser de la mort</h2><div class="bd">
+    <div class="dg" data-fen="5rk1/5p1p/5P1Q/8/8/8/6PP/6K1 w - -" data-a="h6g7" data-t="w"></div>
+    <p>Dite aussi « baiser de la dame » : la dame au contact du roi, protégée (ici par le pion f6) : <span class="mv">Dg7#</span>.</p>
+  </div></section>
+  <section class="box grow"><h2>Repérer un mat</h2><div class="bd">
+    <ul class="lst">
+      <li>Compter les <b>cases de fuite</b> du roi : qui les garde, qui les bloque ?</li>
+      <li>Les pièces du défenseur qui entourent son roi l’étouffent : couloir, étouffée, épaulette.</li>
+      <li>Chercher l’échec qui force, puis le sacrifice qui <b>attire</b> le roi ou <b>dévie</b> un défenseur.</li>
+      <li>Pour son propre roi : une case de fuite à temps.</li>
+    </ul>
+    <p class="note">Voir aussi p. 7 (mat du berger, mat du lion, mat de Légal) et p. 8 (mats élémentaires).</p>
+  </div></section>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 5 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 6 — STRATÉGIE ============================ -->
+<div class="page">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab on"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>6 · Stratégie : principes, pièces, structures</h1><span class="run">Les avantages durables</span></header>
+<div class="cols c3">
+ <div class="col">
+  <section class="box"><h2>Principes d’ouverture</h2><div class="bd">
+    <ol class="num">
+      <li><b>Occuper ou contrôler le centre</b> : e4, d4, e5, d5.</li>
+      <li><b>Développer</b> vite les cavaliers et les fous, vers le centre.</li>
+      <li><b>Roquer tôt</b> : le roi à l’abri, les tours reliées.</li>
+      <li>Un coup, un but : ne pas jouer deux fois la même pièce sans raison.</li>
+      <li>Ne pas sortir la <b>dame</b> trop tôt : chassée, elle fait perdre du temps.</li>
+      <li>Peu de coups de pion, surtout devant son roi.</li>
+      <li>Ne pas prendre un pion au prix de son développement, sauf calcul précis.</li>
+      <li>Placer les tours sur les colonnes ouvertes ou qui vont s’ouvrir.</li>
+    </ol>
+    <p class="note">Un <b>temps</b> = un coup. En position ouverte, l’avance de développement pèse lourd ; en position fermée, moins.</p>
+  </div></section>
+  <section class="box"><h2>Milieu de partie : le plan</h2><div class="bd">
+    <ul class="lst">
+      <li>Jouer du côté où l’on est plus fort : espace, pièces actives, majorité de pions.</li>
+      <li><b>Chaîne de pions</b> : attaquer sa base ; chaque camp joue du côté où pointent ses pions.</li>
+      <li><b>Roques opposés</b> : course à l’attaque, pions lancés contre le roi adverse. Roques du même côté : jeu de pièces, action au centre.</li>
+      <li>Une attaque sur une aile se contre souvent par une action au <b>centre</b>.</li>
+      <li>Améliorer sa <b>plus mauvaise pièce</b>.</li>
+      <li><b>Deux faiblesses</b> : une seule se défend ; en créer une seconde, de préférence sur l’autre aile.</li>
+      <li>Sans contre-jeu adverse, rien ne presse : renforcer d’abord.</li>
+    </ul>
+  </div></section>
+  <section class="box grow"><h2>Attaquer le roi</h2><div class="bd">
+    <ul class="lst">
+      <li>Réunir près du roi adverse plus d’attaquants qu’il n’a de défenseurs.</li>
+      <li>Ouvrir des lignes vers lui : colonnes (poussées de pions) et diagonales.</li>
+      <li>Prendre ou chasser ses défenseurs (p. 4), à commencer par le cavalier f6 (ou f3).</li>
+      <li>Cibles classiques : h7 (ou h2) sous le feu du fou et de la dame ; f7 (ou f2) en début de partie.</li>
+      <li>En défense : échanger les attaquants, riposter au centre, ne pas pousser sans nécessité les pions devant son roi.</li>
+    </ul>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Placer ses pièces</h2><div class="bd">
+    <div class="dg dgc" data-fen="6k1/4bppp/p2p4/3Np3/4P3/5P2/PP4PP/2R3K1 w - -" data-c="d5,e7"></div>
+    <p class="note" style="margin-top:0"><b>Cd5</b> : avant-poste idéal, soutenu par e4, qu’aucun pion noir ne peut plus chasser. <b>Fe7</b> : mauvais fou, gêné par ses pions d6 et e5 fixés sur sa couleur. <b>Tc1</b> : colonne ouverte.</p>
+    <table class="fb" style="margin-top:1mm"><colgroup><col style="width:22%"><col style="width:78%"></colgroup><tbody>
+    <tr><td>Cavalier</td><td>Aime les <b>avant-postes</b> : case avancée, protégée par un pion, hors d’atteinte des pions adverses. Au bord, il contrôle 2 à 4 cases au lieu de 8.</td></tr>
+    <tr><td>Fou</td><td>Aime les positions ouvertes, les longues diagonales. <b>Mauvais fou</b> : bloqué par ses pions sur sa couleur. La <b>paire de fous</b> est un atout durable.</td></tr>
+    <tr><td>Tour</td><td>Colonnes <b>ouvertes</b> (sans pion) ou semi-ouvertes (sans pion de son camp) ; la <b>7<sup>e</sup> rangée</b> ; derrière les pions passés.</td></tr>
+    <tr><td>Dame</td><td>Centralisée, mais à l’abri des pièces mineures qui la chasseraient.</td></tr>
+    <tr><td>Roi</td><td>À l’abri au milieu de partie ; pièce active en finale.</td></tr>
+    </tbody></table>
+  </div></section>
+  <section class="box"><h2>Fou ou cavalier ?</h2><div class="bd">
+    <p><b>Le fou</b> est meilleur en position ouverte, avec des pions sur les deux ailes, contre un pion passé éloigné.</p>
+    <p><b>Le cavalier</b> est meilleur en position fermée, avec des avant-postes, quand les pions sont sur une seule aile, contre un mauvais fou.</p>
+  </div></section>
+  <section class="box grow"><h2>Prophylaxie</h2><div class="bd">
+    <p>Se demander : <b>que jouerait l’adversaire s’il avait le trait ?</b> Puis l’en empêcher avant qu’il ne commence.</p>
+    <p>Exemples : h3 (ou …h6) pour interdire à un fou de clouer un cavalier en g4 ou g5 ; a3 (ou …a6) contre un fou en b4 ou b5 ; une case de fuite pour le roi avant que la rangée du fond ne devienne une cible.</p>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Structures de pions</h2><div class="bd">
+    <table class="fb"><colgroup><col style="width:27%"><col style="width:73%"></colgroup><tbody>
+    <tr><td>Isolé</td><td>Aucun pion ami sur les colonnes voisines. Faible en finale ; la case devant lui est un poste pour l’adversaire. Au milieu de partie, il donne de l’activité.</td></tr>
+    <tr><td>Doublés</td><td>Deux pions d’un même camp sur une colonne : souvent faibles, mais ils ouvrent une colonne voisine.</td></tr>
+    <tr><td>Arriéré</td><td>Resté en retrait de ses voisins, il ne peut plus avancer sans être pris. Cible sur colonne semi-ouverte ; la case devant lui est faible.</td></tr>
+    <tr><td>Passé</td><td>Aucun pion adverse devant lui, sur sa colonne ni sur les colonnes voisines. Atout majeur en finale : il doit avancer.</td></tr>
+    <tr><td>Liés</td><td>Côte à côte, ils se soutiennent en avançant.</td></tr>
+    <tr><td>Chaîne</td><td>Pions en diagonale qui se protègent : la base est le point faible.</td></tr>
+    <tr><td>Majorité</td><td>Plus de pions que l’adversaire sur une aile : de quoi créer un pion passé.</td></tr>
+    <tr><td>Îlots</td><td>Groupes de pions séparés : moins il y en a, plus la structure est saine.</td></tr>
+    <tr><td>Case faible</td><td>Case qu’aucun pion ne peut plus défendre : poste idéal pour une pièce adverse.</td></tr>
+    </tbody></table>
+    <p class="note">Les pions ne reculent pas : chaque poussée crée des cases faibles derrière elle. La réfléchir.</p>
+  </div></section>
+  <section class="box"><h2>Adages</h2><div class="bd">
+    <ul class="lst">
+      <li>« La menace est plus forte que l’exécution. »</li>
+      <li>« Les tours se placent derrière les pions passés. »</li>
+      <li>« Un pion passé doit avancer. »</li>
+    </ul>
+    <p class="note">Formulations courantes, d’auteurs divers. Règles d’usage, non des lois : la position concrète l’emporte toujours.</p>
+  </div></section>
+  <section class="box grow"><h2>Le centre</h2><div class="bd">
+    <ul class="lst">
+      <li><b>Occupé</b> par des pions (e4-d4) : de l’espace, mais une cible à soutenir.</li>
+      <li><b>Contrôlé à distance</b> par les pièces, puis attaqué : l’idée des défenses « hypermodernes » (p. 7).</li>
+      <li><b>Fermé</b> : le jeu passe aux ailes, les plans sont lents.</li>
+      <li><b>Ouvert</b> : les pièces actives et la sécurité du roi priment.</li>
+    </ul>
+  </div></section>
+ </div>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 6 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 7 — OUVERTURES ============================ -->
+<div class="page p7">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab on"><b>7</b>&nbsp; Ouvertures</div><div class="tab"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>7 · Ouvertures : les idées plutôt que les variantes</h1><span class="run">Plans · structures · pièges</span></header>
+<section class="box"><h2>Après 1.e4</h2><div class="bd">
+  <table class="op fb"><colgroup><col style="width:16%"><col style="width:24%"><col style="width:60%"></colgroup>
+  <thead><tr><th>Ouverture</th><th>Coups</th><th>Idées</th></tr></thead><tbody>
+  <tr><td>Partie italienne</td><td>1.e4 e5 2.Cf3 Cc6 3.Fc4</td><td>Le fou vise f7 ; les Blancs préparent c3 puis d4 pour bâtir un centre. Jeu lent (d3) ou ouvert.</td></tr>
+  <tr><td>Partie espagnole</td><td>1.e4 e5 2.Cf3 Cc6 3.Fb5</td><td>Pression sur le cavalier c6, défenseur de e5. Lutte longue : roque, Te1, c3 et d4.</td></tr>
+  <tr><td>Partie écossaise</td><td>1.e4 e5 2.Cf3 Cc6 3.d4 exd4 4.Cxd4</td><td>Ouvrir le centre tout de suite ; jeu de pièces.</td></tr>
+  <tr><td>Deux cavaliers</td><td>1.e4 e5 2.Cf3 Cc6 3.Fc4 Cf6</td><td>Contre-attaque noire sur e4. 4.Cg5 vise f7 : positions tranchantes, à connaître avant de s’y risquer.</td></tr>
+  <tr><td>Défense Petrov</td><td>1.e4 e5 2.Cf3 Cf6</td><td>Contre-attaque symétrique, solide. Après 3.Cxe5, jouer d’abord 3…d6 : 3…Cxe4 ? 4.De2 Cf6 ?? 5.Cc6+ gagne la dame.</td></tr>
+  <tr><td>Gambit du roi</td><td>1.e4 e5 2.f4</td><td>Offrir un pion pour ouvrir la colonne f et prendre le centre. Romantique et risqué.</td></tr>
+  <tr><td>Défense sicilienne</td><td>1.e4 c5</td><td>Déséquilibre. Après d4 cxd4, les Noirs gardent deux pions centraux contre un et jouent sur la colonne c ; les Blancs attaquent souvent à l’aile roi.</td></tr>
+  <tr><td>Défense française</td><td>1.e4 e6 2.d4 d5</td><td>Chaîne de pions. Après e5, les Noirs attaquent la base d4 (…c5, …f6) ; leur fou c8 est souvent gêné.</td></tr>
+  <tr><td>Caro-Kann</td><td>1.e4 c6 2.d4 d5</td><td>Solide : le fou c8 sort avant …e6.</td></tr>
+  <tr><td>Scandinave</td><td>1.e4 d5 2.exd5 Dxd5</td><td>Question posée tout de suite au centre ; la dame sortie tôt perd un temps après 3.Cc3.</td></tr>
+  <tr><td>Pirc · Moderne</td><td>1.e4 d6 · 1.e4 g6</td><td>Laisser les Blancs bâtir le centre, puis le miner ; fou en fianchetto en g7.</td></tr>
+  <tr><td>Défense Alekhine</td><td>1.e4 Cf6</td><td>Provoquer l’avance des pions blancs pour en faire des cibles.</td></tr>
+  </tbody></table>
+</div></section>
+<section class="box"><h2>Après 1.d4 <span class="lc">et ouvertures de flanc</span></h2><div class="bd">
+  <table class="op fb"><colgroup><col style="width:16%"><col style="width:24%"><col style="width:60%"></colgroup>
+  <thead><tr><th>Ouverture</th><th>Coups</th><th>Idées</th></tr></thead><tbody>
+  <tr><td>Gambit dame</td><td>1.d4 d5 2.c4</td><td>Détourner le pion d5 pour dominer le centre ; le pion c4 se récupère le plus souvent.</td></tr>
+  <tr><td>… accepté</td><td>2…dxc4</td><td>Les Noirs cèdent le centre contre un jeu de pièces libre.</td></tr>
+  <tr><td>… refusé</td><td>2…e6</td><td>Solide ; le problème des Noirs : leur fou c8 enfermé.</td></tr>
+  <tr><td>Défense slave</td><td>2…c6</td><td>Soutenir d5 en laissant le fou c8 libre de sortir.</td></tr>
+  <tr><td>Système de Londres</td><td>1.d4, Ff4, e3, c3, Cf3, Fd3</td><td>Schéma presque fixe, peu de théorie : facile à apprendre.</td></tr>
+  <tr><td>Nimzo-indienne</td><td>1.d4 Cf6 2.c4 e6 3.Cc3 Fb4</td><td>Clouer le cavalier c3 pour contrôler e4 ; céder souvent la paire de fous contre des pions doublés blancs.</td></tr>
+  <tr><td>Ouest-indienne</td><td>1.d4 Cf6 2.c4 e6 3.Cf3 b6</td><td>Fianchetto du fou c8 pour contrôler e4.</td></tr>
+  <tr><td>Est-indienne</td><td>1.d4 Cf6 2.c4 g6 3.Cc3 Fg7 4.e4 d6</td><td>Laisser le centre aux Blancs, puis le frapper par …e5 ou …c5 ; attaque noire fréquente à l’aile roi.</td></tr>
+  <tr><td>Grünfeld</td><td>1.d4 Cf6 2.c4 g6 3.Cc3 d5</td><td>Laisser les Blancs bâtir un centre de pions, puis l’attaquer par les pièces (Fg7, …c5).</td></tr>
+  <tr><td>Hollandaise</td><td>1.d4 f5</td><td>Contrôler e4, attaquer à l’aile roi ; affaiblit la diagonale e8-h5.</td></tr>
+  <tr><td>Anglaise · Réti</td><td>1.c4 · 1.Cf3</td><td>Contrôler le centre de côté, par les pièces, avant de l’occuper ; souplesse.</td></tr>
+  </tbody></table>
+</div></section>
+<div class="cols c2" style="flex:1 1 auto">
+ <div class="col">
+  <section class="box"><h2>Pièges classiques</h2><div class="bd">
+    <table class="fb"><colgroup><col style="width:21%"><col style="width:79%"></colgroup><tbody>
+    <tr><td>Mat du berger</td><td>1.e4 e5 2.Fc4 Cc6 3.Dh5 Cf6 ?? 4.Dxf7#. Parade : 3…g6 (ou 3…De7), puis chasser la dame.</td></tr>
+    <tr><td>Mat du lion</td><td>(ou « du sot ») 1.f3 e5 2.g4 ?? Dh4#. Le mat le plus rapide : les pions f et g ont ouvert la diagonale du roi.</td></tr>
+    <tr><td>Mat de Légal</td><td>1.e4 e5 2.Cf3 d6 3.Fc4 Fg4 4.Cc3 g6 ? 5.Cxe5 ! Fxd1 ?? 6.Fxf7+ Re7 7.Cd5#. Le cavalier « cloué » sur la dame ne l’était pas vraiment.</td></tr>
+    <tr><td>Piège de l’éléphant</td><td>1.d4 d5 2.c4 e6 3.Cc3 Cf6 4.Fg5 Cbd7 5.cxd5 exd5 6.Cxd5 ?? Cxd5 ! 7.Fxd8 Fb4+ 8.Dd2 Fxd2+ 9.Rxd2 Rxd8 : les Noirs gagnent une pièce contre un pion.</td></tr>
+    <tr><td>Gambit Blackburne-Shilling</td><td>1.e4 e5 2.Cf3 Cc6 3.Fc4 Cd4 4.Cxe5 ? Dg5 ! 5.Cxf7 ? Dxg2 6.Tf1 Dxe4+ 7.Fe2 Cf3#. Sur 3…Cd4, 4.Cxd4 évite le piège.</td></tr>
+    </tbody></table>
+  </div></section>
+  <section class="box grow"><h2>Construire son répertoire</h2><div class="bd">
+    <ul class="lst">
+      <li>Avec les Blancs, <b>une</b> ouverture ; avec les Noirs, une réponse à 1.e4 et une à 1.d4.</li>
+      <li>Pour chacune : les idées des deux camps, la structure de pions typique, les plans du milieu de partie, deux ou trois pièges.</li>
+      <li>Ne pas mémoriser au-delà de ce que l’on comprend ; rejouer des parties modèles.</li>
+      <li>Hors de la théorie, revenir aux principes (p. 6).</li>
+    </ul>
+  </div></section>
+ </div>
+ <div class="col">
+  <section class="box"><h2>Mat de Légal <span class="lc">— après 4…g6 ?</span></h2><div class="bd cg" style="grid-template-columns: 40mm minmax(0, 1fr)">
+    <div class="dg" data-fen="rn1qkbnr/ppp2p1p/3p2p1/4p3/2B1P1b1/2N2N2/PPPP1PPP/R1BQK2R w KQkq -" data-a="f3e5" data-c="d1,f7" data-t="w"></div>
+    <div class="tx">
+      <p><span class="mv">5.Cxe5 !</span> abandonne la dame, clouée en apparence.</p>
+      <p>Si <span class="mv">5…Fxd1 ??</span>, <span class="mv">6.Fxf7+ Re7 7.Cd5#</span>.</p>
+      <p>Si <span class="mv">5…dxe5</span>, <span class="mv">6.Dxg4</span> : un pion de plus pour les Blancs.</p>
+      <p class="rep">Un clouage relatif n’interdit rien : il se calcule.</p>
+    </div></div></section>
+  <section class="box grow"><h2>Structures et plans types</h2><div class="bd">
+    <table class="fb"><colgroup><col style="width:30%"><col style="width:70%"></colgroup><tbody>
+    <tr><td>Chaîne de pions</td><td>Française, Caro-Kann avec e5 : attaquer la base, jouer du côté où pointent ses pions.</td></tr>
+    <tr><td>Centre ouvert</td><td>Écossaise, gambit dame accepté : développement et activité des pièces priment.</td></tr>
+    <tr><td>Pion dame isolé</td><td>Son camp cherche l’attaque ; l’adversaire bloque la case devant lui et échange les pièces.</td></tr>
+    <tr><td>Fianchetto</td><td>Est-indienne, Grünfeld : le fou pèse sur la grande diagonale ; ne pas l’échanger à la légère.</td></tr>
+    </tbody></table>
+  </div></section>
+ </div>
+</div>
+<footer class="foot"><span>Mémento — échecs · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 7 / 8</span></footer>
+</div>
+
+<!-- ============================ PAGE 8 — FINALES ============================ -->
+<div class="page p8">
+<nav class="tabs"><div class="tab"><b>1</b>&nbsp; Règles</div><div class="tab"><b>2</b>&nbsp; Méthode</div><div class="tab"><b>3</b>&nbsp; Tactique (1)</div><div class="tab"><b>4</b>&nbsp; Tactique (2)</div><div class="tab"><b>5</b>&nbsp; Mats</div><div class="tab"><b>6</b>&nbsp; Stratégie</div><div class="tab"><b>7</b>&nbsp; Ouvertures</div><div class="tab on"><b>8</b>&nbsp; Finales</div></nav>
+<header class="ptitle"><h1>8 · Finales : le roi devient une pièce forte</h1><span class="run">Pions · tours · mats élémentaires</span></header>
+<div class="grid g33a fc">
+  <section class="box mat"><h2>Règle du carré</h2><div class="bd">
+    <div class="dg" data-fen="8/8/8/6k1/1P6/8/8/7K w - -" data-sq="b4f8" data-d="b4b8"></div>
+    <p>Tracer le carré dont un côté va du pion à sa case de promotion. Si le roi adverse peut y entrer, il rattrape le pion. <b>Trait aux Noirs</b> : <span class="mv">…Rf5</span>, nulle. <b>Trait aux Blancs</b> : <span class="mv">1.b5</span> et le pion va à dame. Pion sur sa case de départ : compter depuis la 3<sup>e</sup> rangée (double pas).</p>
+  </div></section>
+  <section class="box mat"><h2>Roi devant son pion</h2><div class="bd">
+    <div class="dg" data-fen="4k3/8/4K3/4P3/8/8/8/8 w - -"></div>
+    <p>Roi en 6<sup>e</sup> rangée devant son pion (pion hors colonnes a et h) : gain quel que soit le trait. <b>Blancs</b> : <span class="mv">1.Rd6 Rd8 2.e6 Re8 3.e7 Rf7 4.Rd7</span>. <b>Noirs</b> : <span class="mv">1…Rd8 2.Rf7</span> (ou <span class="mv">1…Rf8 2.Rd7</span>).</p>
+  </div></section>
+  <section class="box grow"><h2>Opposition et cases clés</h2><div class="bd">
+    <p><b>Opposition</b> : rois face à face, une case entre eux. Le camp qui <b>n’a pas</b> le trait a l’opposition ; l’autre doit céder le passage.</p>
+    <p><b>Cases clés</b> : pion en 2<sup>e</sup>, 3<sup>e</sup> ou 4<sup>e</sup> rangée → les trois cases situées deux rangées devant lui (pion e4 : d6, e6, f6). Le roi attaquant qui en occupe une gagne, quel que soit le trait.</p>
+    <p><b>Pion de tour</b> : nulle si le roi défenseur atteint le coin.</p>
+  </div></section>
+  <section class="box mat"><h2>Position de Lucena <span class="lc">— gain</span></h2><div class="bd">
+    <div class="dg" data-fen="3K4/3P2k1/8/8/8/8/2r5/5R2 w - -" data-a="f1f4" data-t="w"></div>
+    <p><b>Construire un pont.</b> <span class="mv">1.Tf4 !</span> Tc1 2.Re7 Te1+ 3.Rd6 Td1+ 4.Re6 Te1+ 5.Rd5 Td1+ <span class="mv">6.Td4</span> : la tour s’interpose, le pion va à dame. Condition : le roi adverse coupé d’au moins une colonne.</p>
+  </div></section>
+  <section class="box mat"><h2>Position de Philidor <span class="lc">— nulle</span></h2><div class="bd">
+    <div class="dg" data-fen="4k3/7R/1r6/3KP3/8/8/8/8 w - -" data-d="b6h6"></div>
+    <p>La tour du défenseur tient la <b>6<sup>e</sup> rangée</b> et interdit au roi d’avancer. Dès que le pion y arrive (<span class="mv">1.e6</span>), elle file à l’autre bout (<span class="mv">1…Tb1 !</span>) et donne des échecs par derrière : le roi blanc n’a plus d’abri.</p>
+  </div></section>
+  <section class="box grow"><h2>Finales de tours</h2><div class="bd">
+    <ul class="lst">
+      <li>Une tour <b>active</b> vaut souvent un pion.</li>
+      <li><b>Couper</b> le roi adverse d’une colonne ou d’une rangée.</li>
+      <li>Tours <b>derrière</b> les pions passés, les siens comme ceux de l’adversaire.</li>
+      <li>En défense : échecs par derrière ou de côté, à distance.</li>
+    </ul>
+  </div></section>
+  <section class="box mat"><h2>Roi et dame contre roi</h2><div class="bd">
+    <div class="dg" data-fen="7k/5K2/8/8/8/8/8/6Q1 w - -" data-a="g1g7" data-x="g6" data-t="w"></div>
+    <p><span class="mv">Dg7#</span> — mais <span class="mv">Dg6 ??</span> pat. Méthode : repousser le roi vers un bord (la dame à un saut de cavalier de lui), puis approcher son roi. Toujours lui laisser une case.</p>
+  </div></section>
+  <section class="box mat"><h2>Roi et tour contre roi</h2><div class="bd">
+    <div class="dg" data-fen="4k3/8/4K3/8/8/8/8/R7 w - -" data-a="a1a8" data-t="w"></div>
+    <p><span class="mv">Ta8#</span>. Méthode : la tour enferme le roi dans une « boîte » qui rétrécit ; son roi soutient la tour ; mat sur le bord, les rois face à face.</p>
+  </div></section>
+  <section class="box grow"><h2>Principes de finale</h2><div class="bd">
+    <ul class="lst">
+      <li><b>Activer le roi</b> dès les dames échangées : le centraliser.</li>
+      <li>Pion passé : le pousser et l’escorter ; celui de l’adversaire, le bloquer (le cavalier bloque bien).</li>
+      <li>Un pion passé <b>éloigné</b> détourne le roi adverse.</li>
+      <li><b>Zugzwang</b> : tout coup aggrave la position ; la <b>triangulation</b> du roi (perdre un temps) l’impose.</li>
+      <li>Fous de couleurs opposées : forte tendance à la nulle, même avec un ou deux pions de plus.</li>
+      <li>Pion de tour et fou qui ne contrôle pas la case de promotion : nulle si le roi adverse tient le coin.</li>
+      <li>Contre un roi seul, un cavalier, un fou ou deux cavaliers ne suffisent pas pour forcer le mat ; deux fous, fou et cavalier (difficile : coin de la couleur du fou), tour ou dame suffisent.</li>
+    </ul>
+  </div></section>
+</div>
+<footer class="foot"><span>Règles : Lois des échecs de la FIDE (2023) · positions et suites contrôlées par programme · v1.1 — septembre 2026</span><span>didierdambreville.github.io · 8 / 8</span></footer>
+</div>
+
+<script>
+(function () {
+  var W = { K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙' };
+  var F = { K: '♚', Q: '♛', R: '♜', B: '♝', N: '♞', P: '♟' };
+  var S = 10, L = 5;                                   // taille d'une case, marge des coordonnées
+  function sq(s) { return [s.charCodeAt(0) - 97, +s[1] - 1]; }
+  function cx(f) { return L + f * S + S / 2; }
+  function cy(r) { return (7 - r) * S + S / 2; }
+  function list(v) { return v ? v.split(',').map(function (x) { return x.trim(); }).filter(Boolean) : []; }
+  function arrow(m, dashed) {
+    var a = sq(m.slice(0, 2)), b = sq(m.slice(2, 4));
+    var x1 = cx(a[0]), y1 = cy(a[1]), x2 = cx(b[0]), y2 = cy(b[1]);
+    var dx = x2 - x1, dy = y2 - y1, d = Math.sqrt(dx * dx + dy * dy), ux = dx / d, uy = dy / d;
+    var hl = dashed ? 3.2 : 3.8, hw = dashed ? 3.0 : 3.8, back = 1.2;
+    var tx = x2 - ux * back, ty = y2 - uy * back, bx = tx - ux * hl, by = ty - uy * hl;
+    var op = dashed ? 0.85 : 0.62, sw = dashed ? 1.05 : 1.8;
+    var line = '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + (bx + ux * 0.3) + '" y2="' + (by + uy * 0.3) +
+      '" stroke="#000" stroke-width="' + sw + '"' + (dashed ? ' stroke-dasharray="2.1 1.5"' : '') + ' stroke-linecap="butt"/>';
+    var head = '<polygon points="' + tx + ',' + ty + ' ' + (bx - uy * hw / 2) + ',' + (by + ux * hw / 2) + ' ' +
+      (bx + uy * hw / 2) + ',' + (by - ux * hw / 2) + '"/>';
+    return '<g opacity="' + op + '" fill="#000">' + line + head + '</g>';
+  }
+  function draw(el) {
+    var rows = el.getAttribute('data-fen').split(' ')[0].split('/');
+    var h = '<rect x="' + L + '" y="0" width="80" height="80" fill="#fff"/>';
+    for (var r = 0; r < 8; r++) for (var f = 0; f < 8; f++)
+      if ((f + r) % 2 === 0) h += '<rect class="dk" x="' + (L + f * S) + '" y="' + ((7 - r) * S) + '" width="10" height="10"/>';
+    var sqr = el.getAttribute('data-sq');
+    if (sqr) {
+      var p = sq(sqr.slice(0, 2)), q = sq(sqr.slice(2, 4));
+      var x0 = L + Math.min(p[0], q[0]) * S, y0 = (7 - Math.max(p[1], q[1])) * S;
+      h += '<rect x="' + (x0 + 0.6) + '" y="' + (y0 + 0.6) + '" width="' + ((Math.abs(p[0] - q[0]) + 1) * S - 1.2) +
+        '" height="' + ((Math.abs(p[1] - q[1]) + 1) * S - 1.2) + '" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="2.4 1.4"/>';
+    }
+    list(el.getAttribute('data-k')).forEach(function (s) { var c = sq(s); h += '<circle cx="' + cx(c[0]) + '" cy="' + cy(c[1]) + '" r="1.8"/>'; });
+    rows.forEach(function (row, i) {
+      var r = 7 - i, f = 0;
+      for (var j = 0; j < row.length; j++) {
+        var ch = row[j];
+        if (/\d/.test(ch)) { f += +ch; continue; }
+        var t = ch.toUpperCase(), x = cx(f), y = cy(r) + 3.25;
+        if (ch === t) h += '<text x="' + x + '" y="' + y + '" class="pw">' + F[t] + '</text><text x="' + x + '" y="' + y + '" class="po">' + W[t] + '</text>';
+        else h += '<text x="' + x + '" y="' + y + '" class="pb">' + F[t] + '</text>';
+        f++;
+      }
+    });
+    list(el.getAttribute('data-x')).forEach(function (s) { var c = sq(s), x = cx(c[0]), y = cy(c[1]); h += '<path d="M' + (x - 3) + ' ' + (y - 3) + 'L' + (x + 3) + ' ' + (y + 3) + 'M' + (x + 3) + ' ' + (y - 3) + 'L' + (x - 3) + ' ' + (y + 3) + '" stroke="#000" stroke-width="1.3"/>'; });
+    list(el.getAttribute('data-c')).forEach(function (s) { var c = sq(s); h += '<circle cx="' + cx(c[0]) + '" cy="' + cy(c[1]) + '" r="4.55" fill="none" stroke="#000" stroke-width="0.95"/>'; });
+    list(el.getAttribute('data-d')).forEach(function (m) { h += arrow(m, true); });
+    list(el.getAttribute('data-a')).forEach(function (m) { h += arrow(m, false); });
+    h += '<rect x="' + L + '" y="0" width="80" height="80" fill="none" stroke="#000" stroke-width="0.6"/>';
+    for (var k = 0; k < 8; k++) {
+      h += '<text x="' + cx(k) + '" y="83.9" class="lb">' + 'abcdefgh'[k] + '</text>';
+      h += '<text x="2.4" y="' + (cy(k) + 1.3) + '" class="lb">' + (k + 1) + '</text>';
+    }
+    var t = el.getAttribute('data-t');
+    if (t === 'w') h += '<circle cx="2.4" cy="82.6" r="1.55" fill="#fff" stroke="#000" stroke-width="0.6"/>';
+    if (t === 'b') h += '<circle cx="2.4" cy="82.6" r="1.7" fill="#000"/>';
+    el.innerHTML = '<svg viewBox="0 0 85 85" xmlns="http://www.w3.org/2000/svg">' +
+      '<style>.pw{fill:#fff}.pb{fill:#000;stroke:#fff;stroke-width:.55;paint-order:stroke}.po{fill:#000}' +
+      '.pw,.pb,.po{font-family:"DejaVu Sans","Segoe UI Symbol",serif;font-size:9.2px;text-anchor:middle}' +
+      '.lb{font-family:Calibri,Arial,sans-serif;font-size:3.4px;text-anchor:middle}.dk{fill:#bdbdbd}</style>' + h + '</svg>';
+  }
+  var els = document.querySelectorAll('.dg');
+  for (var i = 0; i < els.length; i++) draw(els[i]);
+})();
+</script>
+</body>
+</html>

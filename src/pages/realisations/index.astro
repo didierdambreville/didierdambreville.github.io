@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+import CarteRealisation from '../../components/CarteRealisation.astro';
+import { DISCIPLINES, LIBELLES_DISCIPLINE } from '../../content.config';
+
+const toutes = (await getCollection('realisations', (e) => !e.data.brouillon)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const presentes = DISCIPLINES.filter((d) => toutes.some((r) => r.data.discipline === d));
+---
+<Base titre={`Réalisations — ${AUTEUR}`} description="L'ensemble des travaux exposés, classés en quatre cases.">
+  <h1>Réalisations</h1>
+  <p class="chapeau">
+    Quatre cases seulement. Le critère qui tranche&#160;: qu'est-ce que le lecteur en fait&#160;?
+  </p>
+
+  {
+    presentes.length > 1 && (
+      <ul class="filtres">
+        <li><a href="/realisations/" aria-current="true">Toutes</a></li>
+        {presentes.map((d) => (
+          <li><a href={`/realisations/discipline/${d}/`}>{LIBELLES_DISCIPLINE[d]}</a></li>
+        ))}
+      </ul>
+    )
+  }
+
+  <ul class="grille">
+    {
+      toutes.map((r) => (
+        <CarteRealisation
+          href={`/realisations/${r.id}/`}
+          titre={r.data.titre}
+          resume={r.data.resume}
+          discipline={r.data.discipline}
+          annee={r.data.date.getFullYear()}
+          couverture={r.data.couverture}
+          couvertureAlt={r.data.couvertureAlt}
+        />
+      ))
+    }
+  </ul>
+</Base>

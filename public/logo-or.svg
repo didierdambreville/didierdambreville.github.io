@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Logo D. Dambreville">
+  <!-- Logo personnel de D. Dambreville, version or (30 septembre 2026).
+       Six anneaux aux sommets d'un hexagone, reliés au centre par des pointillés.
+       Le dégradé est appliqué d'un seul tenant à toute la figure, à travers un masque :
+       ainsi il ne tourne pas avec chaque branche. -->
+  <defs>
+    <linearGradient id="or" x1="14" y1="8" x2="82" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f6df8c"/>
+      <stop offset="0.42" stop-color="#dcb04a"/>
+      <stop offset="0.72" stop-color="#bf8d2e"/>
+      <stop offset="1" stop-color="#94661b"/>
+    </linearGradient>
+    <g id="branche">
+      <rect x="48.45" y="44.3" width="3.1" height="5.7"/>
+      <rect x="48.45" y="36.9" width="3.1" height="3.65"/>
+      <rect x="48.45" y="29.6" width="3.1" height="3.6"/>
+      <rect x="48.45" y="23.5" width="3.1" height="2.6"/>
+      <circle cx="50" cy="15" r="7.5" fill="none" stroke="#fff" stroke-width="3.1"/>
+    </g>
+    <mask id="figure" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <g fill="#fff">
+        <use href="#branche"/>
+        <use href="#branche" transform="rotate(60 50 50)"/>
+        <use href="#branche" transform="rotate(120 50 50)"/>
+        <use href="#branche" transform="rotate(180 50 50)"/>
+        <use href="#branche" transform="rotate(240 50 50)"/>
+        <use href="#branche" transform="rotate(300 50 50)"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="url(#or)" mask="url(#figure)"/>
+</svg>

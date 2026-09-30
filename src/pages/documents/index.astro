@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+
+const documents = (await getCollection('documents', (e) => !e.data.brouillon)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+<Base titre={`Documents — ${AUTEUR}`} description="Les documents publiés, avec leur notice, leur version et leur licence.">
+  <h1>Documents</h1>
+  <p class="chapeau">
+    Chaque document a sa page. C'est elle qui porte le titre, le résumé, la version et la licence —
+    donc c'est elle qui se cite. Le fichier n'est que la pièce jointe.
+  </p>
+
+  {
+    documents.length === 0 ? (
+      <p>Aucun document publié pour l'instant.</p>
+    ) : (
+      <ul class="liens">
+        {documents.map((d) => (
+          <li>
+            <a href={`/documents/${d.id}/`}>{d.data.titre}</a> — version {d.data.version},
+            {' '}{d.data.pages} pages
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>

@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { RUBRIQUES, LIBELLES_RUBRIQUE } from '../../../content.config';
+
+export async function getStaticPaths() {
+  const tous = await getCollection('articles', (e) => !e.data.brouillon);
+  return RUBRIQUES.filter((r) => tous.some((a) => a.data.rubrique === r)).map((r) => ({
+    params: { nom: r },
+    props: {
+      rubrique: r,
+      entrees: tous
+        .filter((a) => a.data.rubrique === r)
+        .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+    },
+  }));
+}
+
+const { rubrique, entrees } = Astro.props;
+const libelle = LIBELLES_RUBRIQUE[rubrique];
+---
+<Base titre={`${libelle} — Articles`} description={`Les articles de la rubrique « ${libelle} ».`}>
+  <h1>{libelle}</h1>
+
+  <ul class="filtres">
+    <li><a href="/articles/">Tous</a></li>
+    {
+      RUBRIQUES.map((r) => (
+        <li>
+          <a href={`/articles/rubrique/${r}/`} aria-current={r === rubrique ? 'true' : undefined}>
+            {LIBELLES_RUBRIQUE[r]}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ol class="sommaire">
+    {
+      entrees.map((a) => (
+        <li>
+          <p class="etiquette">
+            {a.data.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
+          <h3><a href={`/articles/${a.id}/`}>{a.data.titre}</a></h3>
+          <p class="sommaire__these">{a.data.these}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Base>

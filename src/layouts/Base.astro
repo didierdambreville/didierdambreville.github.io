@@ -1,0 +1,32 @@
+---
+import type { ImageMetadata } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import Entete from '../components/Entete.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import '../styles/global.css';
+
+interface Props {
+  titre: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+  image?: ImageMetadata;
+  imageAlt?: string;
+}
+const { titre, description, jsonLd, image, imageAlt } = Astro.props;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <BaseHead titre={titre} description={description} jsonLd={jsonLd} image={image} imageAlt={imageAlt} />
+  </head>
+  <body>
+    <a class="evitement" href="#contenu">Aller au contenu</a>
+    <Entete />
+    <main id="contenu">
+      <div class="enveloppe">
+        <slot />
+      </div>
+    </main>
+    <PiedDePage />
+  </body>
+</html>

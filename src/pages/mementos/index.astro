@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import CarteMemento from '../../components/CarteMemento.astro';
+import { mementosPublies, grouper } from '../../lib/mementos';
+import { AUTEUR, LICENCE } from '../../lib/identite';
+
+const mementos = await mementosPublies();
+const familles = grouper(mementos);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Mémentos',
+  description: 'Aide-mémoire imprimables en libre accès.',
+  url: new URL('/mementos/', Astro.site).href,
+  author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  license: LICENCE.urlCanonique,
+  hasPart: mementos.map((m) => ({
+    '@type': 'LearningResource',
+    name: `Mémento — ${m.data.titre}`,
+    url: new URL(`/mementos/${m.id}/`, Astro.site).href,
+  })),
+};
+---
+<Base
+  titre={`Mémentos — ${AUTEUR}`}
+  description={`${mementos.length} aide-mémoire imprimables (A4, noir et blanc), en libre accès sous licence CC BY 4.0.`}
+  jsonLd={jsonLd}
+>
+  <h1>Mémentos</h1>
+  <p class="chapeau">
+    Des aide-mémoire à imprimer&#160;: l'essentiel d'un sujet en six à huit pages A4, en noir et
+    blanc. Tous sont en libre accès sous licence
+    <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>&#160;: copiez-les, imprimez-les,
+    modifiez-les, diffusez-les — en citant l'auteur. Chaque mémento est fourni en PDF et en source
+    HTML modifiable.
+  </p>
+
+  {
+    familles.map(({ famille, rubriques }) => (
+      <section class="famille" aria-labelledby={`famille-${famille.numero}`}>
+        <h2 id={`famille-${famille.numero}`}>
+          <span class="famille__numero">{famille.numero}</span> {famille.nom}
+        </h2>
+        {rubriques.map(({ rubrique, mementos }) => (
+          <>
+            {/* Le nom de la rubrique n'apporte rien quand il redit celui de la famille. */}
+            {(rubriques.length > 1 || rubrique.nom !== famille.nom) && (
+              <h3 class="rubrique">{rubrique.nom}</h3>
+            )}
+            <ul class="grille grille--mementos">
+              {mementos.map((m) => (
+                <CarteMemento m={m} />
+              ))}
+            </ul>
+          </>
+        ))}
+      </section>
+    ))
+  }
+</Base>

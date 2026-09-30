@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CarteMemento from '../components/CarteMemento.astro';
+import { mementosPublies, grouper } from '../lib/mementos';
+import { AUTEUR, RESEAUX, ARSCRIPTA, SPECULA, DEPOT_PRAXIS, LICENCE } from '../lib/identite';
+
+// Les mémentos dans l'ordre du classement, famille après famille.
+const mementos = grouper(await mementosPublies()).flatMap((f) =>
+  f.rubriques.flatMap((r) => r.mementos),
+);
+
+const articles = (await getCollection('articles', (e) => !e.data.brouillon))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 4);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: AUTEUR,
+  url: Astro.site?.href,
+  sameAs: RESEAUX.map((r) => r.url),
+  founder: { '@type': 'Organization', name: ARSCRIPTA.nom, url: ARSCRIPTA.url },
+};
+---
+<Base
+  titre={AUTEUR}
+  description="Mémentos imprimables en libre accès, méthodes de travail (ARSCRIPTA) et analyses macro-financières (SPECULA)."
+  jsonLd={jsonLd}
+>
+  <h1>{AUTEUR}</h1>
+  <p class="chapeau">
+    Des mémentos à imprimer, en libre accès&#160;; des méthodes de travail publiées par
+    ARSCRIPTA&#160;; des analyses macro-financières publiées par SPECULA.
+  </p>
+
+  <section aria-labelledby="titre-mementos">
+    <h2 id="titre-mementos"><a href="/mementos/">Mémentos</a></h2>
+    <p>
+      {mementos.length} aide-mémoire imprimables, de six à huit pages A4 chacun, de l'informatique au
+      latin. PDF et source HTML, sous licence
+      <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>.
+    </p>
+    <ul class="grille grille--mementos">
+      {mementos.map((m) => <CarteMemento m={m} />)}
+    </ul>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section aria-labelledby="titre-articles">
+        <h2 id="titre-articles">Derniers articles</h2>
+        <ol class="sommaire sommaire--serre">
+          {articles.map((a) => (
+            <li>
+              <p class="etiquette">
+                {a.data.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })}
+              </p>
+              <h3><a href={`/articles/${a.id}/`}>{a.data.titre}</a></h3>
+              <p class="sommaire__these">{a.data.these}</p>
+            </li>
+          ))}
+        </ol>
+        <p class="liens"><a href="/articles/">Tous les articles</a></p>
+      </section>
+    )
+  }
+
+  <section aria-labelledby="titre-ailleurs">
+    <h2 id="titre-ailleurs">Ailleurs</h2>
+    <ul class="ailleurs">
+      <li>
+        <h3><a href={SPECULA.url}>Articles — specula.fr</a></h3>
+        <p>Analyses macro-financières et La Note Sentinelle.</p>
+      </li>
+      <li>
+        <h3><a href={ARSCRIPTA.methodes}>Méthodes — arscripta.fr</a></h3>
+        <p>
+          Quatre méthodes de travail publiées sous licences ouvertes&#160;: RCUP pour classer, TELOS
+          pour conduire un projet, SOBRE pour instruire un assistant IA, et PRAXIS, qui les réunit.
+        </p>
+      </li>
+      <li>
+        <h3><a href={RESEAUX[2].url}>Code — GitHub</a></h3>
+        <p>
+          Dépôts publics, dont <a href={DEPOT_PRAXIS}>la méthode PRAXIS</a>, versée au domaine
+          public.
+        </p>
+      </li>
+      <li>
+        <h3>Réseaux</h3>
+        <p>
+          <a href={RESEAUX[0].url} rel="me">X — {RESEAUX[0].libelle}</a><br />
+          <a href={RESEAUX[1].url} rel="me">LinkedIn</a>
+        </p>
+      </li>
+    </ul>
+  </section>
+</Base>

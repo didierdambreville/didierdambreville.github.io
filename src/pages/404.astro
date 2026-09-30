@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { AUTEUR } from '../lib/identite';
+---
+<Base titre={`Page introuvable — ${AUTEUR}`} description="Cette adresse ne correspond à aucune page.">
+  <h1>Page introuvable</h1>
+  <p>
+    Cette adresse ne correspond à aucune page. Si vous suivez un lien ancien, il devrait avoir été
+    redirigé&#160;: les adresses de ce site ne sont pas censées disparaître. Signalez-le, ce serait
+    un défaut.
+  </p>
+  <p class="liens"><a href="/">Accueil</a> · <a href="/mementos/">Les mémentos</a></p>
+</Base>

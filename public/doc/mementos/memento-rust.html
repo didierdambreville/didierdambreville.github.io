@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="D. Dambreville">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.fr">
+<title>Mémento — Rust</title>
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: #fff; color: #000; }
+body { font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 8.5pt; line-height: 1.17; }
+.page { width: 210mm; height: 297mm; padding: 7mm 8.5mm 5.5mm; display: flex; flex-direction: column;
+        overflow: hidden; break-after: page; page-break-after: always; }
+.page:last-child { break-after: auto; page-break-after: auto; }
+.tabs { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1mm; margin-bottom: 2mm; flex: none; }
+.tab { border: 0.6pt solid #000; border-radius: 1mm; padding: 0.5mm 1.2mm 0.4mm; font-size: 6.8pt; text-transform: uppercase;
+       letter-spacing: .03em; white-space: nowrap; overflow: hidden; }
+.tab.on { background: #000; color: #fff; font-weight: bold; }
+.cover { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2pt solid #000;
+         padding-bottom: 1.8mm; margin-bottom: 2.6mm; flex: none; gap: 4mm; }
+.kicker { font-size: 8pt; text-transform: uppercase; letter-spacing: .35em; font-weight: bold; }
+.cover h1 { font-family: Cambria, Georgia, serif; font-size: 30pt; line-height: 1; margin: 0.6mm 0 1mm; letter-spacing: .01em; }
+.sub { font-size: 9pt; letter-spacing: .02em; }
+.legend { border: 0.7pt solid #000; border-radius: 1.2mm; padding: 1.2mm 2mm; font-size: 7.6pt; line-height: 1.4; flex: none; }
+.ptitle { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2pt solid #000;
+          padding-bottom: 0.8mm; margin-bottom: 2.4mm; flex: none; }
+.ptitle h1 { font-family: Cambria, Georgia, serif; font-size: 16pt; margin: 0; }
+.ptitle .run { font-size: 7.2pt; text-transform: uppercase; letter-spacing: .12em; }
+.cols { flex: 1 1 auto; min-height: 0; display: grid; gap: 3mm; }
+.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.col { display: flex; flex-direction: column; gap: 2.2mm; min-height: 0; overflow: hidden; }
+.box { border: 0.7pt solid #000; border-radius: 1.2mm; overflow: hidden; flex: none; }
+.page > .box { margin-bottom: 2.2mm; }
+.page > .cols + .box { margin-top: 2.2mm; margin-bottom: 0; }
+.col > .box:last-child { flex: 1 1 auto; }
+.box h2 { margin: 0; background: #000; color: #fff; font-size: 8.3pt; text-transform: uppercase; letter-spacing: .06em;
+          padding: 0.7mm 2mm 0.5mm; }
+.bd { padding: 1mm 1.5mm 1.2mm; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+td, th { padding: 0.3mm 0.9mm; vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+tbody tr:nth-child(even) td { background: #e8e8e8; }
+th { font-size: 7pt; text-transform: uppercase; letter-spacing: .03em; border-bottom: 0.8pt solid #000; padding-bottom: 0.4mm; }
+code, pre, kbd { font-family: Consolas, "DejaVu Sans Mono", "Courier New", monospace; }
+code { font-weight: bold; font-size: .94em; }
+code i, td.k i, pre i { font-weight: normal; }
+td.k { font-family: Consolas, "DejaVu Sans Mono", "Courier New", monospace; font-weight: bold; font-size: .94em; }
+td.k code { font-size: 1em; }
+td.sub { font-size: .95em; font-style: italic; }
+td:not(.k) code, .note code, li code { white-space: nowrap; }
+kbd { display: inline-block; border: .6pt solid #000; border-radius: .7mm; padding: 0 .55mm; line-height: 1.12;
+      font-size: .84em; font-weight: bold; background: #fff; white-space: nowrap; box-shadow: 0 .35pt 0 #000; }
+td.k kbd { font-size: .9em; }
+pre.code { margin: .8mm 0; padding: .7mm 1.4mm; background: #efefef; border-left: 1.5pt solid #000;
+           font-size: 7.3pt; line-height: 1.2; white-space: pre; overflow: hidden; }
+pre.code .cm { font-style: italic; font-weight: normal; color: #444; }
+h3 { margin: 1.2mm 0 0.5mm; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .04em;
+     border-bottom: 0.6pt solid #000; padding-bottom: 0.2mm; }
+.bd > h3:first-child { margin-top: 0; }
+.note { margin: 0.9mm 0 0; font-size: 7.9pt; }
+.note.first { margin-top: 0; margin-bottom: 0.8mm; }
+ul.lst, ol.lst { margin: 0; padding-left: 3.4mm; }
+ul.lst li, ol.lst li { margin: 0 0 0.45mm; }
+ol.lst li::marker { font-weight: bold; }
+.w { display: inline-block; width: 1.3em; height: 1.3em; line-height: 1.3em; border-radius: 50%; background: #000; color: #fff;
+     font-weight: bold; text-align: center; font-size: .78em; vertical-align: .08em; margin-right: .15em; font-style: normal; }
+sup { font-size: .68em; line-height: 0; }
+.foot { display: flex; justify-content: space-between; font-size: 6.8pt; border-top: .6pt solid #000;
+        padding-top: .7mm; margin-top: 2mm; flex: none; letter-spacing: .02em; }
+.foot code { font-size: 1em; }
+.legend .cm, pre .cm { font-style: italic; font-weight: normal; color: #444; }
+td.sub { font-weight: bold; font-style: normal; text-transform: uppercase; font-size: 6.8pt; letter-spacing: .05em;
+         background: none !important; border-bottom: .5pt solid #000; padding-top: .8mm; }
+tbody tr:first-child td.sub { padding-top: 0; }
+.in2 { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 3mm; align-items: center; }
+pre.diag { margin: 0; padding: .6mm 1mm; font-size: 7.1pt; line-height: 1.18; white-space: pre; overflow: hidden;
+           border: .6pt dashed #000; border-radius: 1mm; }
+pre.diag .cm { font-style: italic; color: #444; }
+.rule { border: 1.2pt solid #000; border-radius: 1mm; background: #efefef; padding: .8mm 1.4mm; margin: .9mm 0 .6mm; font-size: 8.1pt; }
+.gloss { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .2mm 2mm; }
+.gloss span { border-bottom: .4pt solid #999; padding: .15mm 0; white-space: nowrap; overflow: hidden; }
+.gloss i { color: #333; }
+table.ct thead + tbody tr:nth-child(even) td { background: #e8e8e8; }
+.nw { white-space: nowrap; }
+.box h2 code { text-transform: none; font-size: 1em; }
+.gloss span.l { grid-column: 1 / -1; }
+td.k { overflow-wrap: break-word; }
+.kicker .auteur { margin-left: 3mm; letter-spacing: .02em; text-transform: none; font-weight: normal; }
+</style>
+</head>
+<body>
+<div class="page p1"><nav class="tabs"><div class="tab on"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="cover">
+  <div class="brand">
+    <div class="kicker">Mémento<span class="auteur">Auteur&#160;: D.&#160;Dambreville · didierdambreville.github.io · licence CC&#160;BY&#160;4.0</span></div>
+    <h1>Rust</h1>
+    <div class="sub">Le langage · possession et emprunt · types et traits · erreurs · collections · Cargo · concurrence</div>
+  </div>
+  <div class="legend">
+    <div><code>let x = 5;</code> chasse fixe, gras : code à taper tel quel</div>
+    <div><code><i>nom</i></code> italique : valeur à remplacer</div>
+    <div><code><span class="cm">// → 42</span></code> commentaire : résultat obtenu</div>
+    <div><code>E0382</code> code d’erreur du compilateur</div>
+    <div><span class="w">!</span> piège fréquent ou action risquée</div>
+  </div>
+</header><div class="cols c3"><div class="col"><section class="box "><h2>Installer et démarrer</h2><div class="bd"><table class="ct "><colgroup><col style="width:47%"><col style="width:53%"></colgroup><tbody><tr><td class="k"><span class="nw">rustup</span></td><td>installateur officiel et gestionnaire de versions (rustup.rs)</td></tr><tr><td class="k">rustup update</td><td>mettre à jour compilateur et outils</td></tr><tr><td class="k">cargo new <i>projet</i></td><td>créer un projet (<code>--lib</code> : une bibliothèque)</td></tr><tr><td class="k"><span class="nw">cargo run</span></td><td>compiler et lancer</td></tr><tr><td class="k"><span class="nw">cargo check</span></td><td>vérifier sans produire d’exécutable (rapide)</td></tr><tr><td class="k">cargo build <span class="nw">--release</span></td><td>compilation optimisée → <code>target/release/</code></td></tr><tr><td class="k"><span class="nw">cargo test</span></td><td>lancer les tests</td></tr><tr><td class="k"><span class="nw">cargo fmt</span></td><td>mettre le code en forme</td></tr><tr><td class="k"><span class="nw">cargo clippy</span></td><td>conseils de qualité (analyseur)</td></tr><tr><td class="k">rustup doc <span class="nw">--std</span></td><td>documentation de la bibliothèque standard, hors ligne</td></tr></tbody></table><p class="note">Windows : <code>rustup-init.exe</code> ; il propose d’installer les outils Visual Studio (éditeur de liens MSVC) requis.</p><p class="note">Une version stable toutes les 6 semaines ; au 29 septembre 2026 : <b>1.98</b>. Édition courante : <b>2024</b> (depuis Rust 1.85).</p></div></section><section class="box "><h2>Premier programme</h2><div class="bd"><pre class="code"><span class="cm">// src/main.rs</span>
+fn main() {
+    let nom = "monde";
+    println!("Bonjour, {nom} !");
+}</pre><ul class="lst"><li><code>fn main()</code> : point d’entrée du programme.</li><li><code>println!</code> : le <code>!</code> signale une <b>macro</b>.</li><li>Instruction terminée par <code>;</code> ; blocs entre <code>{ }</code>.</li><li>Commentaires : <code>//</code> ligne · <code>/* */</code> bloc · <code>///</code> documentation de l’élément qui suit.</li><li>Noms : <code>snake_case</code> variables, fonctions · <code>CamelCase</code> types, traits · <code>MAJUSCULES</code> constantes.</li></ul></div></section><section class="box "><h2>Variables</h2><div class="bd"><table class="ct "><colgroup><col style="width:48%"><col style="width:52%"></colgroup><tbody><tr><td class="k"><span class="nw">let x = 5;</span></td><td>liaison <b>immuable</b> (par défaut)</td></tr><tr><td class="k">let mut n = 0;</td><td>liaison modifiable</td></tr><tr><td class="k">let x: i64 = 5;</td><td>type explicite (sinon déduit)</td></tr><tr><td class="k">let x = x * 2;</td><td>masquage : nouvelle variable de même nom, type libre</td></tr><tr><td class="k">const MAX: u32 = 100;</td><td>constante : type obligatoire, calculée à la compilation</td></tr><tr><td class="k">static NOM: &amp;str = "a";</td><td>valeur globale unique</td></tr><tr><td class="k">let (a, b) = (1, 2);</td><td>déstructuration</td></tr><tr><td class="k"><span class="nw">let _x = 1;</span></td><td><code>_</code> en tête : pas d’avertissement si inutilisée</td></tr></tbody></table><p class="note"><span class="w">!</span> Réaffecter une liaison sans <code>mut</code> : erreur <code>E0384</code>.</p></div></section></div><div class="col"><section class="box "><h2>Types scalaires</h2><div class="bd"><table class="ct "><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody><tr><td class="k">i8 i16 i32 i64 i128</td><td>entiers signés ; <code>i32</code> par défaut</td></tr><tr><td class="k">u8 u16 u32 u64 u128</td><td>entiers non signés ; <code>u8</code> = octet</td></tr><tr><td class="k"><span class="nw">isize usize</span></td><td>taille d’une adresse (64 bits sur un PC actuel) ; index et longueurs : <code>usize</code></td></tr><tr><td class="k"><span class="nw">f32 f64</span></td><td>flottants IEEE 754 ; <code>f64</code> par défaut</td></tr><tr><td class="k"><span class="nw">bool</span></td><td><code>true</code> · <code>false</code></td></tr><tr><td class="k"><span class="nw">char</span></td><td>un caractère Unicode, 4 octets : <code>'é'</code></td></tr><tr><td class="k"><span class="nw">()</span></td><td>« unité » : absence de valeur</td></tr></tbody></table><h3>Littéraux</h3><table class="ct "><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody><tr><td class="k"><span class="nw">1_000_000</span></td><td><code>_</code> : séparateur visuel</td></tr><tr><td class="k">0xff 0o77 0b1010</td><td>hexadécimal · octal · binaire</td></tr><tr><td class="k"><span class="nw">255u8 2.5f32</span></td><td>suffixe de type</td></tr><tr><td class="k"><span class="nw">b'A' b"abc"</span></td><td>octet <code>u8</code> · chaîne d’octets</td></tr><tr><td class="k">'\n' '\t' '\\' '\u{e9}'</td><td>caractères échappés (<code>\u{e9}</code> = é)</td></tr><tr><td class="k"><span class="nw">r"C:\d"</span> · <span class="nw">r#"a "b""#</span></td><td>chaînes brutes : <code>\</code> et <code>"</code> pris à la lettre</td></tr></tbody></table><p class="note">Bornes : <code>i32::MAX</code>, <code>u8::MIN</code>… <span class="w">!</span> Dépassement d’entier : panique en mode debug, résultat « rebouclé » en <code>--release</code>. Choisir : <code>checked_add</code> (→ <code>Option</code>), <code>wrapping_add</code>, <code>saturating_add</code>.</p></div></section><section class="box "><h2>Types composés</h2><div class="bd"><table class="ct "><colgroup><col style="width:35%"><col style="width:65%"></colgroup><tbody><tr><td class="k">(i32, f64, char)</td><td>tuple : types mêlés, taille fixe ; <code>t.0</code>, <code>t.1</code></td></tr><tr><td class="k"><span class="nw">[i32; 5]</span></td><td>tableau : taille fixe ; <code>[0; 5]</code> = cinq zéros</td></tr><tr><td class="k"><span class="nw">&amp;[i32]</span></td><td>tranche (slice) : vue sur une suite contiguë ; <code>&amp;a[1..3]</code></td></tr><tr><td class="k"><span class="nw">&amp;str</span></td><td>tranche de texte UTF-8 ; littéraux <code>"…"</code></td></tr><tr><td class="k"><span class="nw">String</span></td><td>texte possédé, modifiable (tas)</td></tr><tr><td class="k"><span class="nw">Vec&lt;T&gt;</span></td><td>tableau dynamique possédé (tas)</td></tr></tbody></table><p class="note"><code>a[i]</code> hors limites : <b>panique</b>, jamais de lecture hasardeuse. <code>a.get(i)</code> renvoie une <code>Option</code>.</p></div></section><section class="box "><h2>Conversions</h2><div class="bd"><table class="ct "><colgroup><col style="width:47%"><col style="width:53%"></colgroup><tbody><tr><td class="k"><span class="nw">x as f64</span></td><td>entre types primitifs, sans contrôle</td></tr><tr><td class="k"><span class="nw">f64::from(x)</span> · <span class="nw">x.into()</span></td><td>sans perte possible (<code>From</code> / <code>Into</code>)</td></tr><tr><td class="k">u8::try_from(x)</td><td>faillible → <code>Result</code></td></tr><tr><td class="k">"42".parse::&lt;i32&gt;()</td><td>texte → nombre : <code>Result</code></td></tr><tr><td class="k">n.to_string()</td><td>nombre → <code>String</code></td></tr><tr><td class="k"><span class="nw">s.as_str()</span> · <span class="nw">&amp;s</span></td><td><code>String</code> → <code>&amp;str</code></td></tr><tr><td class="k">s.to_string()</td><td><code>&amp;str</code> → <code>String</code> (ou <code>String::from(s)</code>)</td></tr></tbody></table><p class="note"><span class="w">!</span> <code>as</code> tronque : <code>300_i32 as u8</code> → 44 ; <code>-1_i32 as u32</code> → 4294967295 ; <code>2.9_f64 as i32</code> → 2 ; <code>300.0_f64 as u8</code> → 255.</p></div></section></div><div class="col"><section class="box "><h2>Afficher : println! et format!</h2><div class="bd"><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k"><span class="nw">{}</span></td><td>affichage « utilisateur » (<code>Display</code>)</td></tr><tr><td class="k"><span class="nw">{:?}</span> · <span class="nw">{:#?}</span></td><td>débogage (<code>Debug</code>) · indenté</td></tr><tr><td class="k"><span class="nw">{x}</span> · <span class="nw">{0}</span> · <span class="nw">{nom}</span></td><td>variable · position · argument nommé</td></tr><tr><td class="k">{:&gt;8} {:&lt;8} {:^8}</td><td>à droite · à gauche · centré sur 8</td></tr><tr><td class="k"><span class="nw">{:08.2}</span></td><td>8 caractères, zéros devant, 2 décimales</td></tr><tr><td class="k"><span class="nw">{:+}</span></td><td>signe toujours affiché</td></tr><tr><td class="k">{:x} {:X} {:o} {:b}</td><td>hexadécimal · majuscules · octal · binaire</td></tr><tr><td class="k"><span class="nw">{:#x}</span> · <span class="nw">{:#b}</span></td><td>avec préfixe <code>0x</code> · <code>0b</code></td></tr><tr><td class="k"><span class="nw">{:e}</span></td><td>notation scientifique</td></tr><tr><td class="k"><span class="nw">{:&gt;w$}</span> · <span class="nw">{:.p$}</span></td><td>largeur · précision prises dans <code>w</code> · <code>p</code></td></tr><tr><td class="k"><span class="nw">{{</span> · <span class="nw">}}</span></td><td>accolade littérale</td></tr></tbody></table><h3>Macros d’usage courant</h3><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k"><span class="nw">print!</span> · <span class="nw">println!</span></td><td>sortie standard</td></tr><tr><td class="k"><span class="nw">eprint!</span> · <span class="nw">eprintln!</span></td><td>sortie d’erreur</td></tr><tr><td class="k"><span class="nw">format!(…)</span></td><td>même syntaxe → <code>String</code></td></tr><tr><td class="k"><span class="nw">dbg!(expr)</span></td><td>affiche fichier, ligne, expression et valeur (sur stderr), puis la renvoie</td></tr><tr><td class="k"><span class="nw">write!</span> · <span class="nw">writeln!</span></td><td>vers un fichier ou un tampon</td></tr><tr><td class="k">vec![1, 2, 3]</td><td>construire un <code>Vec</code></td></tr><tr><td class="k"><span class="nw">assert!(c)</span> · assert_eq!(a, b)</td><td>vérifier, sinon paniquer</td></tr><tr><td class="k"><span class="nw">todo!()</span></td><td>code à écrire : panique si atteint</td></tr><tr><td class="k">unreachable!()</td><td>branche jugée impossible</td></tr></tbody></table></div></section><section class="box "><h2>Lire le compilateur</h2><div class="bd"><ol class="lst"><li>Lire la <b>première</b> erreur : les suivantes en découlent souvent.</li><li>Code <code>E0382</code> → <code>rustc --explain E0382</code> : explication et exemples.</li><li>Suivre les lignes <code>help:</code> : le correctif y est souvent proposé.</li><li><code>cargo check</code> pour itérer vite ; <code>cargo clippy</code> pour les tournures idiomatiques.</li></ol><table class="ct "><colgroup><col style="width:27%"><col style="width:36%"><col style="width:37%"></colgroup><tbody><tr><td class="k"><span class="nw">E0308</span></td><td>types incompatibles</td><td>conversion ? <code>;</code> final en trop ?</td></tr><tr><td class="k"><span class="nw">E0277</span></td><td>trait non implémenté</td><td><code>derive</code>, <code>impl</code>, autre type</td></tr><tr><td class="k"><span class="nw">E0599</span></td><td>méthode introuvable</td><td>type exact ? trait importé ?</td></tr><tr><td class="k"><span class="nw">E0425</span></td><td>nom inconnu</td><td>orthographe, portée</td></tr><tr><td class="k"><span class="nw">E0432</span> · <span class="nw">E0433</span></td><td>import · chemin non résolu</td><td><code>use</code>, <code>mod</code>, dépendance</td></tr></tbody></table><p class="note">Erreurs d’emprunt : page 3. Hors blocs <code>unsafe</code>, le compilateur écarte des classes entières d’erreurs mémoire : pointeur pendant, double libération, accès concurrent non synchronisé.</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 1 / 8</span></footer></div>
+<div class="page p2"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab on"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>2 · Opérateurs, fonctions, contrôle du flux</h1><span class="run">Mémento — Rust</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Opérateurs</h2><div class="bd"><table class="ct "><colgroup><col style="width:34%"><col style="width:66%"></colgroup><tbody><tr><td class="k"><span class="nw">+ - * / %</span></td><td>arithmétique ; entre entiers, <code>/</code> division entière : <code>7 / 2</code> → 3, <code>%</code> reste</td></tr><tr><td class="k">== != &lt; &gt; &lt;= &gt;=</td><td>comparaison</td></tr><tr><td class="k"><span class="nw">&amp;&amp; || !</span></td><td>logique (évaluation paresseuse)</td></tr><tr><td class="k"><span class="nw">&amp; | ^ &lt;&lt; &gt;&gt;</span></td><td>bit à bit ; <code>!n</code> : complément</td></tr><tr><td class="k">+= -= *= /= %=</td><td>affectation composée</td></tr><tr><td class="k"><span class="nw">a..b</span> · <span class="nw">a..=b</span></td><td>intervalle exclusif · inclusif</td></tr><tr><td class="k"><span class="nw">&amp;x</span> · <span class="nw">&amp;mut x</span> · <span class="nw">*r</span></td><td>emprunter · en modification · déréférencer</td></tr><tr><td class="k"><span class="nw">?</span></td><td>propager une erreur (page 5)</td></tr><tr><td class="k"><span class="nw">a::b</span></td><td>chemin : <code>std::fs::read</code>, <code>String::new</code></td></tr></tbody></table><p class="note">Ni <code>++</code> ni <code>--</code> : <code>n += 1</code>. Puissance : <code>2_i32.pow(10)</code>, <code>x.powf(0.5)</code>, <code>x.sqrt()</code>. Arrondis : <code>round</code>, <code>floor</code>, <code>ceil</code> · bornes : <code>min</code>, <code>max</code>, <code>clamp</code> · reste positif : <code>rem_euclid</code> (<code>-7 % 3</code> → -1). <span class="w">!</span> Flottants : comparer <code>(a - b).abs() &lt; 1e-9</code>, pas <code>a == b</code> après un calcul.</p></div></section><section class="box "><h2>Tout est expression</h2><div class="bd"><pre class="code">let signe = if n &lt; 0 { "négatif" } else { "positif" };
+
+let carre = {
+    let a = 3;
+    a * a            <span class="cm">// pas de ; : valeur du bloc</span>
+};                   <span class="cm">// carre = 9</span></pre><p class="note">Un bloc vaut sa dernière expression <b>sans</b> <code>;</code> ; avec <code>;</code>, il vaut <code>()</code>. Les branches d’un <code>if</code> doivent avoir le même type.</p></div></section><section class="box "><h2>Fonctions</h2><div class="bd"><pre class="code">fn aire(l: f64, h: f64) -&gt; f64 {
+    l * h                           <span class="cm">// valeur renvoyée</span>
+}
+
+fn diviser(a: i32, b: i32) -&gt; Option&lt;i32&gt; {
+    if b == 0 {
+        return None;                <span class="cm">// sortie anticipée</span>
+    }
+    Some(a / b)
+}
+
+fn saluer(nom: &amp;str) {              <span class="cm">// renvoie ()</span>
+    println!("Bonjour {nom}");
+}</pre><ul class="lst"><li>Types des paramètres <b>obligatoires</b> ; type de retour après <code>-&gt;</code>.</li><li>Ni paramètres par défaut ni surcharge : <code>Option</code>, noms distincts, constructeurs.</li><li><span class="w">!</span> <code>fn f() -&gt; i32 { 5; }</code> : le <code>;</code> fait renvoyer <code>()</code> → <code>E0308</code>.</li><li>Retour <code>-&gt; !</code> : la fonction ne revient jamais (<code>panic!</code>, <code>std::process::exit</code>).</li></ul></div></section><section class="box "><h2>Fermetures (closures)</h2><div class="bd"><pre class="code">let double = |x| x * 2;
+let somme = |a: i32, b: i32| -&gt; i32 { a + b };
+let seuil = 10;
+let grand = |x: &amp;i32| *x &gt; seuil;   <span class="cm">// capture seuil</span>
+let f = move || println!("{seuil}");<span class="cm">// prend possession</span></pre><table class="ct "><colgroup><col style="width:30%"><col style="width:70%"></colgroup><tbody><tr><td class="k"><span class="nw">Fn</span></td><td>lit ce qu’elle capture ; appelable à volonté</td></tr><tr><td class="k"><span class="nw">FnMut</span></td><td>modifie ce qu’elle capture</td></tr><tr><td class="k"><span class="nw">FnOnce</span></td><td>consomme ce qu’elle capture : un seul appel</td></tr><tr><td class="k">fn(i32) -&gt; i32</td><td>pointeur de fonction (aucune capture)</td></tr></tbody></table><p class="note"><code>move</code> : indispensable quand la fermeture survit à la portée courante (thread, valeur renvoyée). Accepter une fermeture : <code>fn appliquer(f: impl Fn(i32) -&gt; i32)</code>.</p></div></section></div><div class="col"><section class="box "><h2>Boucles</h2><div class="bd"><pre class="code">for i in 0..5 { }                   <span class="cm">// 0, 1, 2, 3, 4</span>
+for i in 1..=5 { }                  <span class="cm">// 1 à 5 inclus</span>
+for i in (0..10).rev() { }          <span class="cm">// 9 à 0</span>
+for i in (0..10).step_by(3) { }     <span class="cm">// 0, 3, 6, 9</span>
+for (i, x) in v.iter().enumerate() { }
+
+while n &gt; 0 { n -= 1; }
+
+let mut k = 0;
+let r = loop {                      <span class="cm">// boucle sans fin…</span>
+    k += 1;
+    if k == 10 { break k * 2; }     <span class="cm">// …qui renvoie 20</span>
+};
+
+'externe: for x in 0..5 {           <span class="cm">// étiquette</span>
+    for y in 0..5 {
+        if x + y &gt; 6 { break 'externe; }
+        if y &gt; x { continue 'externe; }
+    }
+}</pre><p class="note"><code>for x in &amp;v</code> parcourt sans consommer ; <code>for x in v</code> consomme <code>v</code> (inutilisable ensuite) ; <code>for x in &amp;mut v</code> permet de modifier : <code>*x += 1</code>.</p></div></section><section class="box "><h2>match : filtrage par motif</h2><div class="bd"><pre class="code">match n {
+    0 =&gt; println!("zéro"),
+    1 | 2 =&gt; println!("un ou deux"),
+    3..=9 =&gt; println!("chiffre"),
+    x if x &lt; 0 =&gt; println!("négatif : {x}"),
+    grand @ 100.. =&gt; println!("grand : {grand}"),
+    _ =&gt; println!("autre"),
+}
+
+let pays = match code {             <span class="cm">// une expression</span>
+    'F' =&gt; "France",
+    'D' =&gt; "Allemagne",
+    _ =&gt; "inconnu",
+};</pre><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k"><span class="nw">_</span></td><td>n’importe quoi, sans lier</td></tr><tr><td class="k"><span class="nw">x</span></td><td>lie la valeur à <code>x</code></td></tr><tr><td class="k"><span class="nw">a | b</span></td><td>l’un ou l’autre</td></tr><tr><td class="k"><span class="nw">1..=5</span> · <span class="nw">'a'..='z'</span></td><td>intervalle inclusif</td></tr><tr><td class="k">x if <i>condition</i></td><td>garde : condition supplémentaire</td></tr><tr><td class="k"><span class="nw">n @ 1..=9</span></td><td>tester et lier à la fois</td></tr><tr><td class="k"><span class="nw">(a, _, c)</span></td><td>tuple</td></tr><tr><td class="k">[premier, .., dernier]</td><td>tableau ou tranche ; <code>..</code> : le reste</td></tr><tr><td class="k">Point { x, y: 0, .. }</td><td>structure : champs lus, champs testés</td></tr><tr><td class="k"><span class="nw">Some(v)</span> · <span class="nw">Err(e)</span></td><td>variante d’une énumération</td></tr><tr><td class="k"><span class="nw">&amp;x</span></td><td>déstructurer une référence</td></tr></tbody></table><p class="note"><span class="w">!</span> Un <code>match</code> doit être <b>exhaustif</b> : tout cas possible couvert, sinon <code>E0004</code>. <code>_</code> en dernier recueille le reste.</p></div></section><section class="box "><h2>Raccourcis de filtrage</h2><div class="bd"><pre class="code">if let Some(x) = option {           <span class="cm">// un seul motif</span>
+    println!("{x}");
+} else {
+    println!("rien");
+}
+
+let Some(x) = option else {         <span class="cm">// let … else</span>
+    return;                         <span class="cm">// doit sortir</span>
+};                                  <span class="cm">// x reste utilisable</span>
+
+while let Some(sommet) = pile.pop() {
+    println!("{sommet}");
+}
+
+if let Some(x) = option &amp;&amp; x &gt; 10 { }   <span class="cm">// édition 2024</span>
+
+let voyelle = matches!(c, 'a' | 'e' | 'i' | 'o' | 'u');</pre><p class="note">Le bloc <code>else</code> d’un <code>let … else</code> doit diverger : <code>return</code>, <code>break</code>, <code>continue</code>, <code>panic!</code>. Chaînes <code>if let … &amp;&amp;</code> : édition 2024, Rust 1.88 ou plus.</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 2 / 8</span></footer></div>
+<div class="page p3"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab on"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>3 · Possession, emprunt, durées de vie</h1><span class="run">Mémento — Rust</span></header><section class="box "><h2>Les trois règles de la possession (ownership)</h2><div class="bd"><div class="in2"><div><ol class="lst"><li>Chaque valeur a <b>un seul propriétaire</b> : une variable, un champ, un élément de collection.</li><li>Affecter la valeur ou la passer à une fonction la <b>déplace</b> (move) : l’ancien nom devient inutilisable.</li><li>Quand le propriétaire sort de sa portée, la valeur est <b>libérée</b> (drop), automatiquement : ni ramasse-miettes ni <code>free</code>.</li></ol><p class="note">Les types <code>Copy</code> (entiers, flottants, <code>bool</code>, <code>char</code>, <code>&amp;T</code>, tuples et tableaux de types <code>Copy</code>) sont <b>copiés</b> au lieu d’être déplacés. Les autres (<code>String</code>, <code>Vec</code>, <code>Box</code>…) se dupliquent explicitement avec <code>.clone()</code> : une copie coûteuse reste visible.</p></div><div><pre class="diag">let s1 = String::from("salut");
+let s2 = s1;           // déplacement : s1 n'est plus utilisable
+
+   s1 (invalidée)        s2                     tas
+ +-----+-------+     +-----+-------+     +---+---+---+---+---+
+ | ptr |   x   |     | ptr |   o---+---&gt; | s | a | l | u | t |
+ | len |   5   |     | len |   5   |     +---+---+---+---+---+
+ | cap |   5   |     | cap |   5   |
+ +-----+-------+     +-----+-------+
+         pile (stack)</pre></div></div></div></section><div class="cols c2"><div class="col"><section class="box "><h2>Déplacer, copier, cloner</h2><div class="bd"><pre class="code">let s1 = String::from("salut");
+let s2 = s1;                        <span class="cm">// déplacement</span>
+<span class="cm">// println!("{s1}");                // E0382 : valeur déplacée</span>
+
+let s3 = s2.clone();                <span class="cm">// copie profonde</span>
+println!("{s2} {s3}");              <span class="cm">// les deux sont valides</span>
+
+let a = 5;
+let b = a;                          <span class="cm">// i32 est Copy</span>
+println!("{a} {b}");                <span class="cm">// a reste valide</span>
+
+fn prendre(s: String) { }           <span class="cm">// prend possession</span>
+prendre(s3);                        <span class="cm">// s3 inutilisable ensuite</span></pre></div></section><section class="box "><h2>Emprunter : les références</h2><div class="bd"><pre class="code">fn longueur(s: &amp;String) -&gt; usize { s.len() }  <span class="cm">// lit</span>
+fn crier(s: &amp;mut String) { s.push('!'); }     <span class="cm">// modifie</span>
+
+let mut s = String::from("salut");
+let n = longueur(&amp;s);               <span class="cm">// emprunt partagé</span>
+crier(&amp;mut s);                      <span class="cm">// emprunt exclusif</span></pre><div class="rule"><b>Règle d’or</b> — à un instant donné : <b>soit</b> autant de références partagées <code>&amp;T</code> qu’on veut, <b>soit</b> une seule référence exclusive <code>&amp;mut T</code>. Et une référence ne vit jamais plus longtemps que la valeur qu’elle désigne.</div><pre class="code">let mut v = vec![1, 2, 3];
+let premier = &amp;v[0];                <span class="cm">// emprunt partagé…</span>
+v.push(4);                          <span class="cm">// E0502 : exclusif</span>
+println!("{premier}");              <span class="cm">// …encore utilisé ici</span></pre><p class="note">Pourquoi ? <code>push</code> peut réallouer le vecteur : <code>premier</code> désignerait une mémoire libérée. Correctifs : utiliser <code>premier</code> avant le <code>push</code>, ou copier la valeur (<code>let premier = v[0];</code>).</p><p class="note">Un emprunt dure jusqu’à sa <b>dernière utilisation</b>, pas jusqu’à la fin du bloc.</p></div></section><section class="box "><h2>Durées de vie (<code>'a</code>)</h2><div class="bd"><pre class="code">fn plus_long&lt;'a&gt;(x: &amp;'a str, y: &amp;'a str) -&gt; &amp;'a str {
+    if x.len() &gt;= y.len() { x } else { y }
+}
+
+struct Extrait&lt;'a&gt; {
+    texte: &amp;'a str,                 <span class="cm">// la structure emprunte</span>
+}</pre><ul class="lst"><li><code>'a</code> ne change aucune durée : il <b>décrit</b> le lien entre les références (ici : le résultat vit autant que la plus courte des deux).</li><li>Élision : une seule référence en paramètre, ou <code>&amp;self</code> → annotation inutile.</li><li><code>'static</code> : valable pendant tout le programme (littéraux <code>"…"</code>).</li></ul></div></section><section class="box "><h2>Portée et libération</h2><div class="bd"><pre class="code">{
+    let a = String::from("a");
+    let b = vec![1, 2, 3];
+    <span class="cm">// … a et b utilisables ici</span>
+}                       <span class="cm">// fin de portée : b, puis a, libérés</span>
+let v = vec![0; 1000];
+drop(v);                <span class="cm">// libération anticipée</span></pre><p class="note">Ordre inverse de la déclaration. <code>impl Drop</code> : agir à la libération (fermer un fichier, relâcher un verrou).</p></div></section></div><div class="col"><section class="box "><h2>Choisir le type d’un paramètre</h2><div class="bd"><table class="ct "><colgroup><col style="width:22%"><col style="width:78%"></colgroup><tbody><tr><td class="k"><span class="nw">&amp;str</span></td><td>lire un texte (accepte <code>&amp;String</code> et les littéraux)</td></tr><tr><td class="k"><span class="nw">&amp;[T]</span></td><td>lire une suite (accepte <code>&amp;Vec&lt;T&gt;</code> et les tableaux)</td></tr><tr><td class="k"><span class="nw">&amp;mut T</span></td><td>modifier sur place</td></tr><tr><td class="k"><span class="nw">T</span></td><td>garder la valeur (la stocker) ; petites valeurs <code>Copy</code></td></tr></tbody></table><p class="note">Renvoyer une valeur <b>possédée</b> (<code>String</code>, <code>Vec&lt;T&gt;</code>) plutôt qu’une référence vers une variable locale.</p></div></section><section class="box "><h2>Pointeurs intelligents et partage</h2><div class="bd"><table class="ct "><colgroup><col style="width:25%"><col style="width:45%"><col style="width:30%"></colgroup><tbody><tr><td class="k"><span class="nw">Box&lt;T&gt;</span></td><td>valeur sur le tas, un seul propriétaire</td><td>type récursif, <code>dyn Trait</code></td></tr><tr><td class="k"><span class="nw">Rc&lt;T&gt;</span></td><td>plusieurs propriétaires (compteur de références)</td><td>partage dans un thread</td></tr><tr><td class="k"><span class="nw">Arc&lt;T&gt;</span></td><td>idem, compteur atomique</td><td>partage entre threads</td></tr><tr><td class="k">Cell&lt;T&gt; RefCell&lt;T&gt;</td><td>modifier à travers <code>&amp;</code> (mutabilité intérieure)</td><td>contrôle à l’exécution</td></tr><tr><td class="k">Mutex&lt;T&gt; RwLock&lt;T&gt;</td><td>mutabilité intérieure verrouillée</td><td>entre threads</td></tr><tr><td class="k"><span class="nw">Weak&lt;T&gt;</span></td><td>référence non possédante vers un <code>Rc</code> / <code>Arc</code></td><td>casser les cycles</td></tr><tr><td class="k"><span class="nw">Cow&lt;'a, T&gt;</span></td><td>emprunté ou possédé selon le besoin</td><td>éviter une copie</td></tr></tbody></table><p class="note">Associations classiques : <code>Rc&lt;RefCell&lt;T&gt;&gt;</code> (un thread) · <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> (plusieurs threads).</p><p class="note"><span class="w">!</span> <code>RefCell</code> : deux <code>borrow_mut()</code> simultanés → panique. Deux <code>Rc</code> qui se désignent mutuellement ne sont jamais libérés : fuite mémoire (utiliser <code>Weak</code>).</p></div></section><section class="box "><h2>Prendre une valeur hors d’un emprunt (E0507)</h2><div class="bd"><table class="ct "><colgroup><col style="width:40%"><col style="width:60%"></colgroup><tbody><tr><td class="k"><span class="nw">&amp;v[i]</span></td><td>emprunter au lieu de prendre</td></tr><tr><td class="k"><span class="nw">v[i].clone()</span></td><td>copier l’élément (coût d’une copie)</td></tr><tr><td class="k">mem::take(&amp;mut v[i])</td><td>prendre, en laissant la valeur par défaut (<code>""</code>, <code>0</code>, vide)</td></tr><tr><td class="k">option.take()</td><td>prendre le contenu, en laissant <code>None</code></td></tr><tr><td class="k">v.into_iter() · <span class="nw">v.drain(..)</span></td><td>parcourir en prenant possession · en vidant</td></tr></tbody></table></div></section><section class="box "><h2>Codes d’erreur fréquents</h2><div class="bd"><table class="ct "><colgroup><col style="width:21%"><col style="width:43%"><col style="width:36%"></colgroup><tbody><tr><td class="k"><span class="nw">E0382</span></td><td>valeur utilisée après déplacement</td><td>emprunter <code>&amp;</code>, cloner, réordonner</td></tr><tr><td class="k"><span class="nw">E0499</span></td><td>deux emprunts <code>&amp;mut</code> simultanés</td><td>raccourcir le premier</td></tr><tr><td class="k"><span class="nw">E0502</span></td><td><code>&amp;mut</code> pendant un emprunt <code>&amp;</code></td><td>finir de lire avant d’écrire</td></tr><tr><td class="k"><span class="nw">E0505</span></td><td>déplacement d’une valeur empruntée</td><td>attendre la fin de l’emprunt</td></tr><tr><td class="k"><span class="nw">E0507</span></td><td>sortie d’une valeur depuis une référence</td><td><code>&amp;</code>, <code>.clone()</code>, <code>mem::take</code></td></tr><tr><td class="k"><span class="nw">E0596</span></td><td><code>&amp;mut</code> sur une variable non <code>mut</code></td><td><code>let mut</code></td></tr><tr><td class="k"><span class="nw">E0597</span></td><td>valeur libérée trop tôt</td><td>allonger sa portée</td></tr><tr><td class="k"><span class="nw">E0515</span></td><td>référence vers une variable locale renvoyée</td><td>renvoyer la valeur possédée</td></tr><tr><td class="k"><span class="nw">E0106</span></td><td>durée de vie manquante</td><td>annoter <code>'a</code> ou posséder</td></tr></tbody></table><p class="note">Détail et exemples : <code>rustc --explain <i>code</i></code> ou doc.rust-lang.org/error_codes.</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 3 / 8</span></footer></div>
+<div class="page p4"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab on"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>4 · Structures, énumérations, traits, génériques</h1><span class="run">Mémento — Rust</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Structures et méthodes</h2><div class="bd"><pre class="code">#[derive(Debug, Clone, PartialEq)]
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    fn new(x: f64, y: f64) -&gt; Self { <span class="cm">// fonction associée</span>
+        Self { x, y }                <span class="cm">// raccourci de x: x</span>
+    }
+    fn norme(&amp;self) -&gt; f64 { self.x.hypot(self.y) }
+    fn deplacer(&amp;mut self, dx: f64) { self.x += dx; }
+    fn eclater(self) -&gt; (f64, f64) { (self.x, self.y) }
+}
+
+let mut p = Point::new(3.0, 4.0);
+println!("{}", p.norme());           <span class="cm">// 5</span>
+p.deplacer(1.0);
+let q = Point { y: 0.0, ..p.clone() }; <span class="cm">// autres champs de p</span>
+let Point { x, y } = q;              <span class="cm">// déstructurer</span></pre><table class="ct "><colgroup><col style="width:40%"><col style="width:60%"></colgroup><tbody><tr><td class="k"><span class="nw">&amp;self</span></td><td>la méthode lit l’instance</td></tr><tr><td class="k"><span class="nw">&amp;mut self</span></td><td>la méthode la modifie</td></tr><tr><td class="k"><span class="nw">self</span></td><td>la méthode la consomme</td></tr><tr><td class="k"><span class="nw">Self</span></td><td>le type lui-même, dans un <code>impl</code></td></tr><tr><td class="k">struct Metres(f64);</td><td>structure-tuple : <code>m.0</code> ; « newtype »</td></tr><tr><td class="k"><span class="nw">struct Vide;</span></td><td>structure unité, sans champ</td></tr><tr><td class="k">type Km = f64;</td><td>alias : autre nom du <b>même</b> type</td></tr></tbody></table></div></section><section class="box "><h2>Énumérations</h2><div class="bd"><pre class="code">use std::f64::consts::PI;
+
+enum Forme {
+    Cercle { rayon: f64 },
+    Rectangle(f64, f64),
+    Point,
+}
+
+impl Forme {
+    fn aire(&amp;self) -&gt; f64 {
+        match self {
+            Forme::Cercle { rayon } =&gt; PI * rayon * rayon,
+            Forme::Rectangle(l, h) =&gt; l * h,
+            Forme::Point =&gt; 0.0,
+        }
+    }
+}</pre><p class="note">Une valeur d’énumération est <b>une</b> de ses variantes, chacune avec ses propres données : idéal pour modéliser des états.</p><p class="note">Dans le prélude, sans <code>use</code> : <code>enum Option&lt;T&gt; { None, Some(T) }</code> et <code>enum Result&lt;T, E&gt; { Ok(T), Err(E) }</code>. Rust n’a pas de <code>null</code>.</p></div></section><section class="box "><h2>Traits : comportements partagés</h2><div class="bd"><pre class="code">trait Decrire {
+    fn nom(&amp;self) -&gt; String;         <span class="cm">// à fournir</span>
+    fn decrire(&amp;self) -&gt; String {    <span class="cm">// fournie par défaut</span>
+        format!("Je suis {}", self.nom())
+    }
+}
+
+impl Decrire for Point {
+    fn nom(&amp;self) -&gt; String { "un point".to_string() }
+}
+
+use std::fmt;
+impl fmt::Display for Point {        <span class="cm">// active {} et to_string</span>
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}</pre><p class="note">Implémenter un trait pour un type : permis si le trait <b>ou</b> le type est défini dans votre crate (règle de l’orphelin).</p></div></section></div><div class="col"><section class="box "><h2>Génériques et contraintes</h2><div class="bd"><pre class="code">fn plus_grand&lt;T: PartialOrd&gt;(v: &amp;[T]) -&gt; &amp;T {
+    let mut max = &amp;v[0];
+    for x in v {
+        if x &gt; max { max = x; }
+    }
+    max
+}
+
+fn afficher(x: impl fmt::Display) { println!("{x}"); }
+
+fn resumer&lt;T&gt;(x: &amp;T) -&gt; String
+where
+    T: Decrire + Clone,
+{
+    x.decrire()
+}
+
+struct Pile&lt;T&gt; { elements: Vec&lt;T&gt; }
+impl&lt;T&gt; Pile&lt;T&gt; {
+    fn empiler(&amp;mut self, x: T) { self.elements.push(x); }
+}</pre><table class="ct "><colgroup><col style="width:38%"><col style="width:62%"></colgroup><tbody><tr><td class="k"><span class="nw">T: Trait</span></td><td>contrainte : <code>T</code> doit implémenter <code>Trait</code></td></tr><tr><td class="k"><span class="nw">T: A + B</span></td><td>plusieurs contraintes</td></tr><tr><td class="k"><span class="nw">where …</span></td><td>contraintes nombreuses, écrites à part</td></tr><tr><td class="k">x: impl Trait</td><td>paramètre : raccourci d’un générique</td></tr><tr><td class="k">-&gt; impl Trait</td><td>renvoie « un type qui implémente <code>Trait</code> » (itérateur…)</td></tr><tr><td class="k"><span class="nw">&amp;dyn Trait</span> · Box&lt;dyn Trait&gt;</td><td>objet-trait : type choisi à l’exécution</td></tr></tbody></table><p class="note">Générique : une copie du code par type, à la compilation (monomorphisation) — rapide. <code>dyn</code> : un seul code, appel indirect ; permet les collections hétérogènes : <code>Vec&lt;Box&lt;dyn Decrire&gt;&gt;</code>.</p></div></section><section class="box "><h2>Traits standard à connaître</h2><div class="bd"><table class="ct "><colgroup><col style="width:29%"><col style="width:50%"><col style="width:21%"></colgroup><tbody><tr><td class="k"><span class="nw">Debug</span></td><td><code>{:?}</code></td><td>derive</td></tr><tr><td class="k"><span class="nw">Display</span></td><td><code>{}</code>, <code>.to_string()</code></td><td>à écrire</td></tr><tr><td class="k"><span class="nw">Clone</span> · <span class="nw">Copy</span></td><td><code>.clone()</code> · copie implicite</td><td>derive</td></tr><tr><td class="k"><span class="nw">PartialEq</span> · <span class="nw">Eq</span></td><td><code>==</code>, <code>!=</code></td><td>derive</td></tr><tr><td class="k"><span class="nw">PartialOrd</span> · <span class="nw">Ord</span></td><td><code>&lt;</code>, <code>&gt;</code>, <code>.sort()</code>, <code>.max()</code></td><td>derive</td></tr><tr><td class="k"><span class="nw">Hash</span></td><td>clé de <code>HashMap</code> (avec <code>Eq</code>)</td><td>derive</td></tr><tr><td class="k"><span class="nw">Default</span></td><td><code>T::default()</code></td><td>derive</td></tr><tr><td class="k"><span class="nw">From</span> · <span class="nw">Into</span></td><td>conversions ; <code>From</code> fournit <code>Into</code></td><td>à écrire</td></tr><tr><td class="k"><span class="nw">FromStr</span></td><td><code>"…".parse()</code></td><td>à écrire</td></tr><tr><td class="k"><span class="nw">Iterator</span></td><td>boucle <code>for</code>, adaptateurs : fournir <code>next()</code></td><td>à écrire</td></tr><tr><td class="k"><span class="nw">Drop</span></td><td>code exécuté à la libération</td><td>à écrire</td></tr><tr><td class="k"><span class="nw">Deref</span></td><td><code>*x</code> ; méthodes transmises (<code>Box</code>, <code>String</code>)</td><td>à écrire</td></tr><tr><td class="k">Add, Mul, Neg…</td><td>surcharge des opérateurs (<code>std::ops</code>)</td><td>à écrire</td></tr><tr><td class="k"><span class="nw">Error</span></td><td>type d’erreur (avec <code>Debug</code> + <code>Display</code>)</td><td>à écrire</td></tr><tr><td class="k"><span class="nw">Send</span> · <span class="nw">Sync</span></td><td>transfert · partage entre threads</td><td>auto­matique</td></tr></tbody></table><p class="note"><span class="w">!</span> <code>f64</code> n’implémente ni <code>Eq</code> ni <code>Ord</code> (à cause de NaN) : <code>v.sort_by(|a, b| a.total_cmp(b))</code>.</p></div></section><section class="box "><h2>Visibilité</h2><div class="bd"><table class="ct "><colgroup><col style="width:28%"><col style="width:72%"></colgroup><tbody><tr><td class="k"><span class="nw">(rien)</span></td><td>privé : visible dans le module et ses sous-modules</td></tr><tr><td class="k"><span class="nw">pub</span></td><td>public</td></tr><tr><td class="k"><span class="nw">pub(crate)</span></td><td>visible dans toute la crate</td></tr><tr><td class="k"><span class="nw">pub(super)</span></td><td>visible dans le module parent</td></tr></tbody></table><p class="note"><span class="w">!</span> Un <code>pub struct</code> garde ses champs privés : mettre <code>pub</code> devant chaque champ voulu.</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 4 / 8</span></footer></div>
+<div class="page p5"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab on"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>5 · Gestion des erreurs, entrées-sorties</h1><span class="run">Mémento — Rust</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Trois situations</h2><div class="bd"><table class="ct "><colgroup><col style="width:27%"><col style="width:73%"></colgroup><tbody><tr><td class="k"><span class="nw">panic!</span></td><td><b>irrécupérable</b> : bogue, invariant violé ; le thread s’arrête</td></tr><tr><td class="k"><span class="nw">Result&lt;T, E&gt;</span></td><td><b>récupérable</b> : l’appelant décide (fichier absent, saisie invalide, réseau)</td></tr><tr><td class="k"><span class="nw">Option&lt;T&gt;</span></td><td><b>absence</b> de valeur, sans erreur (recherche vide, champ facultatif)</td></tr></tbody></table><p class="note">Ni exceptions ni <code>null</code> : les échecs possibles se lisent dans la signature des fonctions.</p></div></section><section class="box "><h2>Quand paniquer ?</h2><div class="bd"><ul class="lst"><li><b>Oui</b> : bogue, invariant impossible, tests, prototypes ; <code>expect</code> sur une hypothèse démontrée.</li><li><b>Non</b> : tout ce qui vient de l’extérieur (fichier, saisie, réseau, données).</li><li>Paniques implicites : index hors limites, division entière par zéro, dépassement (debug), <code>unwrap</code> sur <code>None</code> / <code>Err</code>, tranche de <code>str</code> coupant un caractère.</li><li>Voir la pile d’appels : variable d’environnement <code>RUST_BACKTRACE=1</code>.</li></ul></div></section><section class="box "><h2>L’opérateur ?</h2><div class="bd"><pre class="code">use std::error::Error;
+use std::fs;
+
+fn lire_nombre(chemin: &amp;str) -&gt; Result&lt;i64, Box&lt;dyn Error&gt;&gt; {
+    let texte = fs::read_to_string(chemin)?;  <span class="cm">// io::Error</span>
+    let n: i64 = texte.trim().parse()?;       <span class="cm">// ParseIntError</span>
+    Ok(n * 2)
+}
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {
+    let n = lire_nombre("nombre.txt")?;
+    println!("{n}");
+    Ok(())
+}</pre><ul class="lst"><li><code>x?</code> : si <code>Ok(v)</code>, donne <code>v</code> ; si <code>Err(e)</code>, <b>renvoie</b> aussitôt <code>Err(e.into())</code>.</li><li>Fonctionne aussi sur <code>Option</code> dans une fonction qui renvoie <code>Option</code>.</li><li>Seulement dans une fonction qui renvoie <code>Result</code> ou <code>Option</code> (sinon <code>E0277</code>).</li><li><code>main</code> peut renvoyer <code>Result</code> : une erreur y est affichée (format <code>Debug</code>) et le programme se termine avec un code d’échec.</li></ul></div></section><section class="box "><h2>Extraire ou transformer : Option et Result</h2><div class="bd"><table class="ct "><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody><tr><td class="k"><span class="nw">match</span> · <span class="nw">if let</span> · <span class="nw">let else</span></td><td>traiter chaque cas explicitement</td></tr><tr><td class="k"><span class="nw">?</span></td><td>propager à l’appelant</td></tr><tr><td class="k"><span class="nw">.unwrap()</span></td><td><span class="w">!</span> la valeur, ou panique (prototypes, tests)</td></tr><tr><td class="k">.expect("<i>raison</i>")</td><td>idem, avec l’hypothèse expliquée</td></tr><tr><td class="k">.unwrap_or(v)</td><td>la valeur, sinon <code>v</code></td></tr><tr><td class="k">.unwrap_or_else(|| …)</td><td>sinon calculée (seulement si besoin)</td></tr><tr><td class="k">.unwrap_or_default()</td><td>sinon <code>0</code>, <code>""</code>, vide…</td></tr><tr><td class="k"><span class="nw">.is_some()</span> · <span class="nw">.is_ok()</span></td><td>tests (et <code>is_none</code>, <code>is_err</code>)</td></tr><tr><td class="k">.is_some_and(|x| …)</td><td>présente <b>et</b> conforme</td></tr><tr><td class="k"><span class="nw">.map(|x| …)</span></td><td>transformer la valeur si présente</td></tr><tr><td class="k">.and_then(|x| …)</td><td>enchaîner une opération faillible</td></tr><tr><td class="k"><span class="nw">.or(b)</span> · .or_else(|| …)</td><td>solution de repli</td></tr><tr><td class="k">.filter(|x| …)</td><td><code>Option</code> : garder si la condition est vraie</td></tr><tr><td class="k">.map_err(|e| …)</td><td><code>Result</code> : transformer l’erreur</td></tr><tr><td class="k"><span class="nw">.ok_or(e)</span> · .ok_or_else(|| e)</td><td><code>Option</code> → <code>Result</code></td></tr><tr><td class="k"><span class="nw">.ok()</span> · <span class="nw">.err()</span></td><td><code>Result</code> → <code>Option</code></td></tr><tr><td class="k"><span class="nw">.as_deref()</span></td><td><code>&amp;Option&lt;String&gt;</code> → <code>Option&lt;&amp;str&gt;</code></td></tr><tr><td class="k"><span class="nw">.take()</span></td><td>extraire, en laissant <code>None</code></td></tr><tr><td class="k"><span class="nw">.copied()</span> · <span class="nw">.cloned()</span></td><td><code>Option&lt;&amp;T&gt;</code> → <code>Option&lt;T&gt;</code></td></tr></tbody></table><p class="note">Une suite de <code>Result</code> → un seul : <code>.collect::&lt;Result&lt;Vec&lt;_&gt;, _&gt;&gt;()</code> (arrêt à la première erreur).</p></div></section></div><div class="col"><section class="box "><h2>Définir son type d’erreur</h2><div class="bd"><pre class="code">use std::{fmt, io};
+
+#[derive(Debug)]
+enum ErreurConfig {
+    Absente(String),
+    Syntaxe(usize),
+    Io(io::Error),
+}
+
+impl fmt::Display for ErreurConfig {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        match self {
+            Self::Absente(c) =&gt; write!(f, "clé {c} absente"),
+            Self::Syntaxe(n) =&gt; write!(f, "erreur ligne {n}"),
+            Self::Io(e) =&gt; write!(f, "entrée-sortie : {e}"),
+        }
+    }
+}
+
+impl std::error::Error for ErreurConfig {}
+
+impl From&lt;io::Error&gt; for ErreurConfig {  <span class="cm">// pour ?</span>
+    fn from(e: io::Error) -&gt; Self { Self::Io(e) }
+}</pre><ul class="lst"><li>Bibliothèque : type d’erreur précis (<code>enum</code>), pour que l’appelant distingue les cas.</li><li>Application : <code>Box&lt;dyn Error&gt;</code> suffit souvent.</li><li>Crates tierces répandues : <code>thiserror</code> (écrit ce code) et <code>anyhow</code> (erreurs d’application, contexte) — à évaluer comme tout code externe.</li></ul></div></section><section class="box "><h2>Fichiers et système</h2><div class="bd"><table class="ct "><colgroup><col style="width:52%"><col style="width:48%"></colgroup><tbody><tr><td class="k">fs::read_to_string(p)?</td><td>tout le fichier → <code>String</code></td></tr><tr><td class="k">fs::write(p, contenu)?</td><td>créer ou <b>écraser</b></td></tr><tr><td class="k"><span class="nw">fs::read(p)?</span></td><td>octets bruts → <code>Vec&lt;u8&gt;</code></td></tr><tr><td class="k">File::open(p)? · File::create(p)?</td><td>ouvrir en lecture · créer (écrase)</td></tr><tr><td class="k"><span class="nw">OpenOptions::new()</span><wbr><span class="nw">.append(true)</span><wbr><span class="nw">.create(true)</span><wbr><span class="nw">.open(p)?</span></td><td>ajouter à la fin</td></tr><tr><td class="k">fs::create_dir_all(p)?</td><td>créer les dossiers manquants</td></tr><tr><td class="k">fs::read_dir(p)?</td><td>lister un dossier</td></tr><tr><td class="k">Path::new(p).exists()</td><td>chemins portables : <code>Path</code>, <code>PathBuf</code></td></tr><tr><td class="k">std::env::args()</td><td>arguments ; le premier : le programme</td></tr><tr><td class="k">std::env::var("<i>NOM</i>")</td><td>variable d’environnement → <code>Result</code></td></tr><tr><td class="k">std::process::exit(1)</td><td>quitter avec un code de retour</td></tr></tbody></table><pre class="code">use std::fs::File;
+use std::io::{self, BufRead, BufReader, Write};
+
+for ligne in BufReader::new(File::open("a.txt")?).lines() {
+    let ligne = ligne?;              <span class="cm">// chaque ligne : Result</span>
+    println!("{ligne}");
+}
+let mut sortie = File::create("rapport.txt")?;
+writeln!(sortie, "total : {}", 42)?;</pre><h3>Lire le clavier</h3><pre class="code">print!("Votre âge : ");
+io::stdout().flush()?;               <span class="cm">// afficher aussitôt</span>
+let mut saisie = String::new();
+io::stdin().read_line(&amp;mut saisie)?;
+let age: u32 = saisie.trim().parse()?; <span class="cm">// trim : retire \n</span></pre><p class="note"><code>write!</code>, <code>writeln!</code> et <code>flush</code> exigent le trait <code>Write</code> : <code>use std::io::Write</code>.</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 5 / 8</span></footer></div>
+<div class="page p6"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab on"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>6 · Collections, texte et itérateurs</h1><span class="run">Mémento — Rust</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Vec&lt;T&gt; : tableau dynamique</h2><div class="bd"><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k"><span class="nw">Vec::new()</span> · <span class="nw">vec![1, 2]</span> · <span class="nw">vec![0; n]</span></td><td>créer</td></tr><tr><td class="k">Vec::with_capacity(n)</td><td>créer en réservant la place</td></tr><tr><td class="k"><span class="nw">v.push(x)</span> · <span class="nw">v.pop()</span></td><td>ajouter à la fin · retirer (→ <code>Option</code>)</td></tr><tr><td class="k"><span class="nw">v[i]</span> · <span class="nw">v.get(i)</span></td><td>accès : panique hors limites · → <code>Option&lt;&amp;T&gt;</code></td></tr><tr><td class="k"><span class="nw">v.first()</span> · <span class="nw">v.last()</span></td><td>premier · dernier → <code>Option</code></td></tr><tr><td class="k"><span class="nw">v.len()</span> · <span class="nw">v.is_empty()</span></td><td>taille · vide ?</td></tr><tr><td class="k">v.insert(i, x) · <span class="nw">v.remove(i)</span></td><td>au rang <code>i</code> (décale la suite)</td></tr><tr><td class="k">v.swap_remove(i)</td><td>retirer sans décaler (le dernier prend la place)</td></tr><tr><td class="k">v.contains(&amp;x)</td><td>présence</td></tr><tr><td class="k"><span class="nw">v.sort()</span> · v.sort_unstable()</td><td>trier (éléments <code>Ord</code>)</td></tr><tr><td class="k">v.sort_by_key(|p| p.age)</td><td>trier selon une clé</td></tr><tr><td class="k">v.sort_by(|a, b| b.cmp(a))</td><td>ordre libre (ici décroissant)</td></tr><tr><td class="k"><span class="nw">v.dedup()</span></td><td>retirer les doublons <b>consécutifs</b></td></tr><tr><td class="k">v.retain(|x| *x &gt; 0)</td><td>ne garder que ce qui vérifie la condition</td></tr><tr><td class="k">v.extend(autre)</td><td>ajouter tous les éléments</td></tr><tr><td class="k">v.truncate(n) · <span class="nw">v.clear()</span></td><td>raccourcir · vider</td></tr><tr><td class="k"><span class="nw">v.reverse()</span> · <span class="nw">v.swap(i, j)</span></td><td>inverser · échanger, sur place</td></tr><tr><td class="k">v.binary_search(&amp;x)</td><td>vecteur trié → <code>Ok(rang)</code> ou <code>Err(rang d’insertion)</code></td></tr><tr><td class="k"><span class="nw">v.chunks(3)</span> · <span class="nw">v.windows(2)</span></td><td>paquets de 3 · fenêtres glissantes</td></tr><tr><td class="k">v.split_at(i)</td><td>deux tranches</td></tr><tr><td class="k"><span class="nw">v.join(", ")</span></td><td><code>Vec</code> de textes → un texte</td></tr></tbody></table></div></section><section class="box "><h2>String et &amp;str</h2><div class="bd"><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k">String::new() · String::from("a")</td><td>créer ; ou <code>"a".to_string()</code></td></tr><tr><td class="k"><span class="nw">s.push('c')</span> · s.push_str("abc")</td><td>ajouter</td></tr><tr><td class="k"><span class="nw">s1 + &amp;s2</span> · format!("{s1}{s2}")</td><td>concaténer (<code>+</code> consomme <code>s1</code>)</td></tr><tr><td class="k"><span class="nw">s.len()</span></td><td><span class="w">!</span> longueur en <b>octets</b> : <code>"é".len()</code> → 2</td></tr><tr><td class="k">s.chars().count()</td><td>nombre de caractères</td></tr><tr><td class="k"><span class="nw">s.chars()</span> · <span class="nw">s.bytes()</span></td><td>parcourir caractères · octets</td></tr><tr><td class="k"><span class="nw">s.trim()</span></td><td>sans espaces ni <code>\n</code> aux extrémités</td></tr><tr><td class="k"><span class="nw">s.split(',')</span> · <span class="nw">s.lines()</span></td><td>découper (itérateurs)</td></tr><tr><td class="k">s.split_whitespace()</td><td>mots séparés par des blancs</td></tr><tr><td class="k">s.split_once('=')</td><td>→ <code>Option&lt;(&amp;str, &amp;str)&gt;</code></td></tr><tr><td class="k"><span class="nw">s.contains("ab")</span></td><td>aussi <code>starts_with</code>, <code>ends_with</code></td></tr><tr><td class="k"><span class="nw">s.find("ab")</span></td><td>position en octets → <code>Option&lt;usize&gt;</code></td></tr><tr><td class="k">s.replace("a", "b")</td><td>remplacer → nouvelle <code>String</code></td></tr><tr><td class="k">s.to_uppercase()</td><td>casse Unicode (<code>to_lowercase</code>)</td></tr><tr><td class="k"><span class="nw">s.repeat(3)</span></td><td>répéter</td></tr><tr><td class="k">s.parse::&lt;f64&gt;()</td><td>convertir → <code>Result</code></td></tr><tr><td class="k"><span class="nw">&amp;s[0..3]</span></td><td><span class="w">!</span> par octets : panique si un caractère est coupé</td></tr></tbody></table><p class="note"><span class="w">!</span> <code>s[0]</code> est refusé : en UTF-8, un caractère occupe de 1 à 4 octets. Premiers caractères : <code>s.chars().take(n).collect::&lt;String&gt;()</code>.</p></div></section><section class="box "><h2>Autres collections (std::collections)</h2><div class="bd"><table class="ct "><colgroup><col style="width:35%"><col style="width:65%"></colgroup><tbody><tr><td class="k"><span class="nw">VecDeque&lt;T&gt;</span></td><td>file à deux bouts : <code>push_front</code>, <code>pop_front</code></td></tr><tr><td class="k">HashMap&lt;K, V&gt;</td><td>dictionnaire, ordre quelconque</td></tr><tr><td class="k">BTreeMap&lt;K, V&gt;</td><td>dictionnaire trié par clé</td></tr><tr><td class="k"><span class="nw">HashSet&lt;T&gt;</span> · <span class="nw">BTreeSet&lt;T&gt;</span></td><td>ensemble sans doublon : <code>union</code>, <code>intersection</code></td></tr><tr><td class="k">BinaryHeap&lt;T&gt;</td><td>file de priorité, plus grand en tête ; <code>Reverse(x)</code> : plus petit</td></tr></tbody></table><p class="note">Clés <code>Hash…</code> : <code>Eq + Hash</code> ; clés <code>BTree…</code> : <code>Ord</code>.</p></div></section></div><div class="col"><section class="box "><h2>HashMap</h2><div class="bd"><pre class="code">use std::collections::HashMap;
+
+let mut notes: HashMap&lt;String, u32&gt; = HashMap::new();
+notes.insert("Anne".to_string(), 15);
+if let Some(n) = notes.get("Anne") { println!("{n}"); }
+
+let mut compte = HashMap::new();     <span class="cm">// compter les mots</span>
+for mot in texte.split_whitespace() {
+    *compte.entry(mot).or_insert(0) += 1;
+}
+for (cle, val) in &amp;notes { println!("{cle} : {val}"); }</pre><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="k">m.insert(k, v)</td><td>ajoute ou remplace → ancienne valeur (<code>Option</code>)</td></tr><tr><td class="k"><span class="nw">m.get(&amp;k)</span> · m.get_mut(&amp;k)</td><td>→ <code>Option</code></td></tr><tr><td class="k">m.contains_key(&amp;k) · <span class="nw">m.remove(&amp;k)</span></td><td>présence · retrait</td></tr><tr><td class="k">m.entry(k).or_insert(v)</td><td>accès, en créant si absent</td></tr><tr><td class="k">m.entry(k).or_default()</td><td>idem, valeur par défaut</td></tr><tr><td class="k"><span class="nw">m.keys()</span> · <span class="nw">m.values()</span></td><td>itérateurs</td></tr></tbody></table><p class="note"><span class="w">!</span> Ordre de parcours imprévisible, variable d’une exécution à l’autre : <code>BTreeMap</code>, ou trier, si l’ordre compte.</p></div></section><section class="box "><h2>Écrire son propre itérateur</h2><div class="bd"><pre class="code">struct Compte { n: u32 }
+impl Iterator for Compte {
+    type Item = u32;                 <span class="cm">// type produit</span>
+    fn next(&amp;mut self) -&gt; Option&lt;u32&gt; {
+        self.n += 1;
+        if self.n &lt;= 3 { Some(self.n) } else { None }
+    }
+}
+<span class="cm">// Compte { n: 0 }.collect::&lt;Vec&lt;_&gt;&gt;() → [1, 2, 3]</span></pre><p class="note">Seul <code>next</code> est à écrire : <code>map</code>, <code>filter</code>, <code>sum</code>… sont fournis par le trait.</p></div></section><section class="box "><h2>Itérateurs</h2><div class="bd"><pre class="code">let v = vec![3, 1, 4, 1, 5, 9, 2, 6];
+let doubles: Vec&lt;i32&gt; = v.iter()
+    .filter(|x| *x % 2 == 0)         <span class="cm">// 4, 2, 6</span>
+    .map(|x| x * 2)
+    .collect();                      <span class="cm">// [8, 4, 12]</span>
+let total: i32 = v.iter().sum();     <span class="cm">// 31</span></pre><table class="ct "><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td colspan="9" class="sub">Créer</td></tr><tr><td class="k"><span class="nw">v.iter()</span> · <span class="nw">v.iter_mut()</span></td><td>éléments <code>&amp;T</code> · <code>&amp;mut T</code></td></tr><tr><td class="k">v.into_iter()</td><td>consomme la collection → <code>T</code></td></tr><tr><td colspan="9" class="sub">Adapter (paresseux)</td></tr><tr><td class="k"><span class="nw">map(f)</span> · <span class="nw">filter(p)</span></td><td>transformer · garder si</td></tr><tr><td class="k">filter_map(f)</td><td>les deux ; <code>f</code> renvoie une <code>Option</code></td></tr><tr><td class="k"><span class="nw">enumerate()</span> · <span class="nw">zip(b)</span></td><td>→ <code>(rang, x)</code> · paires <code>(a, b)</code></td></tr><tr><td class="k"><span class="nw">chain(b)</span> · <span class="nw">rev()</span></td><td>à la suite · à l’envers</td></tr><tr><td class="k"><span class="nw">skip(n)</span> · <span class="nw">take(n)</span></td><td>sauter · prendre <code>n</code> éléments</td></tr><tr><td class="k">skip_while(p) · take_while(p)</td><td>tant que la condition est vraie</td></tr><tr><td class="k"><span class="nw">step_by(n)</span></td><td>un élément sur <code>n</code></td></tr><tr><td class="k"><span class="nw">flat_map(f)</span> · <span class="nw">flatten()</span></td><td>aplatir</td></tr><tr><td class="k"><span class="nw">copied()</span> · <span class="nw">cloned()</span></td><td><code>&amp;T</code> → <code>T</code></td></tr><tr><td colspan="9" class="sub">Consommer</td></tr><tr><td class="k"><span class="nw">collect()</span></td><td>→ <code>Vec</code>, <code>String</code>, <code>HashMap</code>… (type à préciser)</td></tr><tr><td class="k"><span class="nw">sum()</span> · <span class="nw">product()</span> · <span class="nw">count()</span></td><td>somme · produit · nombre</td></tr><tr><td class="k"><span class="nw">min()</span> · <span class="nw">max()</span></td><td>→ <code>Option</code> ; aussi <code>min_by_key(f)</code>, <code>max_by_key(f)</code></td></tr><tr><td class="k">fold(init, f) · <span class="nw">reduce(f)</span></td><td>accumuler</td></tr><tr><td class="k"><span class="nw">any(p)</span> · <span class="nw">all(p)</span></td><td>au moins un · tous</td></tr><tr><td class="k"><span class="nw">find(p)</span> · <span class="nw">position(p)</span></td><td>premier trouvé · son rang</td></tr><tr><td class="k"><span class="nw">partition(p)</span></td><td>→ deux collections</td></tr><tr><td class="k"><span class="nw">for_each(f)</span></td><td>action sur chaque élément</td></tr></tbody></table><p class="note"><span class="w">!</span> Paresseux : sans consommateur (<code>collect</code>, <code>sum</code>, <code>for</code>…), rien n’est calculé.</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 6 / 8</span></footer></div>
+<div class="page p7"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab on"><b>7</b>&nbsp; Projet</div><div class="tab"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>7 · Projet : Cargo, modules, tests, documentation</h1><span class="run">Mémento — Rust</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Structure d’un projet</h2><div class="bd"><pre class="diag">mon_projet/
++-- Cargo.toml       manifeste : nom, dépendances
++-- Cargo.lock       versions exactes retenues (généré)
++-- src/
+|   +-- main.rs      exécutable : fn main
+|   +-- lib.rs       bibliothèque (facultatif)
+|   +-- config.rs    module config
+|   +-- reseau.rs    module reseau…
+|   +-- reseau/
+|       +-- client.rs  sous-module reseau::client
++-- tests/           tests d'intégration
++-- examples/        cargo run --example nom
++-- benches/         mesures de performance
++-- target/          produits de compilation (hors Git)</pre></div></section><section class="box "><h2>Cargo.toml</h2><div class="bd"><pre class="code">[package]
+name = "mon_projet"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+regex = "1"<span class="cm">                      # &gt;= 1.0.0 et &lt; 2.0.0</span>
+serde = { version = "1", features = ["derive"] }
+outil = { path = "../outil" }<span class="cm">    # dépendance locale</span>
+
+[dev-dependencies]<span class="cm">               # pour les tests seulement</span>
+proptest = "1"
+
+[profile.release]
+lto = true<span class="cm">                       # optimisation plus poussée</span></pre><p class="note">Versions : <code>"1.2"</code> accepte toute version compatible (≥ 1.2.0 et &lt; 2.0.0) ; <code>"=1.2.3"</code> : cette version exacte. </p></div></section><section class="box "><h2>Commandes Cargo</h2><div class="bd"><table class="ct "><colgroup><col style="width:47%"><col style="width:53%"></colgroup><tbody><tr><td class="k">cargo new <i>nom</i> · <span class="nw">cargo init</span></td><td>créer un projet · dans le dossier courant</td></tr><tr><td class="k">cargo add regex · cargo remove regex</td><td>ajouter · retirer une dépendance</td></tr><tr><td class="k">cargo add serde <span class="nw">-F</span> derive</td><td>avec une fonctionnalité (<code>--features</code>)</td></tr><tr><td class="k"><span class="nw">cargo build</span> · <span class="nw">--release</span></td><td>compiler : debug · optimisé</td></tr><tr><td class="k">cargo run -- <i>arg1</i> <i>arg2</i></td><td>lancer avec des arguments</td></tr><tr><td class="k">cargo test <i>motif</i></td><td>tests dont le nom contient le motif</td></tr><tr><td class="k">cargo test -- <span class="nw">--nocapture</span></td><td>montrer les <code>println!</code> des tests</td></tr><tr><td class="k">cargo doc <span class="nw">--open</span></td><td>documentation du projet et des dépendances</td></tr><tr><td class="k"><span class="nw">cargo update</span></td><td>actualiser <code>Cargo.lock</code> (dans les limites de <code>Cargo.toml</code>)</td></tr><tr><td class="k"><span class="nw">cargo tree</span></td><td>arbre des dépendances</td></tr><tr><td class="k">cargo install <i>outil</i></td><td>installer un programme depuis crates.io</td></tr><tr><td class="k">cargo publish</td><td><span class="w">!</span> publie sur crates.io ; une version publiée ne se remplace pas</td></tr></tbody></table><p class="note"><span class="w">!</span> Une dépendance est du code tiers, exécuté dès la compilation (<code>build.rs</code>, macros) : vérifier auteur, licence, activité, avis de sécurité (rustsec.org ; outil tiers <code>cargo audit</code>).</p></div></section><section class="box "><h2>Attributs utiles</h2><div class="bd"><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k">#[derive(Debug, Clone)]</td><td>implémentations automatiques</td></tr><tr><td class="k">#[allow(dead_code)]</td><td>taire un avertissement</td></tr><tr><td class="k"><span class="nw">#[cfg(test)]</span></td><td>compilation conditionnelle (aussi <code>target_os = "windows"</code>…)</td></tr><tr><td class="k"><span class="nw">#[must_use]</span></td><td>avertir si le résultat est ignoré</td></tr><tr><td class="k"><span class="nw">#![…]</span></td><td>en tête de fichier : vaut pour tout le module</td></tr></tbody></table></div></section></div><div class="col"><section class="box "><h2>Modules et chemins</h2><div class="bd"><pre class="code"><span class="cm">// src/main.rs</span>
+mod geometrie;                   <span class="cm">// charge src/geometrie.rs</span>
+use geometrie::{distance, Point};
+use std::io::{self, Write};      <span class="cm">// io et io::Write</span>
+
+<span class="cm">// src/geometrie.rs</span>
+pub struct Point { pub x: f64, pub y: f64 }
+
+pub fn distance(a: &amp;Point, b: &amp;Point) -&gt; f64 {
+    (a.x - b.x).hypot(a.y - b.y)
+}</pre><table class="ct "><colgroup><col style="width:37%"><col style="width:63%"></colgroup><tbody><tr><td class="k"><span class="nw">mod m;</span></td><td>déclarer un module : fichier <code>m.rs</code> (ou <code>m/mod.rs</code>)</td></tr><tr><td class="k"><span class="nw">mod m { … }</span></td><td>module écrit sur place</td></tr><tr><td class="k"><span class="nw">use a::b::C;</span></td><td>raccourcir un chemin</td></tr><tr><td class="k">use a::b::C as D;</td><td>importer sous un autre nom</td></tr><tr><td class="k"><span class="nw">use a::b::*;</span></td><td>tout importer (à éviter, sauf tests)</td></tr><tr><td class="k"><span class="nw">crate::</span> · <span class="nw">super::</span> · <span class="nw">self::</span></td><td>racine de la crate · module parent · module courant</td></tr><tr><td class="k">pub use a::C;</td><td>réexporter : façade publique</td></tr></tbody></table><p class="note"><b>Crate</b> : unité de compilation (un exécutable ou une bibliothèque). <b>Paquet</b> (package) : un <code>Cargo.toml</code> et ses crates.</p></div></section><section class="box "><h2>Tests</h2><div class="bd"><pre class="code">pub fn diviser(a: i32, b: i32) -&gt; i32 {
+    if b == 0 { panic!("division par zéro"); }
+    a / b
+}
+
+#[cfg(test)]                     <span class="cm">// compilé pour cargo test</span>
+mod tests {
+    use super::*;
+
+    #[test]
+    fn quotient() {
+        assert_eq!(diviser(7, 2), 3);
+        assert!(diviser(-6, 3) &lt; 0, "négatif attendu");
+    }
+
+    #[test]
+    #[should_panic(expected = "division par zéro")]
+    fn par_zero() { diviser(1, 0); }
+
+    #[test]
+    fn lecture() -&gt; Result&lt;(), std::num::ParseIntError&gt; {
+        assert_eq!("42".parse::&lt;i32&gt;()?, 42);
+        Ok(())
+    }
+}</pre><table class="ct "><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k">assert_eq!(a, b) · <span class="nw">assert_ne!</span></td><td>égalité · différence ; message facultatif en plus</td></tr><tr><td class="k">#[should_panic]</td><td>le test doit paniquer</td></tr><tr><td class="k"><span class="nw">#[ignore]</span></td><td>ignoré, sauf <code>cargo test -- --ignored</code></td></tr><tr><td class="k"><span class="nw">tests/*.rs</span></td><td>tests d’intégration : API publique seulement</td></tr></tbody></table></div></section><section class="box "><h2>Documenter</h2><div class="bd"><pre class="code"><span class="cm">/// Moyenne d'une tranche ; `None` si elle est vide.</span>
+<span class="cm">///</span>
+<span class="cm">/// ```</span>
+<span class="cm">/// assert_eq!(mon_projet::moyenne(&amp;[2.0, 4.0]), Some(3.0));</span>
+<span class="cm">/// ```</span>
+pub fn moyenne(v: &amp;[f64]) -&gt; Option&lt;f64&gt; {
+    if v.is_empty() { return None; }
+    Some(v.iter().sum::&lt;f64&gt;() / v.len() as f64)
+}</pre><p class="note"><code>///</code> documente l’élément suivant (Markdown) ; <code>//!</code> le module entier. Les blocs de code de la documentation sont exécutés par <code>cargo test</code> (bibliothèques).</p></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 7 / 8</span></footer></div>
+<div class="page p8"><nav class="tabs"><div class="tab"><b>1</b>&nbsp; L’essentiel</div><div class="tab"><b>2</b>&nbsp; Fonctions</div><div class="tab"><b>3</b>&nbsp; Possession</div><div class="tab"><b>4</b>&nbsp; Types</div><div class="tab"><b>5</b>&nbsp; Erreurs</div><div class="tab"><b>6</b>&nbsp; Collections</div><div class="tab"><b>7</b>&nbsp; Projet</div><div class="tab on"><b>8</b>&nbsp; Avancé</div></nav><header class="ptitle"><h1>8 · Concurrence, idiomes, pièges, ressources</h1><span class="run">Mémento — Rust</span></header><div class="cols c2"><div class="col"><section class="box "><h2>Threads</h2><div class="bd"><pre class="code">use std::sync::{mpsc, Arc, Mutex};
+use std::thread;
+
+let h = thread::spawn(|| 6 * 7);
+let r = h.join().unwrap();           <span class="cm">// 42</span>
+
+let compteur = Arc::new(Mutex::new(0));
+let mut poignees = vec![];
+for _ in 0..4 {
+    let c = Arc::clone(&amp;compteur);
+    poignees.push(thread::spawn(move || {
+        *c.lock().unwrap() += 1;
+    }));
+}
+for p in poignees { p.join().unwrap(); }
+<span class="cm">// *compteur.lock().unwrap() vaut 4</span>
+
+let (tx, rx) = mpsc::channel();      <span class="cm">// canal</span>
+thread::spawn(move || tx.send("message").unwrap());
+println!("{}", rx.recv().unwrap());
+
+let v = vec![1, 2, 3];
+thread::scope(|s| {                  <span class="cm">// threads bornés :</span>
+    s.spawn(|| println!("{v:?}"));   <span class="cm">// emprunt permis</span>
+});</pre><ul class="lst"><li><code>Send</code> : transférable à un autre thread · <code>Sync</code> : partageable par référence. <code>Rc</code> ou <code>RefCell</code> entre threads : refusé (<code>E0277</code>).</li><li><code>lock()</code> renvoie <code>Err</code> si un thread a paniqué en tenant le verrou (verrou « empoisonné »).</li><li><span class="w">!</span> Le verrou reste pris jusqu’à la fin de la portée du garde : sections courtes. Deux verrous pris dans des ordres différents → interblocage, que le compilateur ne détecte pas.</li></ul></div></section><section class="box "><h2>Asynchrone : async / await</h2><div class="bd"><ul class="lst"><li><code>async fn</code> renvoie un <b>futur</b> : rien ne s’exécute avant <code>.await</code>.</li><li>La bibliothèque standard ne fournit pas d’exécuteur : il vient d’une crate tierce, le plus souvent <code>tokio</code>.</li><li>Pour de nombreuses attentes d’entrées-sorties (réseau, serveurs). Pour du calcul : threads.</li></ul><pre class="code">#[tokio::main]
+async fn main() {
+    let (a, b) = tokio::join!(tache_a(), tache_b());
+}</pre></div></section><section class="box "><h2>Macros et unsafe</h2><div class="bd"><pre class="code">macro_rules! carre {
+    ($x:expr) =&gt; { $x * $x };
+}
+let n = carre!(3 + 1);           <span class="cm">// 16 : $x reste groupé</span></pre><p class="note">Un bloc <code>unsafe { }</code> autorise <b>cinq</b> opérations invérifiables : déréférencer un pointeur brut, appeler une fonction <code>unsafe</code> (dont le code C), lire ou modifier un <code>static mut</code>, implémenter un trait <code>unsafe</code>, lire un champ d’<code>union</code>. Les autres règles restent actives. Un programme d’application n’en a presque jamais besoin.</p></div></section><section class="box "><h2>Boîte à outils de la bibliothèque standard</h2><div class="bd"><table class="ct "><colgroup><col style="width:55%"><col style="width:45%"></colgroup><tbody><tr><td class="k">mem::swap(&amp;mut a, &amp;mut b)</td><td>échanger deux valeurs</td></tr><tr><td class="k">mem::take(&amp;mut v)</td><td>extraire, en laissant la valeur par défaut</td></tr><tr><td class="k">mem::replace(&amp;mut v, n)</td><td>remplacer, en récupérant l’ancienne</td></tr><tr><td class="k"><span class="nw">a.cmp(&amp;b)</span></td><td>→ <code>Ordering::Less</code>, <code>Equal</code> ou <code>Greater</code></td></tr><tr><td class="k">Instant::now() · <span class="nw">t.elapsed()</span></td><td>mesurer une durée (<code>std::time</code>)</td></tr><tr><td class="k"><span class="nw">Command::new("git")</span><wbr><span class="nw">.arg("status")</span><wbr><span class="nw">.output()?</span></td><td>lancer un programme (<code>std::process</code>)</td></tr><tr><td class="k">c.is_alphabetic() · c.is_ascii_digit()</td><td>nature d’un caractère</td></tr><tr><td class="k">c.to_digit(10) · char::from_digit(7, 10)</td><td>chiffre ↔ caractère</td></tr></tbody></table></div></section></div><div class="col"><section class="box "><h2>Idiomes</h2><div class="bd"><ul class="lst"><li>Constructeur <code>new()</code> et <code>impl Default</code> ; <code>impl From&lt;X&gt; for Y</code> pour convertir (utilisé par <code>?</code>).</li><li>Paramètres <code>&amp;str</code> et <code>&amp;[T]</code> ; valeurs renvoyées possédées.</li><li>Itérateurs plutôt que boucles sur des indices.</li><li>« Newtype » <code>struct Euros(f64);</code> : ne plus confondre deux unités.</li><li>Rendre les états impossibles irreprésentables : une <code>enum</code> plutôt que des booléens combinés.</li><li><code>Option</code> pour l’absence, jamais de valeur sentinelle (<code>-1</code>, <code>""</code>).</li></ul></div></section><section class="box "><h2>Pièges fréquents</h2><div class="bd"><table class="ct "><colgroup><col style="width:52%"><col style="width:48%"></colgroup><tbody><tr><td><code>.clone()</code> pour faire taire le compilateur</td><td>revoir qui possède quoi ; emprunter</td></tr><tr><td><code>.unwrap()</code> partout</td><td><code>?</code>, <code>expect</code>, traitement explicite</td></tr><tr><td><code>s.len()</code> pris pour des caractères</td><td><code>s.chars().count()</code></td></tr><tr><td><code>&amp;s[..n]</code> sur un texte accentué</td><td>panique : <code>s.chars().take(n)</code></td></tr><tr><td>dépassement d’entier silencieux en <code>--release</code></td><td><code>checked_add</code>… ; tester en debug</td></tr><tr><td><code>v.sort()</code> sur des <code>f64</code></td><td>refusé : trier avec <code>total_cmp</code> (page 4)</td></tr><tr><td>itérateur sans consommateur</td><td>rien n’est calculé</td></tr><tr><td>modifier une collection en la parcourant</td><td>refusé : <code>retain</code>, ou collecter d’abord</td></tr><tr><td>performances mesurées en debug</td><td>toujours <code>--release</code></td></tr></tbody></table></div></section><section class="box "><h2>Outils autour du compilateur</h2><div class="bd"><ul class="lst"><li><b>rust-analyzer</b> : extension d’éditeur (VS Code…) — complétion, types affichés, erreurs en direct. <code>cargo fmt</code> et <code>cargo clippy</code> avant chaque commit.</li><li><code>cargo clippy --fix</code> : appliquer les corrections proposées.</li></ul></div></section><section class="box "><h2>De Python à Rust</h2><div class="bd"><table class="ct "><colgroup><col style="width:40%"><col style="width:60%"></colgroup><thead><tr><th>Python</th><th>Rust</th></tr></thead><tbody><tr><td><code>None</code></td><td><code>Option&lt;T&gt;</code> : <code>None</code>, <code>Some(x)</code></td></tr><tr><td><code>try</code> / <code>except</code></td><td><code>Result&lt;T, E&gt;</code>, <code>?</code>, <code>match</code></td></tr><tr><td><code>list</code> · <code>dict</code> · <code>set</code></td><td><code>Vec</code> · <code>HashMap</code> · <code>HashSet</code></td></tr><tr><td><code>for i in range(n)</code></td><td><code>for i in 0..n</code></td></tr><tr><td><code>len(s)</code></td><td><code>s.chars().count()</code> (<code>s.len()</code> : octets)</td></tr><tr><td><code>f"{x}"</code></td><td><code>format!("{x}")</code></td></tr><tr><td><code>class</code> · héritage</td><td><code>struct</code> + <code>impl</code> · traits et composition</td></tr><tr><td><code>lambda x: x + 1</code></td><td><code>|x| x + 1</code></td></tr><tr><td><code>pip</code> · <code>pytest</code></td><td><code>cargo add</code> · <code>cargo test</code></td></tr></tbody></table></div></section><section class="box "><h2>Glossaire français – anglais</h2><div class="bd"><div class="gloss"><span>possession <i>ownership</i></span><span>emprunt <i>borrow</i></span><span class="l">vérificateur d’emprunts <i>borrow checker</i></span><span>durée de vie <i>lifetime</i></span><span>libération <i>drop</i></span><span>tranche <i>slice</i></span><span>fermeture <i>closure</i></span><span>filtrage par motif <i>pattern matching</i></span><span>déplacement <i>move</i></span><span>pointeur intelligent <i>smart pointer</i></span><span>masquage <i>shadowing</i></span><span class="l">mutabilité intérieure <i>interior mutability</i></span></div></div></section><section class="box "><h2>Pour aller plus loin</h2><div class="bd"><ul class="lst"><li><i>Le langage de programmation Rust</i> (traduction du « Book ») : jimskapt.github.io/rust-book-fr</li><li><i>Comprehensive Rust</i> (Google), en français : google.github.io/comprehensive-rust/fr</li><li><i>Rust by Example</i> : doc.rust-lang.org/rust-by-example</li><li><i>Rustlings</i>, exercices guidés par le compilateur : github.com/rust-lang/rustlings</li><li>Bibliothèque standard : doc.rust-lang.org/std · paquets : crates.io, docs.rs</li><li>Essayer sans rien installer : play.rust-lang.org</li></ul></div></section></div></div><footer class="foot"><span>Mémento — Rust · v1.1 · septembre 2026</span><span>didierdambreville.github.io · 8 / 8</span></footer></div>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+
+# Brouillons : le dépôt est public, ce dossier ne doit pas y entrer.
+_brouillons/*
+!_brouillons/LISEZ-MOI.md

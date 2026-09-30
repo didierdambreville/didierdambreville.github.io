@@ -1,0 +1,138 @@
+---
+/**
+ * Démonstrateur — régime C.
+ *
+ * Cette page est appelée en `iframe` avec `sandbox="allow-scripts"`, sans
+ * `allow-same-origin` : elle vit sur une origine opaque et ne peut atteindre ni la fiche
+ * qui l'accueille, ni le stockage du site. Son script est écrit dans la page et autorisé
+ * par son empreinte, calculée ci-dessous à la construction — donc ni fichier externe,
+ * ni `'unsafe-inline'`. C'est le gabarit à reprendre pour tout nouveau démonstrateur.
+ */
+import { createHash } from 'node:crypto';
+import { cspDemonstrateur } from '../../csp';
+
+const script = `
+(function () {
+  var lignes = [
+    { ref: 'A-104', libelle: 'Papier 80 g, ramette',      q: 12, pu: 4.9,   total: 58.8 },
+    { ref: 'A-118', libelle: 'Encre noire, cartouche',    q: 3,  pu: 27.5,  total: 82.5 },
+    { ref: 'B-002', libelle: 'Reliure spirale',           q: 40, pu: 1.15,  total: 44.0 },
+    { ref: 'B-017', libelle: 'Couverture rigide',         q: 40, pu: 2.4,   total: 96.0 },
+    { ref: 'C-231', libelle: 'Façonnage, forfait',        q: 1,  pu: 180.0, total: 180.0 },
+    { ref: 'C-240', libelle: 'Découpe au format',         q: 40, pu: 0.85,  total: 30.0 },
+    { ref: 'D-051', libelle: 'Transport, palette',        q: 1,  pu: 64.0,  total: 64.0 },
+    { ref: 'D-052', libelle: 'Assurance transport',       q: 1,  pu: 12.75, total: 12.75 }
+  ];
+
+  var corps = document.getElementById('corps');
+  var resume = document.getElementById('resume');
+  var bouton = document.getElementById('bascule');
+  var seulementEcarts = false;
+
+  function ecart(l) {
+    var attendu = Math.round(l.q * l.pu * 100) / 100;
+    return Math.abs(attendu - l.total) < 0.005 ? null : attendu;
+  }
+
+  function euros(n) {
+    return n.toFixed(2).replace('.', ',') + ' €';
+  }
+
+  function rendre() {
+    corps.textContent = '';
+    var anomalies = 0;
+    lignes.forEach(function (l) {
+      var attendu = ecart(l);
+      if (attendu !== null) anomalies++;
+      if (seulementEcarts && attendu === null) return;
+      var tr = document.createElement('tr');
+      if (attendu !== null) tr.className = 'ecart';
+      [l.ref, l.libelle, String(l.q), euros(l.pu), euros(l.total),
+       attendu === null ? '—' : euros(attendu)].forEach(function (v, i) {
+        var td = document.createElement('td');
+        td.textContent = v;
+        if (i >= 2) td.className = 'nombre';
+        tr.appendChild(td);
+      });
+      corps.appendChild(tr);
+    });
+    resume.textContent = anomalies === 0
+      ? lignes.length + ' lignes, aucune incohérence.'
+      : lignes.length + ' lignes, ' + anomalies + ' incohérence' + (anomalies > 1 ? 's' : '') +
+        ' : le total ne correspond pas à la quantité multipliée par le prix unitaire.';
+    bouton.textContent = seulementEcarts ? 'Afficher toutes les lignes' : 'N’afficher que les écarts';
+    bouton.disabled = anomalies === 0;
+  }
+
+  bouton.addEventListener('click', function () {
+    seulementEcarts = !seulementEcarts;
+    rendre();
+  });
+
+  rendre();
+})();
+`;
+
+const empreinte =
+  'sha256-' + createHash('sha256').update(script, 'utf8').digest('base64');
+const csp = cspDemonstrateur([empreinte]);
+
+const styles = `
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; padding: 20px;
+    font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #fbfbf9; color: #17171a;
+  }
+  h1 { font-size: 1.1rem; margin: 0 0 0.25rem; }
+  p { margin: 0 0 1rem; color: #55555e; font-size: 0.9rem; }
+  button {
+    font: inherit; font-size: 0.85rem; padding: 0.4rem 0.9rem;
+    background: transparent; border: 1px solid currentColor; cursor: pointer;
+  }
+  button[disabled] { opacity: 0.4; cursor: default; }
+  .cadre { overflow-x: auto; margin-top: 1rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 0.35rem 0.8rem 0.35rem 0; border-bottom: 1px solid #dedcd4; }
+  th { font-weight: 600; white-space: nowrap; }
+  .nombre { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.ecart td { background: #fdf3ec; color: #8a3d12; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #16161a; color: #ece9e3; }
+    p { color: #a3a099; }
+    th, td { border-color: #33333a; }
+    tr.ecart td { background: #2a1d16; color: #e8a97a; }
+  }
+`;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content={csp} />}
+    <title>Lecteur de relevés — démonstration</title>
+    <style is:inline set:html={styles} />
+  </head>
+  <body>
+    <h1>Lecteur de relevés</h1>
+    <p id="resume">Chargement…</p>
+    <button id="bascule" type="button">N’afficher que les écarts</button>
+    <div class="cadre">
+      <table>
+        <thead>
+          <tr>
+            <th>Réf.</th>
+            <th>Libellé</th>
+            <th class="nombre">Qté</th>
+            <th class="nombre">P.U.</th>
+            <th class="nombre">Total relevé</th>
+            <th class="nombre">Total attendu</th>
+          </tr>
+        </thead>
+        <tbody id="corps"></tbody>
+      </table>
+    </div>
+    <script is:inline set:html={script} />
+  </body>
+</html>

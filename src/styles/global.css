@@ -1,0 +1,570 @@
+/* Feuille unique. Aucun attribut style="" nulle part : style-src 'self' les refuse. */
+
+/* Bleu et or, sur fond gris clair : un fond blanc éblouit, le gris reste lisible sans
+   fatiguer. Contrastes calculés (WCAG AA : 4,5:1 au moins pour le texte) : texte sur
+   fond 11,7 ; titres 10,0 ; encre-douce 6,1 ; accent 5,3 ; texte clair sur bleu nuit
+   12,9 ; or sur bleu nuit 8,4. En mode sombre : 14, 8,2 et 9,6. */
+:root {
+  --encre: #1f2a42;          /* texte : un bleu ardoise, moins dur que le noir */
+  --encre-douce: #4a5570;
+  --titre: #1b3462;          /* titres : bleu roi sourd */
+  --fond: #e6e8ec;           /* gris clair, légèrement bleuté */
+  --fond-appuye: #dadee5;
+  --trait: #c3c9d3;
+  --accent: #7a5810;         /* or sombre : lisible comme texte sur le fond gris */
+  --nuit: #0f1d3a;           /* bleu nuit : en-tête, pied, cartes */
+  --nuit-trait: #2a3b62;
+  --sur-nuit: #e8e2d0;       /* texte sur bleu nuit */
+  --sur-nuit-doux: #a9b2c8;
+  --or: #d9b35a;             /* or vif : sur bleu nuit uniquement */
+  --or-clair: #f1dc9c;
+  --mesure: 68ch;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #e7e2d4;
+    --encre-douce: #a7aec0;
+    --titre: #f0e6c8;
+    --fond: #0b1428;
+    --fond-appuye: #121e3a;
+    --trait: #243357;
+    --accent: #dcb865;
+    --nuit: #070e1e;
+    --nuit-trait: #1f2d4f;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { color-scheme: light dark; }
+
+body {
+  margin: 0;
+  padding-block: 0;
+  background: var(--fond);
+  color: var(--encre);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Une seule colonne pour tout le site : en-tête, contenu et pied s'alignent à gauche.
+   La prose, elle, reste bornée à la mesure de lecture (--mesure, plus bas). */
+.enveloppe {
+  width: 100%;
+  max-width: 108ch;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+/* Masqué à l'écran, lu par les lecteurs d'écran. */
+.lecteur-seul {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Lien d'évitement : invisible jusqu'à ce qu'on y arrive au clavier. */
+.evitement {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  background: var(--fond);
+  border: 1px solid var(--encre);
+  padding: 0.4rem 0.8rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  z-index: 1;
+}
+.evitement:focus { top: 0.5rem; }
+
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+a { color: inherit; text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { color: var(--accent); }
+
+/* ---------- en-tête et pied ---------- */
+
+/* En-tête et pied : bandeaux bleu nuit, filet or. */
+.bandeau {
+  background: var(--nuit);
+  color: var(--sur-nuit);
+  border-bottom: 2px solid var(--or);
+  padding-block: 1rem;
+}
+.bandeau__interieur {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.bandeau__nom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--or);
+  text-decoration: none;
+}
+.bandeau__nom img { width: 2rem; height: 2rem; display: block; }
+.bandeau__nom:hover { color: var(--or-clair); }
+.bandeau nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+.bandeau nav a { text-decoration: none; color: var(--sur-nuit); }
+.bandeau nav a:hover { color: var(--or-clair); text-decoration: underline; }
+.bandeau nav a[aria-current="page"] { color: var(--or); }
+.externe { font-size: 0.8em; margin-left: 0.15em; color: var(--or); }
+.bandeau a:focus-visible, .pied a:focus-visible { outline-color: var(--or); }
+
+.pied {
+  margin-top: 4rem;
+  background: var(--nuit);
+  border-top: 2px solid var(--or);
+  padding-block: 1.75rem 2.5rem;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--sur-nuit-doux);
+}
+.pied a { color: var(--sur-nuit); }
+.pied a:hover { color: var(--or-clair); }
+.pied p { margin: 0.35rem 0; }
+.reseaux {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.95rem;
+}
+.reseaux a { color: var(--or); font-weight: 600; text-decoration: none; }
+.reseaux a:hover { text-decoration: underline; }
+
+main { padding-block: 2.5rem; }
+
+/* ---------- titres ---------- */
+
+h1, h2, h3 { font-family: var(--sans); line-height: 1.25; letter-spacing: -0.01em; color: var(--titre); }
+h1 { font-family: var(--serif); letter-spacing: 0; }
+h1 { font-size: clamp(1.7rem, 1.2rem + 2vw, 2.4rem); margin: 0 0 0.6rem; }
+h2 { font-size: 1.3rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; }
+
+.chapeau {
+  font-size: 1.15rem;
+  color: var(--encre-douce);
+  max-width: var(--mesure);
+  margin: 0 0 2rem;
+}
+
+/* La mesure de lecture s'applique à la prose, jamais aux listes de mise en page :
+   une grille bornée à 68ch se réduit à une ou deux colonnes quelle que soit la place. */
+p, ul, ol { max-width: var(--mesure); }
+.grille, .filtres, .meta { max-width: none; }
+
+/* ---------- index des réalisations ---------- */
+
+.grille {
+  display: grid;
+  /* `min(100%, 240px)` plutôt que `240px` : sur un écran plus étroit que 240 px,
+     la colonne se réduit au lieu de faire déborder la page. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 2.5rem 1.75rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Sans cela, un élément de grille refuse de descendre sous sa largeur de contenu
+     minimale — un mot long ou une image suffit alors à réduire la grille à une colonne. */
+  min-width: 0;
+}
+.carte img {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: var(--fond-appuye);
+  border: 1px solid var(--trait);
+}
+.carte__titre { font-family: var(--sans); font-size: 1rem; font-weight: 600; margin: 0.25rem 0 0; }
+.carte__titre a { text-decoration: none; }
+.carte__resume { font-size: 0.95rem; color: var(--encre-douce); margin: 0; }
+
+.etiquette {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+/* ---------- filtres ---------- */
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+.filtres a[aria-current="true"] { color: var(--accent); font-weight: 600; }
+
+/* ---------- fiche ---------- */
+
+.meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1.25rem;
+  margin: 2rem 0;
+  padding: 1.25rem 0;
+  border-block: 1px solid var(--trait);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  max-width: var(--mesure);
+}
+.meta dt { color: var(--encre-douce); }
+.meta dd { margin: 0; }
+
+figure { margin: 2rem 0; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--trait); }
+figcaption {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+  margin-top: 0.5rem;
+}
+
+.cadre-demo { margin: 2.5rem 0; }
+.cadre-demo iframe {
+  width: 100%;
+  border: 1px solid var(--trait);
+  background: var(--fond-appuye);
+  display: block;
+}
+.cadre-demo__repli {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+  border-left: 2px solid var(--trait);
+  padding-left: 1rem;
+  margin: 1rem 0 0;
+}
+
+.liens { font-family: var(--sans); font-size: 0.95rem; }
+
+/* ---------- documents ---------- */
+
+.notice { border: 1px solid var(--trait); padding: 1.5rem; margin: 2rem 0; }
+.notice ol { margin: 0.5rem 0 0 1.25rem; padding: 0; }
+.telecharger {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: var(--nuit);
+  color: var(--or-clair);
+  border: 1px solid var(--or);
+  border-radius: 3px;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  margin-top: 1.25rem;
+}
+.telecharger:hover { background: var(--or); color: var(--nuit); }
+
+/* ---------- tableaux et code ---------- */
+
+.debordement { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 0.4rem 0.9rem 0.4rem 0; border-bottom: 1px solid var(--trait); }
+code, pre { font-family: var(--mono); font-size: 0.9em; }
+pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1px solid var(--trait); }
+
+@media (max-width: 30rem) {
+  .meta { grid-template-columns: 1fr; gap: 0.1rem; }
+  .meta dd { margin-bottom: 0.6rem; }
+}
+
+/* ---------- sommaire d'articles ---------- */
+
+.sommaire {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  max-width: none;
+}
+.sommaire > li {
+  padding-block: 1.25rem;
+  border-top: 1px solid var(--trait);
+  max-width: var(--mesure);
+}
+.sommaire > li:last-child { border-bottom: 1px solid var(--trait); }
+.sommaire h3 {
+  margin: 0.2rem 0 0.35rem;
+  font-size: 1.15rem;
+}
+.sommaire h3 a { text-decoration: none; }
+.sommaire h3 a:hover { text-decoration: underline; }
+.sommaire__these { margin: 0; color: var(--encre-douce); font-size: 1rem; }
+.sommaire--serre > li { padding-block: 0.9rem; }
+
+/* ---------- article ---------- */
+
+.prolonge {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--encre-douce);
+  border-left: 2px solid var(--trait);
+  padding-left: 1rem;
+  margin-top: 2.5rem;
+}
+
+.piliers {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--trait);
+}
+.piliers h2 { margin-top: 0; font-size: 1.05rem; }
+.piliers__note {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: var(--encre-douce);
+  margin: 0 0 1rem;
+}
+.piliers ol { font-size: 0.95rem; padding-left: 1.2rem; }
+.piliers li { margin-bottom: 0.4rem; }
+.piliers__glose { color: var(--encre-douce); }
+
+/* ---------- mémentos ---------- */
+
+.famille { margin-top: 3rem; }
+.famille h2 { margin-bottom: 0.25rem; }
+.famille__numero {
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+  font-weight: 400;
+  margin-right: 0.35rem;
+}
+.rubrique {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+  margin: 1.5rem 0 0;
+}
+
+/* Cartes-titres : une carte bleu nuit au format A4, dans l'esprit des couvertures —
+   surtitre, titre, filet or, sous-titre, pied. Aucune image : nettes à toute taille. */
+.grille--mementos {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+  gap: 1.5rem 1.25rem;
+  margin-top: 1rem;
+}
+.carte-titre { min-width: 0; }
+.carte-titre a {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 210 / 297;
+  padding: 1.1rem 1rem 0.9rem;
+  background: var(--nuit);
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.06), transparent 45%);
+  color: var(--sur-nuit);
+  border: 1px solid var(--nuit-trait);
+  border-radius: 4px;
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+/* Double filet or intérieur, comme un cartouche. */
+.carte-titre a::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgb(217 179 90 / 0.45);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.carte-titre a:hover,
+.carte-titre a:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--or);
+  box-shadow: 0 8px 20px rgb(15 29 58 / 0.25);
+  color: var(--sur-nuit);
+}
+.carte-titre__surtitre {
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--or);
+}
+.carte-titre__titre {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #fbf6e6;
+  margin-top: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.carte-titre__filet {
+  display: block;
+  width: 2.2rem;
+  height: 2px;
+  background: var(--or);
+  margin: 0.75rem 0 0.7rem;
+}
+.carte-titre__sous {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--sur-nuit-doux);
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.carte-titre__pied {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  position: relative;           /* au-dessus du filigrane */
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--or);
+}
+/* Le logo en filigrane : il occupe le bas de la carte, que le texte laisse libre. */
+.carte-titre__logo {
+  position: absolute;
+  right: -14%;
+  bottom: -10%;
+  width: 62%;
+  height: auto;
+  opacity: 0.13;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.carte-titre a:hover .carte-titre__logo { opacity: 0.22; }
+
+/* Notice d'un mémento : la couverture à gauche, la notice à droite ; empilées sur mobile. */
+.memento {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+  margin: 1.5rem 0 1rem;
+}
+.memento__couverture { margin: 0; }
+.memento__couverture img {
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid var(--trait);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+.memento__notice > p:first-child { margin-top: 0; }
+.memento__notice .meta { margin: 1.25rem 0; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem 1.5rem;
+  font-family: var(--sans);
+}
+.actions .telecharger { margin-top: 0; }
+.actions__poids { font-weight: 400; }
+.actions__secondaire { font-size: 0.95rem; }
+
+.sommaire-memento { font-family: var(--sans); font-size: 0.95rem; padding-left: 1.4rem; }
+.sommaire-memento li { margin-bottom: 0.2rem; padding-left: 0.2rem; }
+
+.citation {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  background: var(--fond-appuye);
+  border-left: 2px solid var(--accent);
+  padding: 0.8rem 1rem;
+  overflow-wrap: anywhere;
+}
+.citation cite { font-style: italic; }
+
+@media (max-width: 40rem) {
+  .memento { grid-template-columns: 1fr; }
+  .memento__couverture { max-width: 240px; }
+}
+
+/* ---------- à propos ---------- */
+
+.presentation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 240px);
+  gap: 2.5rem;
+  align-items: start;
+}
+.presentation__texte { grid-row: 1; grid-column: 1; }
+.presentation__texte > :first-child { margin-top: 0; }
+.presentation__portrait { grid-row: 1; grid-column: 2; margin: 0.4rem 0 0; }
+.presentation__portrait img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--or);
+  outline: 1px solid var(--trait);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+@media (max-width: 40rem) {
+  .presentation { grid-template-columns: 1fr; gap: 1.5rem; }
+  .presentation__portrait { grid-row: 1; grid-column: 1; max-width: 200px; margin: 0; }
+  .presentation__texte { grid-row: 2; }
+}
+
+/* ---------- accueil : ailleurs ---------- */
+
+.ailleurs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 1.5rem 2rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+.ailleurs li { border-top: 1px solid var(--trait); padding-top: 0.9rem; }
+.ailleurs h3 { margin: 0 0 0.35rem; font-size: 1rem; }
+.ailleurs p { margin: 0; font-size: 0.95rem; color: var(--encre-douce); }
+.ailleurs p a { color: var(--encre); }
+
+h2 a { text-decoration: none; }
+h2 a:hover { text-decoration: underline; }

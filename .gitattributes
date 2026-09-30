@@ -1,0 +1,14 @@
+# Fins de ligne normalisées (LF) pour tous les fichiers texte
+* text=auto eol=lf
+
+# Scripts Windows : CRLF, attendu par l'invite de commandes et Windows PowerShell
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binaires
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary

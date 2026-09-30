@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import { LIBELLES_DISCIPLINE } from '../content.config';
+
+interface Props {
+  href: string;
+  titre: string;
+  resume: string;
+  discipline: keyof typeof LIBELLES_DISCIPLINE;
+  annee: number;
+  couverture: ImageMetadata;
+  couvertureAlt: string;
+}
+const { href, titre, resume, discipline, annee, couverture, couvertureAlt } = Astro.props;
+---
+<li class="carte">
+  <a href={href}>
+    <Image src={couverture} alt={couvertureAlt} widths={[320, 640, 960]} sizes="(max-width: 40rem) 100vw, 320px" loading="lazy" />
+  </a>
+  <p class="etiquette">{LIBELLES_DISCIPLINE[discipline]} · {annee}</p>
+  <h2 class="carte__titre"><a href={href}>{titre}</a></h2>
+  <p class="carte__resume">{resume}</p>
+</li>

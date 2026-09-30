@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { AUTEUR } from '../../../lib/identite';
+import CarteRealisation from '../../../components/CarteRealisation.astro';
+import { DISCIPLINES, LIBELLES_DISCIPLINE } from '../../../content.config';
+
+export async function getStaticPaths() {
+  const toutes = await getCollection('realisations', (e) => !e.data.brouillon);
+  return DISCIPLINES.filter((d) => toutes.some((r) => r.data.discipline === d)).map((d) => ({
+    params: { nom: d },
+    props: {
+      discipline: d,
+      entrees: toutes
+        .filter((r) => r.data.discipline === d)
+        .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+    },
+  }));
+}
+
+const { discipline, entrees } = Astro.props;
+const libelle = LIBELLES_DISCIPLINE[discipline];
+const presentes = DISCIPLINES.filter((d) => d === discipline || true);
+---
+<Base titre={`${libelle} — ${AUTEUR}`} description={`Les réalisations classées comme « ${libelle} ».`}>
+  <h1>{libelle}</h1>
+
+  <ul class="filtres">
+    <li><a href="/realisations/">Toutes</a></li>
+    {
+      presentes.map((d) => (
+        <li>
+          <a href={`/realisations/discipline/${d}/`} aria-current={d === discipline ? 'true' : undefined}>
+            {LIBELLES_DISCIPLINE[d]}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ul class="grille">
+    {
+      entrees.map((r) => (
+        <CarteRealisation
+          href={`/realisations/${r.id}/`}
+          titre={r.data.titre}
+          resume={r.data.resume}
+          discipline={r.data.discipline}
+          annee={r.data.date.getFullYear()}
+          couverture={r.data.couverture}
+          couvertureAlt={r.data.couvertureAlt}
+        />
+      ))
+    }
+  </ul>
+</Base>

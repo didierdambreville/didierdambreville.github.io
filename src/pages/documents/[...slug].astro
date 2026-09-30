@@ -1,0 +1,54 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+
+export async function getStaticPaths() {
+  const documents = await getCollection('documents', (e) => !e.data.brouillon);
+  return documents.map((d) => ({ params: { slug: d.id }, props: { entree: d } }));
+}
+
+const { entree } = Astro.props;
+const d = entree.data;
+const { Content } = await render(entree);
+const dateFr = d.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.titre,
+  abstract: d.resume,
+  datePublished: d.date.toISOString().slice(0, 10),
+  version: d.version,
+  license: d.licence,
+  url: new URL(`/documents/${entree.id}/`, Astro.site).href,
+};
+---
+<Base titre={`${d.titre} — ${AUTEUR}`} description={d.resume} jsonLd={jsonLd}>
+  <h1>{d.titre}</h1>
+  <p class="chapeau">{d.resume}</p>
+
+  <Content />
+
+  <div class="notice">
+    <dl class="meta">
+      <dt>Version</dt><dd>{d.version}</dd>
+      <dt>Date</dt><dd>{dateFr}</dd>
+      <dt>Pages</dt><dd>{d.pages}</dd>
+      <dt>Licence</dt><dd>{d.licence}</dd>
+    </dl>
+
+    {
+      d.sommaire.length > 0 && (
+        <>
+          <h2>Sommaire</h2>
+          <ol>{d.sommaire.map((s) => <li>{s}</li>)}</ol>
+        </>
+      )
+    }
+
+    <a class="telecharger" href={d.fichier}>Télécharger le document (PDF)</a>
+  </div>
+
+  <p class="liens"><a href="/documents/">← Tous les documents</a></p>
+</Base>

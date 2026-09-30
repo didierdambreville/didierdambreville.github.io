@@ -1,0 +1,59 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { CSP_DOCUMENTAIRE } from '../csp';
+import { AUTEUR, LICENCE, RESEAUX } from '../lib/identite';
+
+/**
+ * Pourquoi la politique n'est posée qu'à la construction, jamais en développement.
+ *
+ * `astro dev` injecte la feuille de style directement dans la page et y ajoute son
+ * client de rechargement à chaud. Une politique stricte refuse les deux : la page
+ * s'affiche alors sans aucune mise en forme, et rien ne le signale hors de la console.
+ * Le serveur de développement n'écoute que la machine locale ; la politique n'y protège
+ * de rien. Elle est donc posée sur les pages construites uniquement.
+ *
+ * Conséquence pratique : pour éprouver la politique, `npm run preview` — qui sert le
+ * site construit — et non `npm run dev`.
+ */
+
+interface Props {
+  titre: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+  csp?: string;
+  /** Image de partage (réseaux sociaux) ; à défaut, aucune. */
+  image?: ImageMetadata;
+  imageAlt?: string;
+}
+const { titre, description, jsonLd, csp = CSP_DOCUMENTAIRE, image, imageAlt } = Astro.props;
+const canonique = new URL(Astro.url.pathname, Astro.site);
+// Les réseaux sociaux lisent mal le WebP : l'image de partage est servie en JPEG.
+const partage = image ? await getImage({ src: image, format: 'jpeg', width: 794 }) : undefined;
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+{import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content={csp} />}
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<title>{titre}</title>
+<meta name="description" content={description} />
+<meta name="author" content={AUTEUR} />
+<link rel="canonical" href={canonique} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="alternate" type="application/rss+xml" title={AUTEUR} href="/rss.xml" />
+<link rel="license" href={LICENCE.url} />
+{RESEAUX.map((r) => <link rel="me" href={r.url} />)}
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:site_name" content={AUTEUR} />
+<meta property="og:title" content={titre} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonique} />
+{partage && <meta property="og:image" content={new URL(partage.src, Astro.site)} />}
+{partage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+<meta name="twitter:card" content={partage ? 'summary_large_image' : 'summary'} />
+{
+  jsonLd && (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  )
+}

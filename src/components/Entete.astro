@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import { AUTEUR, ARSCRIPTA, SPECULA } from '../lib/identite';
+
+const chemin = Astro.url.pathname;
+
+// Une rubrique n'entre au menu que lorsqu'elle a quelque chose à montrer.
+const nombre = async (c: 'articles' | 'realisations' | 'documents') =>
+  (await getCollection(c, (e) => !e.data.brouillon)).length;
+const [articles, realisations, documents] = await Promise.all([
+  nombre('articles'),
+  nombre('realisations'),
+  nombre('documents'),
+]);
+
+// Ordre arrêté par l'auteur : Mémentos · Articles · Méthodes · À propos.
+// Tant que le site n'a pas d'articles propres, « Articles » mène à ceux de SPECULA ;
+// dès le premier article publié ici, il mène à /articles/ et SPECULA le suit.
+type Entree = { href: string; libelle: string; externe?: boolean };
+const rubriques: Entree[] = [
+  { href: '/mementos/', libelle: 'Mémentos' },
+  ...(articles
+    ? [
+        { href: '/articles/', libelle: 'Articles' },
+        { href: SPECULA.url, libelle: 'SPECULA', externe: true },
+      ]
+    : [{ href: SPECULA.url, libelle: 'Articles', externe: true }]),
+  { href: ARSCRIPTA.methodes, libelle: 'Méthodes', externe: true },
+  ...(realisations ? [{ href: '/realisations/', libelle: 'Réalisations' }] : []),
+  ...(documents ? [{ href: '/documents/', libelle: 'Documents' }] : []),
+  { href: '/a-propos/', libelle: 'À propos' },
+];
+const actif = (r: Entree) => !r.externe && (chemin === r.href || chemin.startsWith(r.href));
+---
+<header class="bandeau">
+  <div class="enveloppe bandeau__interieur">
+    <a class="bandeau__nom" href="/">
+      <img src="/logo-or.svg" alt="" width="32" height="32" />
+      {AUTEUR}
+    </a>
+    <nav aria-label="Navigation principale">
+      <ul>
+        {
+          rubriques.map((r) => (
+            <li>
+              <a href={r.href} aria-current={actif(r) ? 'page' : undefined}>
+                {r.libelle}
+                {r.externe && (
+                  <>
+                    <span class="externe" aria-hidden="true">↗</span>
+                    <span class="lecteur-seul"> (site externe : {new URL(r.href).hostname})</span>
+                  </>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

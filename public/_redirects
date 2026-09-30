@@ -1,0 +1,4 @@
+# Inerte sur GitHub Pages, qui ne gère pas les redirections côté serveur.
+# Pour conserver une ancienne adresse après un renommage, la seule voie sur
+# GitHub Pages est de laisser en place une page de redirection à l'ancienne
+# adresse. Ce fichier peut être supprimé.

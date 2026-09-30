@@ -1,0 +1,6 @@
+# Inerte sur GitHub Pages, qui ne permet pas de fixer d'en-têtes HTTP.
+# La politique de sécurité de contenu est portée par une balise <meta>, dans
+# src/components/BaseHead.astro. Le jeu d'en-têtes complet, à reposer le jour
+# d'un passage sur un hébergeur qui les accepte, est conservé dans
+# entetes-si-hebergeur-avec-entetes.txt, à la racine du projet.
+# Ce fichier peut être supprimé.

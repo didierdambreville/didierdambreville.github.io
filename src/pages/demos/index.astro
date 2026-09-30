@@ -1,0 +1,30 @@
+---
+// Les démonstrateurs vivent chacun sur /demos/<slug>/, en dehors de la navigation du site :
+// la page d'un démonstrateur ne porte ni en-tête ni pied de page, seulement un lien de retour.
+// C'est le seul endroit du site où du JavaScript est autorisé. Cette page-ci n'est qu'un
+// sommaire : elle reste en régime documentaire. Chaque démonstrateur porte sa propre politique.
+import { CSP_DOCUMENTAIRE } from '../../csp';
+import '../../styles/global.css';
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content={CSP_DOCUMENTAIRE} />}
+    <title>Démonstrateurs</title>
+  </head>
+  <body>
+    <main>
+      <div class="enveloppe">
+        <h1>Démonstrateurs</h1>
+        <p>
+          Cette section héberge les pièces interactives. Chacune occupe sa propre adresse et sa
+          propre politique de sécurité&#160;; aucune n'est chargée par le reste du site autrement
+          que dans un cadre cloisonné.
+        </p>
+        <p class="liens"><a href="/">← Retour au site</a></p>
+      </div>
+    </main>
+  </body>
+</html>
