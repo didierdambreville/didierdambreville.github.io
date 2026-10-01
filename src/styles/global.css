@@ -1213,3 +1213,154 @@ section[id] { scroll-margin-top: 1rem; }
   .note__corps td:not(:first-child):not(:last-child) + td:not(:last-child)::before { content: " · "; }
   .note__corps td:last-child:not(:first-child) { margin-top: 0.15rem; }
 }
+
+/* ---------- accueil (/) ---------- */
+
+/* En-tête : le cartouche bleu nuit des cartes-titres et du manifeste. */
+.ac-tete {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 2.25rem;
+  background: var(--nuit);
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.06), transparent 45%);
+  color: var(--sur-nuit);
+  border-bottom: 3px solid var(--or);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.ac-tete::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgb(217 179 90 / 0.45);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.ac-tete > * { position: relative; }
+.ac-tete img { width: 100%; height: auto; display: block; }
+.ac-tete h1 { color: #fbf6e6; margin: 0 0 0.6rem; }
+.ac-tete p { margin: 0; max-width: 60ch; }
+.ac-tete__sous { font-size: 1.15rem; line-height: 1.5; color: var(--sur-nuit); }
+.ac-tete .ac-tete__meta {
+  margin-top: 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--sur-nuit-doux);
+}
+.ac-tete a { color: var(--or-clair); }
+.ac-tete a:hover { color: var(--or); }
+.ac-tete a:focus-visible { outline-color: var(--or); }
+@media (max-width: 40rem) {
+  .ac-tete { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 1.4rem; }
+  .ac-tete img { max-width: 72px; }
+}
+
+/* Le site en chiffres : quatre tuiles qui mènent chacune à son résumé. */
+.ac-chiffres {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+.ac-chiffres a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.9rem 1rem 1rem;
+  background: var(--fond-appuye);
+  border: 1px solid var(--trait);
+  border-top: 3px solid var(--or);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--encre);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.ac-chiffres a:hover { border-color: var(--accent); transform: translateY(-2px); color: var(--encre); }
+.ac-chiffres__nombre {
+  font-family: var(--serif);
+  font-size: 2.3rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--titre);
+  font-variant-numeric: lining-nums;
+}
+.ac-chiffres__libelle {
+  margin-top: 0.3rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ac-chiffres__detail { font-family: var(--sans); font-size: 0.85rem; color: var(--encre-douce); }
+@media (max-width: 40rem) {
+  .ac-chiffres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Les rubriques, en deux colonnes indépendantes : mémentos puis affiches, notes puis
+   manifeste. Chaque colonne s'empile sans attendre la hauteur de l'autre. */
+.ac-rubriques {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  align-items: start;
+}
+.ac-colonne { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+@media (max-width: 52rem) {
+  .ac-rubriques { grid-template-columns: minmax(0, 1fr); }
+}
+.ac-bloc {
+  min-width: 0;
+  padding: 1.25rem 1.4rem 1.3rem;
+  background: var(--fond-appuye);
+  border: 1px solid var(--trait);
+  border-top: 3px solid var(--nuit);
+  border-radius: 4px;
+  scroll-margin-top: 1rem;
+}
+.ac-bloc h2 { margin: 0 0 0.4rem; font-size: 1.35rem; }
+.ac-bloc p { max-width: none; }
+.ac-bloc__chapeau { margin: 0 0 1rem; color: var(--encre-douce); font-size: 0.98rem; }
+.ac-bloc__suite { margin: 1rem 0 0; font-family: var(--sans); font-size: 0.92rem; font-weight: 600; }
+.ac-bloc__suite a { text-decoration: none; color: var(--accent); }
+.ac-bloc__suite a:hover { text-decoration: underline; }
+
+/* Famille ou dossier, puis ses titres. */
+.ac-liste { margin: 0; font-family: var(--sans); font-size: 0.9rem; }
+.ac-liste > div { padding: 0.45rem 0; border-top: 1px solid var(--trait); }
+.ac-liste > div:last-child { border-bottom: 1px solid var(--trait); }
+.ac-liste dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ac-liste dd { margin: 0.1rem 0 0; line-height: 1.5; }
+.ac-liste a { text-underline-offset: 0.2em; }
+
+.ac-puces { margin: 0; padding-left: 1.2rem; font-family: var(--sans); font-size: 0.92rem; }
+.ac-puces li { margin-bottom: 0.25rem; }
+.ac-puces li::marker { color: var(--accent); }
+.ac-puces__glose { color: var(--encre-douce); }
+
+/* Le manifeste, en bleu nuit : il sort du lot comme sur sa propre page. */
+.ac-bloc--nuit { background: var(--nuit); color: var(--sur-nuit); border-color: var(--nuit); border-top-color: var(--or); }
+.ac-bloc--nuit h2, .ac-bloc--nuit h2 a { color: #fbf6e6; }
+.ac-bloc--nuit .ac-bloc__chapeau, .ac-bloc--nuit .ac-puces__glose { color: var(--sur-nuit-doux); }
+.ac-bloc--nuit a { color: var(--or-clair); }
+.ac-bloc--nuit a:hover, .ac-bloc--nuit .ac-bloc__suite a { color: var(--or); }
+.ac-bloc--nuit a:focus-visible { outline-color: var(--or); }
+.ac-bloc--nuit .ac-puces li::marker { color: var(--or); }
+.ac-manifeste { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+.ac-manifeste img { width: 72px; height: 72px; flex: none; }
+.ac-manifeste h2 { margin: 0; }
+.ac-manifeste .ac-manifeste__punch { margin: 0.2rem 0 0; font-style: italic; font-size: 1.2rem; color: var(--or); }

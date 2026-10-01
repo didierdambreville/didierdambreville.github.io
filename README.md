@@ -48,6 +48,10 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   un signet par note, les sections de la note ouverte, puis les mots-clés, qui mènent à l'index de
   `/notes/#mots-cles`. Aucun script : les dossiers se plient avec `<details>`. Voir
   `COMMENT-FAIRE.md`, « Les notes ».
+- **Accueil** (refait le 1er octobre 2026) : `src/pages/index.astro` — bandeau d'identité, le site en
+  chiffres, un résumé de chaque rubrique (mémentos par famille, notes par dossier, affiches,
+  manifeste), puis « Ailleurs ». Tout y est calculé depuis le contenu publié : rien à y retoucher
+  quand une pièce s'ajoute.
 - **Rubriques en attente** (articles, réalisations, documents) : leurs pages existent, mais une
   rubrique sans pièce publiée n'apparaît ni au menu ni au plan du site (`astro.config.mjs`).
 

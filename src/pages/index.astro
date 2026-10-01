@@ -1,18 +1,34 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import CarteMemento from '../components/CarteMemento.astro';
-import { mementosPublies, grouper } from '../lib/mementos';
+import { mementosPublies, grouper as grouperMementos } from '../lib/mementos';
+import { affichesPubliees } from '../lib/affiches';
+import { notesPubliees, grouper as grouperNotes } from '../lib/notes';
+import { MANIFESTE, documentsManifeste } from '../lib/manifeste';
 import { AUTEUR, RESEAUX, ARSCRIPTA, SPECULA, DEPOT_PRAXIS, LICENCE } from '../lib/identite';
 
-// Les mémentos dans l'ordre du classement, famille après famille.
-const mementos = grouper(await mementosPublies()).flatMap((f) =>
-  f.rubriques.flatMap((r) => r.mementos),
-);
+/**
+ * L'accueil résume le site : tout y est calculé à partir de ce qui est publié — nombres,
+ * familles, dossiers, titres. Une pièce ajoutée ailleurs y apparaît d'elle-même.
+ */
+const mementos = await mementosPublies();
+const familles = grouperMementos(mementos);
+const pagesMementos = mementos.reduce((n, m) => n + m.data.pages, 0);
+const affiches = await affichesPubliees();
+const notes = await notesPubliees();
+const dossiers = grouperNotes(notes);
+const documents = documentsManifeste();
 
 const articles = (await getCollection('articles', (e) => !e.data.brouillon))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 4);
+
+const chiffres = [
+  { nombre: mementos.length, libelle: 'mémentos', detail: `${pagesMementos} pages A4`, href: '#mementos' },
+  { nombre: notes.length, libelle: 'notes', detail: `en ${dossiers.length} dossiers`, href: '#notes' },
+  { nombre: affiches.length, libelle: 'affiches', detail: 'A3 en couleur', href: '#affiches' },
+  { nombre: documents.length, libelle: 'documents', detail: `manifeste ${MANIFESTE.nom}`, href: '#manifeste' },
+];
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -20,31 +36,150 @@ const jsonLd = {
   name: AUTEUR,
   url: Astro.site?.href,
   sameAs: RESEAUX.map((r) => r.url),
-  founder: { '@type': 'Organization', name: ARSCRIPTA.nom, url: ARSCRIPTA.url },
+  founder: [
+    { '@type': 'Organization', name: ARSCRIPTA.nom, url: ARSCRIPTA.url },
+    { '@type': 'Organization', name: SPECULA.nom, url: SPECULA.url },
+  ],
 };
 ---
 <Base
   titre={AUTEUR}
-  description="Mémentos imprimables en libre accès, méthodes de travail (ARSCRIPTA) et analyses macro-financières (SPECULA)."
+  description={`${mementos.length} mémentos imprimables, ${affiches.length} affiches, ${notes.length} notes de travail et le manifeste ${MANIFESTE.nom}, en libre accès sous licence CC BY 4.0.`}
   jsonLd={jsonLd}
 >
-  <h1>{AUTEUR}</h1>
-  <p class="chapeau">
-    Des mémentos à imprimer, en libre accès&#160;; des méthodes de travail publiées par
-    ARSCRIPTA&#160;; des analyses macro-financières publiées par SPECULA.
-  </p>
+  <header class="ac-tete">
+    <img src="/logo-or.svg" alt="" width="120" height="120" />
+    <div>
+      <h1>{AUTEUR}</h1>
+      <p class="ac-tete__sous">
+        Des aide-mémoire à imprimer, des notes de travail tenues à jour, un manifeste pour donner
+        une seconde vie à ce qui part en déchetterie — en libre accès.
+      </p>
+      <p class="ac-tete__meta">
+        Fondateur d'<a href={ARSCRIPTA.url}>ARSCRIPTA</a>, méthodes de travail, et de
+        <a href={SPECULA.url}>SPECULA</a>, analyses macro-financières · tout le contenu est sous licence
+        <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>
+      </p>
+    </div>
+  </header>
 
-  <section aria-labelledby="titre-mementos">
-    <h2 id="titre-mementos"><a href="/mementos/">Mémentos</a></h2>
-    <p>
-      {mementos.length} aide-mémoire imprimables, de six à huit pages A4 chacun, de l'informatique au
-      latin. PDF et source HTML, sous licence
-      <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>.
-    </p>
-    <ul class="grille grille--mementos">
-      {mementos.map((m) => <CarteMemento m={m} />)}
-    </ul>
-  </section>
+  <ul class="ac-chiffres" aria-label="Le site en chiffres">
+    {
+      chiffres.map((c) => (
+        <li>
+          <a href={c.href}>
+            <span class="ac-chiffres__nombre">{c.nombre}</span>
+            <span class="ac-chiffres__libelle">{c.libelle}</span>
+            <span class="ac-chiffres__detail">{c.detail}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="ac-rubriques">
+    <div class="ac-colonne">
+      <section class="ac-bloc ac-bloc--large" id="mementos" aria-labelledby="titre-mementos">
+        <h2 id="titre-mementos"><a href="/mementos/">Mémentos</a></h2>
+        <p class="ac-bloc__chapeau">
+          L'essentiel d'un sujet en six à huit pages A4, en noir et blanc, à imprimer. Chacun est
+          fourni en PDF et en source HTML modifiable.
+        </p>
+        <dl class="ac-liste">
+          {
+            familles.map(({ famille, rubriques }) => (
+              <div>
+                <dt>{famille.nom}</dt>
+                <dd>
+                  {rubriques
+                    .flatMap((r) => r.mementos)
+                    .map((m, i) => (
+                      <>
+                        {i > 0 && ' · '}
+                        <a href={`/mementos/${m.id}/`}>{m.data.titre}</a>
+                      </>
+                    ))}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="ac-bloc__suite"><a href="/mementos/">Tous les mémentos →</a></p>
+      </section>
+
+      {
+        affiches.length > 0 && (
+          <section class="ac-bloc" id="affiches" aria-labelledby="titre-affiches">
+            <h2 id="titre-affiches"><a href="/mementos/#affiches">Affiches</a></h2>
+            <p class="ac-bloc__chapeau">
+              L'essentiel d'un mémento sur une page A3 en couleur, pour le mur d'un atelier ou d'un
+              fablab.
+            </p>
+            <ul class="ac-puces">
+              {affiches.map((a) => (
+                <li>
+                  <a href={`/affiches/${a.id}/`}>{a.data.titre}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+
+    <div class="ac-colonne">
+      <section class="ac-bloc ac-bloc--large" id="notes" aria-labelledby="titre-notes">
+        <h2 id="titre-notes"><a href="/notes/">Notes</a></h2>
+        <p class="ac-bloc__chapeau">
+          Bibliographies, listes, circuits, relevés : l'essentiel d'un sujet, tenu à jour et rangé
+          comme des favoris.
+        </p>
+        <dl class="ac-liste">
+          {
+            dossiers.map(({ categorie, notes }) => (
+              <div>
+                <dt>{categorie.nom}</dt>
+                <dd>
+                  {notes.map((n, i) => (
+                    <>
+                      {i > 0 && ' · '}
+                      <a href={`/notes/${n.id}/`}>{n.data.titre}</a>
+                    </>
+                  ))}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="ac-bloc__suite"><a href="/notes/">Toutes les notes →</a></p>
+      </section>
+
+      <section class="ac-bloc ac-bloc--nuit" id="manifeste" aria-labelledby="titre-manifeste">
+        <div class="ac-manifeste">
+          <img src={MANIFESTE.logo} alt="" width="72" height="72" />
+          <div>
+            <h2 id="titre-manifeste"><a href="/manifeste/">Manifeste {MANIFESTE.nom}</a></h2>
+            <p class="ac-manifeste__punch">{MANIFESTE.punchline}</p>
+          </div>
+        </div>
+        <p class="ac-bloc__chapeau">
+          {MANIFESTE.chaine} : ajouter à la déchetterie une ressourcerie qui trie et remet en
+          circulation, et un fablab qui répare et transforme. Un projet à porter devant ses élus.
+        </p>
+        <ul class="ac-puces">
+          {
+            documents.map((d) => (
+              <li>
+                <a href={d.url} download>{d.titre}</a>
+                {d.pages && <span class="ac-puces__glose"> — {d.pages}&#160;pages</span>}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="ac-bloc__suite"><a href="/manifeste/">Lire le manifeste →</a></p>
+      </section>
+    </div>
+  </div>
 
   {
     articles.length > 0 && (
