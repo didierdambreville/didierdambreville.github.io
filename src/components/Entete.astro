@@ -13,9 +13,10 @@ const [articles, realisations, documents] = await Promise.all([
   nombre('documents'),
 ]);
 
-// Ordre arrêté par l'auteur : Mémentos · Articles · Méthodes · À propos.
-// Tant que le site n'a pas d'articles propres, « Articles » mène à ceux de SPECULA ;
-// dès le premier article publié ici, il mène à /articles/ et SPECULA le suit.
+// Ordre arrêté par l'auteur : Mémentos · Publications · Méthodes · À propos.
+// Tant que le site n'a pas d'articles propres, « Publications » mène à la rubrique
+// « Méthode et sources » de SPECULA (libellé et cible choisis par l'auteur le 1er octobre
+// 2026) ; dès le premier article publié ici, « Articles » mène à /articles/ et SPECULA le suit.
 type Entree = { href: string; libelle: string; externe?: boolean };
 const rubriques: Entree[] = [
   { href: '/mementos/', libelle: 'Mémentos' },
@@ -24,7 +25,7 @@ const rubriques: Entree[] = [
         { href: '/articles/', libelle: 'Articles' },
         { href: SPECULA.url, libelle: 'SPECULA', externe: true },
       ]
-    : [{ href: SPECULA.url, libelle: 'Articles', externe: true }]),
+    : [{ href: SPECULA.publications, libelle: 'Publications', externe: true }]),
   { href: ARSCRIPTA.methodes, libelle: 'Méthodes', externe: true },
   ...(realisations ? [{ href: '/realisations/', libelle: 'Réalisations' }] : []),
   ...(documents ? [{ href: '/documents/', libelle: 'Documents' }] : []),

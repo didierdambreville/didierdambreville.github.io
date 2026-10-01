@@ -31,8 +31,10 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   ailleurs. Logo : `public/logo-or.svg` (fichier maître : `../identite/`).
 - **Couleurs** : bleu et or sur fond gris clair, jetons en tête de `src/styles/global.css`
   (contrastes calculés, en commentaire).
-- **Menu** : Mémentos · Articles · Méthodes · À propos. Articles et Méthodes renvoient à specula.fr
-  et arscripta.fr ; dès qu'un article est publié ici, « Articles » mène à `/articles/`.
+- **Menu** : Mémentos · Publications · Méthodes · À propos. « Publications » renvoie à la rubrique
+  « Méthode et sources » de specula.fr (`SPECULA.publications`, libellé et cible choisis le
+  1er octobre 2026) et « Méthodes » à arscripta.fr ; dès qu'un article est publié ici, une entrée
+  « Articles » mène à `/articles/` et SPECULA la suit.
 - **Rubriques en attente** (articles, réalisations, documents) : leurs pages existent, mais une
   rubrique sans pièce publiée n'apparaît ni au menu ni au plan du site (`astro.config.mjs`).
 

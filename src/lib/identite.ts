@@ -28,6 +28,8 @@ export const ARSCRIPTA = {
 export const SPECULA = {
   nom: 'SPECULA',
   url: 'https://specula.fr/',
+  /** Cible de l'entrée « Publications » du menu tant que le site n'a pas d'articles propres. */
+  publications: 'https://specula.fr/category/methode-et-sources/',
 } as const;
 
 /** Dépôt public de la méthode PRAXIS (domaine public). */
