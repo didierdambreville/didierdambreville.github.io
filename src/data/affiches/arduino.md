@@ -4,7 +4,7 @@ sousTitre: "La carte Uno · téléverser · Blink · fonctions de base · règle
 identifiant: "arduino"
 ordre: 3
 resume: "Arduino sur une page A3 : la carte Uno R3 et ses connecteurs, les étapes du téléversement, le croquis Blink commenté, les fonctions de base, les règles d’or du câblage et les pannes courantes."
-version: "1.1"
+version: "1.2"
 date: 2026-10-01
 premiereEdition: 2026-09-30
 source: "informatique-affiche-arduino"
