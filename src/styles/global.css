@@ -980,3 +980,237 @@ section[id] { scroll-margin-top: 1rem; }
   text-align: center;
 }
 .mf-fin { font-style: italic; font-size: 1.6rem; color: var(--accent); margin: 2rem 0 1rem; }
+
+/* ---------- notes (/notes/) ---------- */
+
+/* Deux volets, comme un gestionnaire de favoris : les dossiers à gauche, la note à droite.
+   Dans le document, la note vient d'abord — c'est elle qu'on vient lire, et le lien
+   d'évitement y mène ; la grille remet le panneau à gauche. Sur mobile, il passe dessous. */
+.notes {
+  display: grid;
+  grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+  grid-template-areas: "panneau contenu";
+  gap: 2.75rem;
+  align-items: start;
+}
+.notes__contenu { grid-area: contenu; min-width: 0; }
+.notes__contenu > h1 { margin-top: 0.2rem; }
+.notes__saut { display: none; }
+
+/* Le panneau. Il reste en vue quand la note défile. */
+.favoris {
+  grid-area: panneau;
+  position: sticky;
+  top: 1.25rem;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  padding: 0.75rem 0.5rem 0.9rem;
+  background: var(--fond-appuye);
+  border: 1px solid var(--trait);
+  border-top: 3px solid var(--nuit);
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+.favoris ul { list-style: none; margin: 0; padding: 0; max-width: none; }
+.favoris__tete {
+  display: flex;
+  align-items: baseline;
+  margin: 0 0.4rem 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--trait);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  max-width: none;
+}
+.favoris__tete a { text-decoration: none; }
+.favoris__tete a:hover { text-decoration: underline; }
+.favoris__compte {
+  margin-left: auto;
+  padding-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--encre-douce);
+  font-variant-numeric: tabular-nums;
+}
+.favoris__dossier + .favoris__dossier { margin-top: 0.3rem; }
+.favoris summary {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 3px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  color: var(--titre);
+}
+.favoris summary::-webkit-details-marker { display: none; }
+/* Le chevron tourne quand le dossier s'ouvre. */
+.favoris summary::before {
+  content: "▸";
+  flex: none;
+  width: 0.6rem;
+  font-size: 0.7rem;
+  color: var(--encre-douce);
+  transition: transform 0.15s ease;
+}
+.favoris details[open] > summary::before { transform: rotate(90deg); }
+.favoris summary:hover { background: var(--fond); }
+.favoris summary:focus-visible,
+.favoris a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.favoris svg { flex: none; width: 1rem; height: 1rem; color: var(--accent); }
+.favoris__dossier > ul:not(.mots) { margin: 0.1rem 0 0.2rem 1.05rem; }
+
+.favoris__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.32rem 0.45rem;
+  border-radius: 3px;
+  color: var(--encre);
+  text-decoration: none;
+}
+.favoris__note svg { margin-top: 0.08rem; }
+.favoris__note:hover { background: var(--fond); color: var(--accent); }
+/* La note ouverte : signet bleu nuit, liseré or. */
+.favoris__note[aria-current="page"],
+.favoris__note[aria-current="page"]:hover {
+  background: var(--nuit);
+  color: #fbf6e6;
+  box-shadow: inset 3px 0 0 var(--or);
+}
+.favoris__note[aria-current="page"] svg { color: var(--or); }
+
+.favoris .favoris__sections {
+  margin: 0.25rem 0 0.35rem 1.35rem;
+  border-left: 1px solid var(--trait);
+}
+.favoris__sections a {
+  display: block;
+  padding: 0.14rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--encre-douce);
+  text-decoration: none;
+}
+.favoris__sections a:hover { color: var(--accent); text-decoration: underline; }
+.favoris .favoris__mots { margin: 0.35rem 0.4rem 0 1.4rem; }
+
+/* Mots-clés : pastilles, dans le panneau, sous le titre d'une note et dans l'index. */
+.mots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.4rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+}
+.mots a {
+  display: inline-block;
+  padding: 0.08rem 0.55rem;
+  background: var(--fond);
+  border: 1px solid var(--trait);
+  border-radius: 1rem;
+  color: var(--encre-douce);
+  text-decoration: none;
+}
+.mots a::before { content: "#"; margin-right: 0.08em; color: var(--accent); }
+.mots a:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Le corps d'une note : des listes, des tableaux, peu de prose. */
+.note__corps { max-width: var(--mesure); }
+.note__corps h2 {
+  font-size: 1.15rem;
+  margin: 2.25rem 0 0.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--trait);
+}
+.note__corps h3 {
+  margin: 1.4rem 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+.note__corps h2:first-child { margin-top: 0; }
+.note__corps [id] { scroll-margin-top: 1rem; }
+.note__corps ul, .note__corps ol { padding-left: 1.3rem; }
+.note__corps li { margin-bottom: 0.3rem; }
+.note__corps li::marker { color: var(--accent); }
+.note__corps ol li::marker { font-family: var(--sans); font-size: 0.85em; font-variant-numeric: tabular-nums; }
+/* Un tableau trop large défile seul, sans élargir la page. */
+.note__corps table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 0.75rem 0 1.25rem;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+.note__corps thead th { color: var(--encre-douce); font-weight: 600; border-bottom: 2px solid var(--or); }
+.note__corps td { vertical-align: top; }
+.note__corps td:first-child { font-weight: 600; color: var(--titre); }
+.note__corps td:nth-child(3) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.note__pied {
+  margin-top: 2.5rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--trait);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+
+/* Index des mots-clés : le mot, puis ses notes ; la ligne visée par un lien s'éclaire. */
+.index-mots { margin: 0.5rem 0 0; max-width: var(--mesure); font-family: var(--sans); font-size: 0.92rem; }
+.index-mots > div {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+  gap: 0.2rem 1.25rem;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--trait);
+  scroll-margin-top: 1rem;
+}
+.index-mots dt { font-weight: 600; color: var(--titre); }
+.index-mots dt::before { content: "#"; color: var(--accent); margin-right: 0.08em; }
+.index-mots dd { margin: 0; }
+.index-mots > div:target { background: var(--fond-appuye); box-shadow: inset 3px 0 0 var(--or); }
+
+@media (max-width: 52rem) {
+  .notes { grid-template-columns: minmax(0, 1fr); grid-template-areas: "contenu" "panneau"; gap: 2.5rem; }
+  .favoris { position: static; max-height: none; }
+  .notes__saut { display: inline; margin-left: 0.6rem; }
+  /* Sur l'index, le panneau redirait la liste qui le précède. */
+  .notes--index .favoris { display: none; }
+}
+@media (max-width: 30rem) {
+  .index-mots > div { grid-template-columns: 1fr; }
+}
+/* Sur téléphone, un tableau de note devient une liste de fiches : la première cellule en
+   titre, les cellules du milieu sur une ligne (séparées par « · »), la dernière dessous.
+   L'en-tête reste lu par les lecteurs d'écran. */
+@media (max-width: 36rem) {
+  .note__corps table, .note__corps tbody, .note__corps tr, .note__corps td { display: block; }
+  .note__corps table { overflow: visible; }
+  .note__corps thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .note__corps tr { padding: 0.65rem 0; border-bottom: 1px solid var(--trait); }
+  .note__corps tr:first-child { border-top: 2px solid var(--or); }
+  .note__corps td { padding: 0; border: 0; }
+  .note__corps td:not(:first-child):not(:last-child) { display: inline; color: var(--encre-douce); }
+  .note__corps td:not(:first-child):not(:last-child) + td:not(:last-child)::before { content: " · "; }
+  .note__corps td:last-child:not(:first-child) { margin-top: 0.15rem; }
+}

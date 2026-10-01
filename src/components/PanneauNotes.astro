@@ -1,0 +1,76 @@
+---
+import { grouper, indexMotsCles, type Note } from '../lib/notes';
+
+/**
+ * Le panneau de gauche de /notes/, à la manière d'un gestionnaire de favoris : un
+ * dossier par catégorie, un signet par note, puis les mots-clés. Aucun script — les
+ * dossiers se plient avec <details>, que le navigateur gère seul. Sous la note ouverte,
+ * ses sections (titres de niveau 2) se déplient comme un sous-dossier.
+ */
+interface Props {
+  notes: Note[];
+  /** Identifiant de la note affichée, s'il y en a une. */
+  courante?: string;
+  /** Sections de la note affichée. */
+  sections?: { slug: string; text: string }[];
+}
+const { notes, courante, sections = [] } = Astro.props;
+const dossiers = grouper(notes);
+const mots = indexMotsCles(notes);
+---
+<nav class="favoris" id="favoris" aria-label="Toutes les notes">
+  <p class="favoris__tete">
+    <a href="/notes/">Notes</a>
+    <span class="favoris__compte">{notes.length}</span>
+  </p>
+
+  {
+    dossiers.map(({ categorie, notes }) => (
+      <details class="favoris__dossier" open>
+        <summary>
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M1.5 3.5h4.2l1.5 1.6h7.3v7.4H1.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+          </svg>
+          <span>{categorie.nom}</span>
+          <span class="favoris__compte">{notes.length}</span>
+        </summary>
+        <ul>
+          {notes.map((n) => (
+            <li>
+              <a class="favoris__note" href={`/notes/${n.id}/`} aria-current={n.id === courante ? 'page' : undefined}>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M4 1.8h8v12.4L8 11.3l-4 2.9z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+                </svg>
+                <span>{n.data.titre}</span>
+              </a>
+              {n.id === courante && sections.length > 2 && (
+                <ul class="favoris__sections" aria-label="Sections de la note">
+                  {sections.map((s) => (
+                    <li>
+                      <a href={`#${s.slug}`}>{s.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </details>
+    ))
+  }
+
+  <details class="favoris__dossier" open>
+    <summary>
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M1.8 1.8h6l6.4 6.4-6 6-6.4-6.4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+        <circle cx="5" cy="5" r="1.1" fill="currentColor" />
+      </svg>
+      <span>Mots-clés</span>
+    </summary>
+    <ul class="mots favoris__mots">
+      {mots.map(({ mot, ancre }) => (
+        <li><a href={`/notes/#${ancre}`}>{mot}</a></li>
+      ))}
+    </ul>
+  </details>
+</nav>

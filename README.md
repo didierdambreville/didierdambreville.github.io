@@ -31,7 +31,7 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   ailleurs. Logo : `public/logo-or.svg` (fichier maître : `../identite/`).
 - **Couleurs** : bleu et or sur fond gris clair, jetons en tête de `src/styles/global.css`
   (contrastes calculés, en commentaire).
-- **Menu** : Mémentos · Publications · Méthodes · Manifeste · À propos. « Publications » renvoie à
+- **Menu** : Mémentos · Notes · Publications · Méthodes · Manifeste · À propos. « Publications » renvoie à
   la rubrique « Méthode et sources » de specula.fr (`SPECULA.publications`, libellé et cible choisis
   le 1er octobre 2026) et « Méthodes » à arscripta.fr ; dès qu'un article est publié ici, une entrée
   « Articles » mène à `/articles/` et SPECULA la suit.
@@ -42,6 +42,12 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   hors du site**, depuis `../manifeste/` : `py 2026-10-01_6_fabriquer-pdf-trifab_v1.0.0.py` imprime
   les sources HTML avec Brave, numérote le sommaire, vérifie que couverture et dos sont bleu nuit,
   puis copie les PDF ici. Les schémas se régénèrent avec `../manifeste/2026-10-01_5_schemas-trifab-site_v1.0.0.py`.
+- **Notes** (depuis le 1er octobre 2026) : `/notes/`, une note par fichier Markdown dans
+  `src/data/notes/`. Panneau de gauche à la manière d'un gestionnaire de favoris
+  (`src/components/PanneauNotes.astro`) : un dossier par catégorie (`src/lib/classement-notes.ts`),
+  un signet par note, les sections de la note ouverte, puis les mots-clés, qui mènent à l'index de
+  `/notes/#mots-cles`. Aucun script : les dossiers se plient avec `<details>`. Voir
+  `COMMENT-FAIRE.md`, « Les notes ».
 - **Rubriques en attente** (articles, réalisations, documents) : leurs pages existent, mais une
   rubrique sans pièce publiée n'apparaît ni au menu ni au plan du site (`astro.config.mjs`).
 

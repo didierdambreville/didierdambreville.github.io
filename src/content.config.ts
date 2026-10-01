@@ -2,6 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { RUBRIQUES_MEMENTO } from './lib/classement-mementos';
+import { CATEGORIES_NOTE } from './lib/classement-notes';
 
 /**
  * Quatre cases, pas six. Une classification n'est utilisée que si elle tient
@@ -208,9 +209,32 @@ const affiches = defineCollection({
     }),
 });
 
+/**
+ * Notes : listes, relevés, bibliographies — des outils de travail tenus à jour, non des
+ * articles. Le corps est en Markdown ; il ne porte ni titre ni chapeau (l'en-tête de la
+ * page les tire de `titre` et `resume`), il commence directement par le contenu.
+ */
+const notes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/data/notes' }),
+  schema: z.object({
+    titre: z.string().max(90),
+    /** Une phrase : ce que la note rassemble et à quoi elle sert. */
+    resume: z.string().max(240),
+    /** Permalien : /notes/<identifiant>/ ; égal au nom du fichier. */
+    identifiant: z.string(),
+    categorie: z.enum(CATEGORIES_NOTE),
+    /** En minuscules, sauf nom propre. Chacun mène à l'index des mots-clés de /notes/. */
+    motsCles: z.array(z.string()).min(1).max(5),
+    /** Date de la dernière mise à jour. */
+    date: z.coerce.date(),
+    licence: z.string().default('CC BY 4.0'),
+    brouillon: z.boolean().default(false),
+  }),
+});
+
 const pages = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/data/pages' }),
   schema: z.object({ titre: z.string(), description: z.string() }),
 });
 
-export const collections = { realisations, documents, articles, mementos, affiches, pages };
+export const collections = { realisations, documents, articles, mementos, affiches, notes, pages };

@@ -1,0 +1,64 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PanneauNotes from '../../components/PanneauNotes.astro';
+import { notesPubliees, ancre, dateNote } from '../../lib/notes';
+import { categorie } from '../../lib/classement-notes';
+import { verifierIdentifiants } from '../../lib/identifiants';
+import { AUTEUR, LICENCE } from '../../lib/identite';
+
+export async function getStaticPaths() {
+  const notes = await notesPubliees();
+  verifierIdentifiants(notes);
+  return notes.map((n) => ({ params: { slug: n.id }, props: { note: n, notes } }));
+}
+
+const { note, notes } = Astro.props;
+const d = note.data;
+const cat = categorie(d.categorie);
+const { Content, headings } = await render(note);
+const sections = headings.filter((h) => h.depth === 2);
+const adresse = new URL(`/notes/${note.id}/`, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: d.titre,
+  description: d.resume,
+  genre: 'Note',
+  about: cat.nom,
+  keywords: d.motsCles.join(', '),
+  inLanguage: 'fr',
+  author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  license: d.licence === LICENCE.nom ? LICENCE.urlCanonique : d.licence,
+  dateModified: d.date.toISOString().slice(0, 10),
+  isPartOf: { '@type': 'CollectionPage', name: 'Notes', url: new URL('/notes/', Astro.site).href },
+  url: adresse,
+};
+---
+<Base titre={`${d.titre} — Notes · ${AUTEUR}`} description={d.resume} jsonLd={jsonLd}>
+  <div class="notes">
+    <article class="notes__contenu note">
+      <p class="etiquette">
+        <a href="/notes/">Notes</a> · {cat.nom}
+        <a class="notes__saut" href="#favoris">Toutes les notes ↓</a>
+      </p>
+      <h1>{d.titre}</h1>
+      <p class="chapeau">{d.resume}</p>
+      <ul class="mots" aria-label="Mots-clés">
+        {d.motsCles.map((m) => <li><a href={`/notes/#${ancre(m)}`}>{m}</a></li>)}
+      </ul>
+
+      <div class="note__corps">
+        <Content />
+      </div>
+
+      <p class="note__pied">
+        {AUTEUR} · mise à jour le {dateNote(d.date)} ·
+        <a href={LICENCE.url} rel="license">{d.licence}</a>
+      </p>
+    </article>
+
+    <PanneauNotes notes={notes} courante={note.id} sections={sections} />
+  </div>
+</Base>

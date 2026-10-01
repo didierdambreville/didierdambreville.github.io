@@ -114,6 +114,33 @@ pas la version de la notice (celle qui suit « · v », non celle du mémento ci
 
 ---
 
+## Les notes
+
+Une note n'est pas un article : c'est une liste, un relevé, une bibliographie — l'essentiel d'un
+sujet, tenu à jour. Chacune est un fichier Markdown de `src\data\notes\` ; le nom du fichier fait
+l'adresse (`architectes-et-batisseurs.md` → `/notes/architectes-et-batisseurs/`).
+
+Ajouter une note : copier une note existante, la renommer, remplacer l'en-tête et le texte.
+
+| Champ | Ce qu'on y met |
+|---|---|
+| `titre` | le titre, 90 signes au plus |
+| `resume` | une phrase : ce que la note rassemble — elle sert de chapeau et de description |
+| `identifiant` | le nom du fichier, sans `.md` — le site refuse de se construire s'ils diffèrent |
+| `categorie` | le dossier du panneau : `methode`, `documentation` ou `patrimoine` |
+| `motsCles` | de un à cinq mots, en minuscules sauf nom propre, ex. `["web", "archives"]` |
+| `date` | la date de la dernière mise à jour, `AAAA-MM-JJ` |
+
+Sous l'en-tête, le texte commence directement : ni titre ni chapeau, la page les tire de `titre` et
+`resume`. Les intertitres `##` deviennent les sections affichées sous la note dans le panneau (à
+partir de trois). Un tableau Markdown se lit en colonnes sur ordinateur et en fiches sur téléphone.
+
+Un nouveau dossier : l'ajouter à la liste de `src\lib\classement-notes.ts`, rien d'autre. Un même
+mot-clé doit toujours s'écrire de la même façon : « Patrimoine » et « patrimoine » dans deux notes
+font échouer la construction, qui vous dit lequel corriger.
+
+---
+
 ## Ajouter une réalisation
 
 **1. Choisir un identifiant.** En minuscules, avec des tirets, sans accent :

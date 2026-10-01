@@ -1,0 +1,81 @@
+---
+import Base from '../../layouts/Base.astro';
+import PanneauNotes from '../../components/PanneauNotes.astro';
+import { notesPubliees, grouper, indexMotsCles, ancre, dateNote } from '../../lib/notes';
+import { AUTEUR, LICENCE } from '../../lib/identite';
+
+const notes = await notesPubliees();
+const dossiers = grouper(notes);
+const mots = indexMotsCles(notes);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Notes',
+  description: 'Notes de travail tenues à jour : bibliographies, listes, relevés.',
+  url: new URL('/notes/', Astro.site).href,
+  author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  license: LICENCE.urlCanonique,
+  hasPart: notes.map((n) => ({
+    '@type': 'CreativeWork',
+    name: n.data.titre,
+    url: new URL(`/notes/${n.id}/`, Astro.site).href,
+  })),
+};
+---
+<Base
+  titre={`Notes — ${AUTEUR}`}
+  description={`${notes.length} notes de travail tenues à jour — bibliographies, listes, relevés —, rangées par dossier et par mot-clé.`}
+  jsonLd={jsonLd}
+>
+  <div class="notes notes--index">
+    <div class="notes__contenu">
+      <h1>Notes</h1>
+      <p class="chapeau">
+        Des notes de travail tenues à jour&#160;: bibliographies, listes, relevés. Pas des
+        articles — l'essentiel d'un sujet, à consulter plutôt qu'à lire d'une traite. Rangées par
+        dossier, retrouvées par mot-clé.
+      </p>
+
+      {
+        dossiers.map(({ categorie, notes }) => (
+          <section aria-labelledby={`dossier-${categorie.id}`}>
+            <h2 id={`dossier-${categorie.id}`}>{categorie.nom}</h2>
+            <ul class="sommaire sommaire--serre">
+              {notes.map((n) => (
+                <li>
+                  <h3><a href={`/notes/${n.id}/`}>{n.data.titre}</a></h3>
+                  <p class="sommaire__these">{n.data.resume}</p>
+                  <p class="etiquette">Mise à jour le {dateNote(n.data.date)}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+
+      <section id="mots-cles" aria-labelledby="titre-mots-cles">
+        <h2 id="titre-mots-cles">Mots-clés</h2>
+        <dl class="index-mots">
+          {
+            mots.map(({ mot, notes }) => (
+              <div id={ancre(mot)}>
+                <dt>{mot}</dt>
+                <dd>
+                  {notes.map((n, i) => (
+                    <>
+                      {i > 0 && ' · '}
+                      <a href={`/notes/${n.id}/`}>{n.data.titre}</a>
+                    </>
+                  ))}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+    </div>
+
+    <PanneauNotes notes={notes} />
+  </div>
+</Base>
