@@ -7,8 +7,9 @@
  * mots-clés libres ; le panneau de gauche range par dossier, l'index de /notes/ par
  * mot-clé.
  *
- * Structure arrêtée le 1er octobre 2026 avec les trois premières notes. Un dossier sans
- * note publiée n'apparaît pas. Pour en ajouter un : cette liste, et rien d'autre.
+ * Structure arrêtée le 1er octobre 2026 avec les trois premières notes ; « Informatique » et
+ * « Loisirs » ajoutés le même jour avec les trois suivantes. Un dossier sans note publiée
+ * n'apparaît pas. Pour en ajouter un : cette liste, et rien d'autre.
  */
 
 export interface Categorie {
@@ -19,7 +20,9 @@ export interface Categorie {
 export const CATEGORIES: Categorie[] = [
   { id: 'methode', nom: 'Méthode' },
   { id: 'documentation', nom: 'Documentation' },
+  { id: 'informatique', nom: 'Informatique' },
   { id: 'patrimoine', nom: 'Patrimoine' },
+  { id: 'loisirs', nom: 'Loisirs' },
 ];
 
 /** Liste plate des identifiants, pour le schéma de la collection. */

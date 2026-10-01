@@ -127,7 +127,7 @@ Ajouter une note : copier une note existante, la renommer, remplacer l'en-tête 
 | `titre` | le titre, 90 signes au plus |
 | `resume` | une phrase : ce que la note rassemble — elle sert de chapeau et de description |
 | `identifiant` | le nom du fichier, sans `.md` — le site refuse de se construire s'ils diffèrent |
-| `categorie` | le dossier du panneau : `methode`, `documentation` ou `patrimoine` |
+| `categorie` | le dossier du panneau : `methode`, `documentation`, `informatique`, `patrimoine` ou `loisirs` |
 | `motsCles` | de un à cinq mots, en minuscules sauf nom propre, ex. `["web", "archives"]` |
 | `date` | la date de la dernière mise à jour, `AAAA-MM-JJ` |
 
