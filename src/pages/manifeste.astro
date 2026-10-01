@@ -1,0 +1,793 @@
+---
+import Base from '../layouts/Base.astro';
+import SchemaReseau from '../components/manifeste/SchemaReseau.astro';
+import SchemaBoucle from '../components/manifeste/SchemaBoucle.astro';
+import { AUTEUR, LICENCE } from '../lib/identite';
+import { MANIFESTE, CONTACTS, documentsManifeste } from '../lib/manifeste';
+import { dateFr } from '../lib/mementos';
+import partage from '../assets/manifeste/trifab-partage.png';
+
+const documents = documentsManifeste();
+const adresse = new URL('/manifeste/', Astro.site).href;
+// « 1er octobre », non « 1 octobre » : l'ordinal du premier jour du mois.
+const releve = dateFr(new Date(CONTACTS.releve)).replace(/^1 /, '1er ');
+const hote = (u: string) => u.replace(/^https:\/\//, '').replace(/\/$/, '');
+// Les adresses électroniques se coupent après l'arobase sur petit écran.
+const coupe = (a: string) => a.split('@');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: `${MANIFESTE.nom} — Manifeste Déchetterie · Ressourcerie · Fablab`,
+  alternativeHeadline: MANIFESTE.punchline,
+  description:
+    'Manifeste pour une chaîne locale déchetterie, ressourcerie et fablab : réemployer, réparer et transformer sur place ce qui peut encore servir.',
+  inLanguage: 'fr',
+  author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  license: LICENCE.urlCanonique,
+  isAccessibleForFree: true,
+  version: MANIFESTE.version,
+  datePublished: MANIFESTE.date.toISOString().slice(0, 10),
+  url: adresse,
+  encoding: documents.map((d) => ({
+    '@type': 'MediaObject',
+    name: d.titre,
+    contentUrl: new URL(d.url, Astro.site).href,
+    encodingFormat: 'application/pdf',
+  })),
+};
+
+const sommaire = [
+  ['constat', 'Le constat'],
+  ['chaine', 'Trois maillons, une chaîne'],
+  ['securite', "La sécurité d'abord"],
+  ['quotidien', 'Au quotidien'],
+  ['gains', 'Ce que le territoire y gagne'],
+  ['economie', 'Un modèle économique stable'],
+  ['ess', "Une démarche d'économie sociale et solidaire"],
+  ['gouvernance', 'Gouvernance'],
+  ['pilote', 'Le site pilote'],
+  ['faire-vivre', 'Faire vivre TRIFAB'],
+  ['mesurer', 'Mesurer les résultats'],
+  ['feuille-de-route', 'Feuille de route et vigilance'],
+  ['reproductible', 'Un modèle reproductible'],
+  ['relais', 'Devenez relais'],
+  ['modeles', 'Modèles à copier'],
+  ['contacts', 'Contacts relais'],
+  ['appel', 'Appel aux collectivités'],
+] as const;
+
+---
+<Base
+  titre={`${MANIFESTE.nom} — Manifeste Déchetterie · Ressourcerie · Fablab · ${AUTEUR}`}
+  description="TRIFAB : un manifeste pour ajouter à chaque déchetterie une ressourcerie et un fablab. Version courte, version longue, contacts relais et modèles de courrier, en libre diffusion."
+  jsonLd={jsonLd}
+  image={partage}
+  imageAlt="TRIFAB — Déchetterie · Ressourcerie · Fablab. De la benne à l'établi."
+>
+  <header class="mf-tete">
+    <img src={MANIFESTE.logo} alt="Logo TRIFAB : trois anneaux reliés en boucle" width="140" height="140" />
+    <div>
+      <p class="mf-tete__surtitre">Manifeste</p>
+      <h1>{MANIFESTE.nom}</h1>
+      <p class="mf-tete__sous"><strong>{MANIFESTE.chaine}</strong> — transformer le tri en matière première locale</p>
+      <p class="mf-tete__punch">{MANIFESTE.punchline}</p>
+      <p class="mf-tete__meta">
+        {AUTEUR} · version {MANIFESTE.version}, {dateFr(MANIFESTE.date, false)} · document public, licence
+        <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>
+      </p>
+    </div>
+  </header>
+
+  <p class="chapeau mf-chapeau">
+    Une partie de ce qui arrive en déchetterie peut encore servir. TRIFAB propose d'ajouter deux maillons à
+    la chaîne qui existe déjà&#160;: une <strong>ressourcerie</strong> qui trie et remet en circulation, un
+    <strong>fablab</strong> qui répare et transforme. Ce manifeste vous appartient&#160;: lisez-le,
+    adaptez-le, portez-le devant vos élus.
+  </p>
+
+  <section aria-labelledby="titre-documents">
+    <h2 id="titre-documents">Télécharger le manifeste</h2>
+    <ul class="mf-documents">
+      {
+        documents.map((d) => (
+          <li class="mf-document">
+            <h3>{d.titre}</h3>
+            <p>{d.usage}</p>
+            <p class="mf-document__meta">
+              PDF{d.pages && <> · {d.pages}&#160;pages</>}{d.poids && <> · {d.poids}</>}
+            </p>
+            <a class="telecharger" href={d.url} download>
+              Télécharger<span class="lecteur-seul"> : {d.titre} (PDF)</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mf-note">
+      Logo pour vos supports&#160;: <a href={MANIFESTE.logo} download>SVG</a> ·
+      <a href={MANIFESTE.logoPng} download>PNG 1024&#160;px</a>. Textes et logo sont libres de
+      réutilisation sous licence <a href={LICENCE.url} rel="license">CC&#160;BY&#160;4.0</a>, en citant l'auteur.
+    </p>
+  </section>
+
+  <section class="mf-essentiel" aria-labelledby="titre-essentiel">
+    <h2 id="titre-essentiel">L'essentiel</h2>
+    <blockquote class="mf-cle">
+      <p>Ce qui peut encore servir ne devrait pas devenir un déchet sans avoir été examiné comme une ressource.</p>
+    </blockquote>
+    <ol class="mf-chaine" aria-label="La chaîne TRIFAB">
+      <li class="mf-maillon">
+        <span class="mf-maillon__rang" aria-hidden="true">1</span>
+        <h3>Déchetterie</h3>
+        <p><b>Collecter</b>, orienter, repérer ce qui peut encore servir.</p>
+      </li>
+      <li class="mf-maillon">
+        <span class="mf-maillon__rang" aria-hidden="true">2</span>
+        <h3>Ressourcerie</h3>
+        <p><b>Trier</b>, nettoyer, stocker, remettre en circulation.</p>
+      </li>
+      <li class="mf-maillon">
+        <span class="mf-maillon__rang" aria-hidden="true">3</span>
+        <h3>Fablab</h3>
+        <p><b>Réparer</b>, concevoir, transformer, fabriquer.</p>
+      </li>
+    </ol>
+    <p class="mf-chaine__suite">→ Réemploi · Réparation · Transformation · Redistribution — la valeur reste sur le territoire</p>
+    <div class="mf-encadre mf-encadre--nuit">
+      <p class="mf-encadre__titre">Première décision demandée</p>
+      <p>
+        Que chaque communauté de communes compétente en matière de déchets <strong>étudie, dans un délai de
+        12&#160;mois, la faisabilité d'au moins un site pilote TRIFAB</strong>, puis décide de la suite sur la
+        base de résultats mesurés.
+      </p>
+    </div>
+    <div class="mf-encadre">
+      <p class="mf-encadre__titre">Pourquoi «&#160;TRIFAB&#160;»&#160;?</p>
+      <p>
+        <strong>TRI</strong>, comme le tri que la déchetterie pratique déjà — et comme les <strong>trois</strong>
+        maillons de la chaîne. <strong>FAB</strong>, comme la fabrication, celle du fablab, et comme la fabrique
+        d'un territoire qui produit à partir de ce qu'il possède. Le logo dit la même chose&#160;: trois anneaux
+        reliés en boucle, une matière qui circule et reste sur place.
+      </p>
+    </div>
+  </section>
+
+  <nav class="mf-sommaire" aria-labelledby="titre-sommaire">
+    <h2 id="titre-sommaire">Tout le projet</h2>
+    <ol>
+      {sommaire.map(([id, titre]) => <li><a href={`#${id}`}>{titre}</a></li>)}
+    </ol>
+  </nav>
+
+  <!-- ==================== I. Le projet ==================== -->
+
+  <p class="mf-partie">Partie I — Le projet</p>
+
+  <section id="constat" aria-labelledby="h-constat">
+    <h2 id="h-constat"><span class="mf-num">1</span>Le constat</h2>
+    <p>
+      Les communautés de communes et les structures compétentes en matière de déchets disposent déjà d'un
+      dispositif organisé de collecte, de tri et d'orientation. Pourtant, une partie des objets, des équipements
+      et des matériaux déposés en déchetterie conserve une valeur d'usage, une valeur matière ou un potentiel de
+      transformation. C'est comme jeter des planches de bois saines après un déménagement, ou mettre à la
+      poubelle des chutes de tissu encore parfaites.
+    </p>
+    <p>
+      <strong>Le tri existe. La valorisation locale, elle, reste trop rare.</strong> L'enjeu n'est pas seulement
+      de mieux éliminer&#160;: c'est d'identifier, <em>avant</em> l'élimination, ce qui peut encore être
+      réemployé, réparé, transformé ou remis en circulation. Cette chaîne ne remplace pas les filières de
+      traitement et de recyclage&#160;: elle intervient en amont, lorsque le réemploi ou la transformation
+      locale présentent un intérêt.
+    </p>
+    <blockquote class="mf-cle"><p>Le meilleur déchet est celui qui n'a pas besoin de devenir un déchet.</p></blockquote>
+    <p>Lorsqu'un objet ne peut plus servir en l'état, on recherche successivement, lorsque c'est possible&#160;:</p>
+    <p class="mf-parcours">
+      <span>Réemploi</span><span>Réparation</span><span>Transformation</span><span>Recyclage</span><span>Traitement final</span>
+    </p>
+    <p>TRIFAB renforce les trois premières étapes, à l'échelle locale.</p>
+  </section>
+
+  <section id="chaine" aria-labelledby="h-chaine">
+    <h2 id="h-chaine"><span class="mf-num">2</span>Trois maillons, une chaîne</h2>
+    <p>
+      Nous demandons à chaque communauté de communes compétente d'étudier la création, à proximité ou en
+      complément de ses déchetteries, d'un dispositif simple et intégré. L'objectif n'est pas de bouleverser la
+      déchetterie, mais de lui ajouter une capacité de détection et d'orientation des ressources.
+    </p>
+    <ul class="mf-cartes mf-cartes--3">
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Maillon 1</p>
+        <h3>La déchetterie</h3>
+        <p>Le point d'entrée&#160;: accueil des usagers, réception et orientation des flux, sécurité,
+        séparation des catégories de déchets, orientation vers les filières — et repérage de ce qui peut encore
+        servir.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Maillon 2</p>
+        <h3>La ressourcerie</h3>
+        <p>Le maillon du réemploi&#160;: contrôler, trier par matière et par état, nettoyer, stocker, remettre
+        en circulation, fournir des matières au fablab, documenter les volumes détournés.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Maillon 3</p>
+        <h3>Le fablab</h3>
+        <p>L'atelier de conception et de fabrication&#160;: réparation, pièces de remplacement, prototypage,
+        découpe et usinage, fabrication numérique, bois, métal, textile, ateliers pédagogiques et citoyens.</p>
+      </li>
+    </ul>
+    <p>
+      Les usagers du fablab peuvent être des particuliers, des artisans, des associations, des établissements
+      scolaires, des organismes de formation, des structures d'insertion et des professionnels, selon des
+      modalités définies localement.
+    </p>
+  </section>
+
+  <section id="securite" aria-labelledby="h-securite">
+    <h2 id="h-securite"><span class="mf-num">3</span>La sécurité d'abord</h2>
+    <p>Tout n'est pas réemployable. Le dispositif doit prévoir&#160;:</p>
+    <ul class="mf-colonnes">
+      <li>une procédure d'identification des matières acceptées&#160;;</li>
+      <li>une zone de quarantaine pour les éléments à vérifier&#160;;</li>
+      <li>l'exclusion des matières dangereuses ou non maîtrisées&#160;;</li>
+      <li>des règles propres à l'électricité et à l'électronique&#160;;</li>
+      <li>des contrôles avant remise en circulation, lorsque c'est nécessaire&#160;;</li>
+      <li>une gestion séparée des produits chimiques, des batteries et des flux réglementés&#160;;</li>
+      <li>des consignes d'utilisation des machines et des protections individuelles&#160;;</li>
+      <li>la formation des encadrants et des utilisateurs&#160;;</li>
+      <li>une traçabilité minimale des objets remis en circulation, lorsqu'elle est nécessaire.</li>
+    </ul>
+    <p class="mf-encadre"><strong>Principe intangible&#160;:</strong> le réemploi ne doit jamais conduire à
+    contourner les obligations de sécurité, de responsabilité ou de conformité.</p>
+  </section>
+
+  <section id="quotidien" aria-labelledby="h-quotidien">
+    <h2 id="h-quotidien"><span class="mf-num">4</span>Au quotidien</h2>
+    <h3>Le parcours d'un objet ou d'un matériau</h3>
+    <ol class="mf-etapes">
+      <li>Un particulier ou un professionnel apporte un objet ou des matériaux en déchetterie.</li>
+      <li>Le personnel repère, lorsque c'est possible, ce qui peut être réemployé.</li>
+      <li>Une partie part vers la ressourcerie&#160;: bois, métal, textile, mobilier, composants, équipements.</li>
+      <li>Les éléments sont contrôlés, triés, nettoyés et préparés, puis stockés dans des espaces identifiés.</li>
+      <li>Certains objets sont remis directement en circulation.</li>
+      <li>Ceux qui ont un potentiel de transformation sont mis à disposition du fablab.</li>
+      <li>Les utilisateurs du fablab mènent leurs projets dans le respect des règles d'accès et de sécurité.</li>
+      <li>Les objets réparés ou créés sont redistribués, vendus à bas prix, confiés à des associations ou à des projets pédagogiques.</li>
+      <li>Les flux sont comptabilisés pour mesurer les résultats.</li>
+    </ol>
+    <h3>Exemple&#160;: une vieille étagère en bois</h3>
+    <p class="mf-parcours">
+      <span>Déchetterie</span><span>repérée</span><span>ressourcerie</span><span>démontée</span><span>planches</span><span>fablab</span><span>nouvel objet</span>
+    </p>
+    <p>
+      Le même principe vaut pour le métal, les textiles, les composants électroniques, le mobilier ou certains
+      matériaux de construction. C'est un <strong>circuit court de la matière</strong>&#160;: elle reste sur le
+      territoire, et la valeur créée profite aux habitants, aux associations, aux professionnels et aux
+      établissements de formation.
+    </p>
+  </section>
+
+  <section id="gains" aria-labelledby="h-gains">
+    <h2 id="h-gains"><span class="mf-num">5</span>Ce que le territoire y gagne</h2>
+    <ul class="mf-cartes">
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Environnement</p>
+        <p><strong>Moins de déchets</strong> enfouis ou incinérés, des objets qui durent plus longtemps, moins de
+        gaspillage et de transport, une meilleure connaissance des flux de matières.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Économie locale</p>
+        <p><strong>Des emplois locaux</strong>&#160;: tri, préparation, réparation, animation, maintenance. Des
+        matériaux à bas coût, un soutien aux artisans, des compétences nouvelles.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Formation</p>
+        <p>Un lieu d'apprentissage pratique — conception, réparation, électronique, bois, métal, textile,
+        fabrication numérique — pour les collèges, les lycées, les organismes de formation.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Cohésion</p>
+        <p>Un lieu de coopération entre habitants, collectivités, associations, artisans, écoles, structures
+        d'insertion et entreprises&#160;: un <strong>écosystème local</strong> de la matière.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================== II. Le modèle ==================== -->
+
+  <p class="mf-partie">Partie II — Le modèle</p>
+
+  <section id="economie" aria-labelledby="h-economie">
+    <h2 id="h-economie"><span class="mf-num">6</span>Un modèle économique stable</h2>
+    <p class="chapeau">
+      Un site qui ferme au bout de deux ans fait plus de tort que s'il n'avait jamais ouvert&#160;: matériel
+      dispersé, compétences perdues, confiance entamée. La stabilité financière n'est pas un objectif
+      secondaire&#160;: c'est la condition de tout le reste.
+    </p>
+    <h3>Pourquoi viser la stabilité dès la conception</h3>
+    <ul class="mf-cartes">
+      <li class="mf-carte"><h4>Pérenniser les emplois</h4><p>Trier, réparer, encadrer un atelier&#160;: ces
+      savoir-faire s'acquièrent en années. Des contrats précaires les font partir au moment où ils deviennent
+      utiles.</p></li>
+      <li class="mf-carte"><h4>Traverser les cycles</h4><p>Un dispositif suspendu à une seule subvention
+      s'arrête avec elle. La diversité des ressources protège des aléas budgétaires et politiques.</p></li>
+      <li class="mf-carte"><h4>Amortir les investissements</h4><p>Aménagements et machines s'amortissent sur
+      plusieurs années&#160;: seul un fonctionnement régulier leur fait produire tout ce qu'ils peuvent.</p></li>
+      <li class="mf-carte"><h4>Rassurer décideurs et partenaires</h4><p>Un élu soutient plus volontiers un
+      coût net connu et suivi&#160;; artisans, écoles et entreprises s'engagent si le lieu sera encore là l'an
+      prochain.</p></li>
+    </ul>
+    <h3>Trois piliers de recettes</h3>
+    <ul class="mf-cartes mf-cartes--3">
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Pilier 1</p>
+        <h4>Recettes d'activité</h4>
+        <p>Boutique de réemploi, vente de matériaux, ateliers, abonnements au fablab, usage encadré des
+        machines, formations, prestations pour entreprises et collectivités&#160;: petites séries, mobilier,
+        pièces de rechange, réparations.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Pilier 2</p>
+        <h4>Un contrat de service</h4>
+        <p>Chaque tonne détournée de l'élimination est une tonne que la collectivité ne paie plus à transporter
+        et traiter. Une <strong>convention pluriannuelle d'objectifs</strong>, adossée à des indicateurs,
+        rémunère ce service et remplace une subvention annuelle incertaine.</p>
+      </li>
+      <li class="mf-carte">
+        <p class="mf-carte__etiquette">Pilier 3</p>
+        <h4>Financements de projet</h4>
+        <p>ADEME, Région, Département, fonds dédiés au réemploi et à la réparation des filières à
+        responsabilité élargie du producteur, appels à projets, mécénat&#160;: pour <strong>démarrer et
+        investir</strong>, pas pour fonctionner.</p>
+      </li>
+    </ul>
+    <p>
+      À ces trois piliers s'ajoute un <strong>socle non monétaire</strong> — bénévolat, dons de matières et
+      d'outils, locaux ou machines mis à disposition — qui réduit les charges fixes et se valorise dans le bilan.
+    </p>
+    <h3>Les leviers de la stabilité</h3>
+    <ul>
+      <li><strong>Diversifier</strong>&#160;: viser qu'à terme aucune source ne pèse plus de la moitié du budget (seuil indicatif).</li>
+      <li><strong>Compter les coûts évités</strong>&#160;: transport, traitement, taxe générale sur les activités polluantes (TGAP), fortement relevée depuis 2021.</li>
+      <li><strong>Mutualiser</strong> locaux, machines et compétences avec l'existant&#160;: ressourcerie, fablab, lycée professionnel.</li>
+      <li><strong>Croître sur preuves</strong>&#160;: chaque palier d'investissement est déclenché par des indicateurs atteints.</li>
+      <li><strong>Constituer une réserve</strong> de quelques mois de charges, pour absorber un retard de versement sans licencier.</li>
+      <li><strong>Publier ses comptes</strong>&#160;: on finance plus facilement ce que l'on mesure.</li>
+    </ul>
+    <ol class="mf-phases" aria-label="Trajectoire économique visée">
+      <li><span class="mf-phases__duree">Année 1</span><strong>Amorcer</strong>financements de démarrage prépondérants, premières recettes, convention signée.</li>
+      <li><span class="mf-phases__duree">Années 2 et 3</span><strong>Consolider</strong>montée des recettes propres, convention indexée sur les résultats, réserve constituée.</li>
+      <li><span class="mf-phases__duree">Ensuite</span><strong>Stabiliser</strong>équilibre entre les trois piliers, investissements en partie autofinancés.</li>
+    </ol>
+    <p class="mf-note">Trajectoire visée, non prévision. Les dispositifs de financement cités évoluent&#160;: conditions et montants à vérifier au moment du montage.</p>
+  </section>
+
+  <section id="ess" aria-labelledby="h-ess">
+    <h2 id="h-ess"><span class="mf-num">7</span>Une démarche d'économie sociale et solidaire</h2>
+    <p class="chapeau">
+      Le réemploi n'est pas né d'hier&#160;: ressourceries, recycleries, ateliers et chantiers d'insertion,
+      réseaux comme Emmaüs ou Envie le pratiquent depuis longtemps. TRIFAB s'appuie sur ce savoir-faire au lieu
+      de le concurrencer, et en adopte les principes.
+    </p>
+    <ul class="mf-cartes">
+      <li class="mf-carte"><h4>Une finalité d'utilité sociale</h4><p>La loi du 31 juillet 2014 relative à
+      l'économie sociale et solidaire en fixe les conditions&#160;: un but autre que le seul partage des
+      bénéfices, une gouvernance démocratique, des bénéfices majoritairement réinvestis dans l'activité.</p></li>
+      <li class="mf-carte"><h4>L'emploi et l'insertion</h4><p>Démontage, tri, nettoyage, réparation, vente&#160;:
+      des métiers accessibles et formateurs, propices aux parcours d'insertion. Ces emplois ne se délocalisent
+      pas.</p></li>
+      <li class="mf-carte"><h4>L'accès pour tous</h4><p>Prix solidaires, tarifs réduits pour les associations,
+      les écoles et les foyers modestes&#160;: la valeur récupérée profite d'abord à ceux qui en ont besoin.</p></li>
+      <li class="mf-carte"><h4>Une gouvernance partagée</h4><p>La société coopérative d'intérêt collectif (SCIC)
+      réunit collectivité, salariés, usagers, associations et entreprises. L'association loi 1901 reste une
+      forme simple pour démarrer.</p></li>
+    </ul>
+    <h3>Ce que l'ESS apporte au modèle économique</h3>
+    <ul>
+      <li><strong>L'hybridation des ressources</strong>&#160;: ventes, contrats publics, subventions, bénévolat et dons se combinent — c'est ce qui rend le projet robuste. Stabilité et ESS se renforcent l'une l'autre.</li>
+      <li><strong>Des appuis dédiés</strong>&#160;: agrément «&#160;entreprise solidaire d'utilité sociale&#160;» (ESUS), dispositif local d'accompagnement (DLA), France Active, chambres régionales de l'ESS (CRESS).</li>
+      <li><strong>Une commande publique responsable</strong>&#160;: clauses sociales et environnementales, marchés réservés aux structures d'insertion.</li>
+      <li><strong>La coopération territoriale</strong>&#160;: les pôles territoriaux de coopération économique (PTCE).</li>
+    </ul>
+    <div class="mf-encadre mf-encadre--nuit">
+      <p class="mf-encadre__titre">Le montage à étudier en priorité</p>
+      <p>La collectivité garde la main sur le service public des déchets et sur la déchetterie. Une structure de
+      l'économie sociale et solidaire — existante de préférence — exploite la ressourcerie et le fablab. Une
+      <strong>convention pluriannuelle d'objectifs</strong> lie les deux, sur des résultats mesurés et publiés.</p>
+    </div>
+    <blockquote class="mf-cle"><p>Un projet d'utilité sociale n'est pas un projet sans modèle économique. C'est un projet dont le modèle économique sert l'utilité sociale.</p></blockquote>
+  </section>
+
+  <section id="gouvernance" aria-labelledby="h-gouvernance">
+    <h2 id="h-gouvernance"><span class="mf-num">8</span>Gouvernance</h2>
+    <p>
+      Le dispositif doit rester pilotable par une collectivité. Plusieurs formes sont possibles&#160;: régie,
+      association, convention avec une structure existante, partenariat public-associatif ou avec une structure
+      d'insertion, SCIC, société d'économie mixte, coopération avec un fablab existant. Le choix se fait après
+      étude des compétences, des contraintes juridiques, des coûts et des responsabilités.
+    </p>
+    <p>
+      Un <strong>comité de suivi</strong> réunit la communauté de communes, le responsable du site, la structure
+      gestionnaire, le référent du fablab, les associations, les écoles et les acteurs économiques. Il doit
+      pouvoir répondre à tout moment à cinq questions&#160;:
+    </p>
+    <ol class="mf-questions">
+      <li>Qu'est-ce qui entre&#160;?</li>
+      <li>Qu'est-ce qui est réemployé&#160;?</li>
+      <li>Qu'est-ce qui est transformé&#160;?</li>
+      <li>Qui peut utiliser les ressources&#160;?</li>
+      <li>Quels résultats sont obtenus&#160;?</li>
+    </ol>
+  </section>
+
+  <!-- ==================== III. La mise en œuvre ==================== -->
+
+  <p class="mf-partie">Partie III — La mise en œuvre</p>
+
+  <section id="pilote" aria-labelledby="h-pilote">
+    <h2 id="h-pilote"><span class="mf-num">9</span>Le site pilote</h2>
+    <p>
+      Commencer petit&#160;: une surface limitée, quelques familles de matériaux, un stockage identifié, un atelier
+      équipé progressivement, des horaires et un règlement intérieur, une équipe réduite mais formée, des
+      partenariats locaux, une mesure simple des résultats. L'objectif initial n'est pas de tout traiter, mais de
+      <strong>démontrer que le circuit fonctionne</strong>.
+    </p>
+    <ol class="mf-phases" aria-label="Les trois phases du pilote">
+      <li><span class="mf-phases__duree">0 à 3 mois</span><strong>Expérimentation</strong>étude du site et des flux, matières acceptées, sécurité, partenaires, budget, protocole de tri, formation.</li>
+      <li><span class="mf-phases__duree">3 à 12 mois</span><strong>Pilote</strong>ouverture progressive, premiers ateliers, partenariats avec associations et écoles, mesure des volumes et des coûts.</li>
+      <li><span class="mf-phases__duree">Après 12 mois</span><strong>Déploiement</strong>bilan et décision, amélioration, nouvelles matières, duplication, réseau territorial.</li>
+    </ol>
+  </section>
+
+  <section id="faire-vivre" aria-labelledby="h-faire-vivre">
+    <h2 id="h-faire-vivre"><span class="mf-num">10</span>Faire vivre TRIFAB</h2>
+    <p class="chapeau">
+      Un équipement ne vit que par ceux qui le fréquentent. TRIFAB n'est pas un bâtiment de plus au bout d'une
+      route&#160;: c'est un <strong>nœud</strong> dans le système d'un territoire, où circulent des matières, des
+      savoirs, des personnes, des projets et de la valeur. Le faire vivre, c'est entretenir ces circulations — et
+      les penser ensemble plutôt qu'une à une.
+    </p>
+
+    <h3>Une lecture systémique</h3>
+    <ul class="mf-cartes">
+      <li class="mf-carte"><h4>Des liens dans les deux sens</h4><p>Chaque partenaire apporte et reçoit. Un lien
+      à sens unique s'épuise&#160;; un échange s'entretient de lui-même.</p></li>
+      <li class="mf-carte"><h4>Des boucles qui s'entretiennent</h4><p>Un événement attire du public, qui dépose
+      des objets et donne du temps&#160;; la matière nourrit des projets, qui apportent visibilité et recettes, qui
+      financent l'événement suivant.</p></li>
+      <li class="mf-carte"><h4>Des garde-fous</h4><p>Une boucle qui s'emballe a besoin d'un régulateur&#160;: trop
+      de matière sature le stock, trop d'affluence fragilise la sécurité. Règles d'acceptation, sorties
+      planifiées, réservations tiennent l'équilibre.</p></li>
+      <li class="mf-carte"><h4>Aucun point unique de défaillance</h4><p>Un seul encadrant, un seul financeur, un
+      seul fournisseur de matière&#160;: autant de fragilités. Doubler les compétences, multiplier les
+      partenaires, documenter les savoir-faire.</p></li>
+    </ul>
+
+    <figure class="mf-schema">
+      <div class="mf-schema__cadre"><SchemaReseau /></div>
+      <figcaption>Les partenaires échangent avec TRIFAB <em>et entre eux</em>&#160;: matière, savoirs,
+      personnes, projets, valeur. Chaque flèche va dans les deux sens.</figcaption>
+    </figure>
+
+    <div class="mf-deux">
+      <figure class="mf-schema">
+        <div class="mf-schema__cadre"><SchemaBoucle /></div>
+        <figcaption>La boucle de renforcement (R)&#160;: chaque tour la rend plus forte — à condition que les
+        garde-fous la régulent.</figcaption>
+      </figure>
+      <div>
+        <h4>Écologie industrielle et territoriale</h4>
+        <p>
+          Les rebuts d'une entreprise — chutes d'une menuiserie, palettes, échantillons, chutes d'un atelier
+          textile — peuvent devenir la matière d'un autre acteur. En recensant ces flux, TRIFAB aide à dresser le
+          <strong>métabolisme du territoire</strong>&#160;: ce qui y entre, ce qui y circule, ce qui en sort.
+          C'est la démarche de l'écologie industrielle et territoriale, promue notamment par l'ADEME.
+        </p>
+        <p>L'artisan qui cherche du bois trouve le lycée qui en a trop&#160;; l'entreprise qui jette des chutes
+        trouve l'association qui en fera des jeux.</p>
+      </div>
+    </div>
+
+    <h3>Tisser des liens</h3>
+    <div class="debordement">
+      <table class="mf-table">
+        <thead><tr><th scope="col">Partenaire</th><th scope="col">Ce que TRIFAB lui apporte</th><th scope="col">Ce qu'il apporte à TRIFAB</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Écoles et collèges</th><td>Ateliers de découverte, sciences et technologie par le concret, éducation au réemploi.</td><td>Élèves, enseignants, projets de classe&#160;; sensibilisation des familles.</td></tr>
+          <tr><th scope="row">Lycées professionnels et technologiques, CFA</th><td>Un plateau technique, des chantiers réels, de la matière pour les travaux pratiques.</td><td>Savoir-faire, encadrement, fabrications, stagiaires.</td></tr>
+          <tr><th scope="row">Universités, écoles d'ingénieurs et de design</th><td>Sujets de projets, terrain d'expérimentation.</td><td>Conception, prototypes, études de flux.</td></tr>
+          <tr><th scope="row">Médiathèques</th><td>Ateliers hors les murs, expositions, démonstrations.</td><td>Public, documentation et tutoriels, cafés-réparation, prêt d'outils.</td></tr>
+          <tr><th scope="row">Industries, artisans, commerces</th><td>Un débouché local pour leurs chutes et rebuts, du prototypage, des profils formés.</td><td>Matière, machines réformées, mécénat de compétences, commandes.</td></tr>
+          <tr><th scope="row">Structures d'insertion</th><td>Des supports d'activité et de formation.</td><td>Équipes, encadrement technique.</td></tr>
+          <tr><th scope="row">Associations</th><td>Un lieu, du matériel, des projets communs.</td><td>Bénévoles, publics, animations.</td></tr>
+          <tr><th scope="row">Collectivité et services techniques</th><td>Réparations, fabrications pour les fêtes et les équipements publics, données sur les flux.</td><td>Locaux, déchetterie, commandes, convention de service.</td></tr>
+          <tr><th scope="row">Fablabs, tiers-lieux, ressourceries voisins</th><td>Mutualisation, réseau, catalogue partagé de matériaux.</td><td>Compétences, machines spécialisées.</td></tr>
+          <tr><th scope="row">Habitants</th><td>Réparation, apprentissage, objets à petit prix, convivialité.</td><td>Objets, temps, savoir-faire — notamment ceux des artisans retraités, qui transmettent leurs gestes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Des événements qui donnent envie</h3>
+    <p>Un événement réussi fait venir des gens qui ne seraient jamais entrés dans une déchetterie. Il montre, mieux qu'un discours, que la matière a repris de la valeur.</p>
+    <ul class="mf-cartes mf-cartes--3">
+      <li class="mf-carte"><p class="mf-carte__etiquette">Défi</p><h4>Course de caisses à savon</h4><p>Écoles, lycées, entreprises ou quartiers construisent leur bolide avec des matériaux de réemploi. Prix de la vitesse, du design et du meilleur réemploi.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Défi</p><h4>Combat de robots</h4><p>Des robots fabriqués à partir de composants récupérés s'affrontent dans une arène protégée. Catégories par âge, avec les lycées et les clubs de robotique.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Concours</p><h4>«&#160;Seconde vie&#160;»</h4><p>Transformer un objet tiré de la déchetterie. Jury d'artisans et d'habitants, exposition à la médiathèque, vente au profit d'une association.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Défi</p><h4>48 heures pour fabriquer</h4><p>Un marathon de fabrication sur un thème utile&#160;: mobilier pour une école, jeux pour la crèche, abri à vélos.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Rendez-vous</p><h4>Cafés-réparation</h4><p>Chaque mois, des bénévoles aident les habitants à réparer eux-mêmes leurs objets.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Entreprises</p><h4>Challenge inter-entreprises</h4><p>Des équipes de salariés fabriquent en une journée un équipement offert à une association.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Découverte</p><h4>Portes ouvertes «&#160;derrière la benne&#160;»</h4><p>Voir ce que deviennent les objets donne envie d'en déposer.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Rendez-vous</p><h4>Bourse aux matériaux</h4><p>Une fois par saison, matériaux triés proposés aux habitants, artisans et associations.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Vitrine</p><h4>Exposition et marché des créateurs</h4><p>Les fabrications du fablab exposées et vendues&#160;: la preuve visible que la matière a repris de la valeur.</p></li>
+    </ul>
+
+    <h3>Une année rythmée</h3>
+    <ul class="mf-cartes mf-cartes--4">
+      <li class="mf-carte"><p class="mf-carte__etiquette">Automne</p><p>Rentrée des partenariats scolaires, Fête de la science, Semaine européenne de la réduction des déchets.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Hiver</p><p>Concours «&#160;seconde vie&#160;» et exposition&#160;; réparation de jouets avant les fêtes.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Printemps</p><p>Course de caisses à savon, bourse aux matériaux, challenge inter-entreprises.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Été</p><p>Combat de robots en fin d'année scolaire, stages pour les jeunes, portes ouvertes.</p></li>
+    </ul>
+    <p class="mf-note">Toute l'année&#160;: cafés-réparation mensuels, défis de fabrication. Calendrier indicatif&#160;; dates des temps forts nationaux à vérifier chaque année. Chaque événement applique les règles de sécurité&#160;: parcours fermé ou arène protégée, protections, assurance et autorisations nécessaires (mairie, préfecture selon le cas).</p>
+
+    <h3>Mesurer la vie du système</h3>
+    <p>
+      Au-delà des tonnes&#160;: nombre de <strong>liens actifs</strong> (partenaires qui apportent <em>et</em>
+      reçoivent), part de la matière venue des entreprises, participants aux événements et nouveaux usagers qui en
+      sont issus, objets déposés dans le mois qui suit un événement, projets menés à plusieurs, savoir-faire
+      documentés et transmis.
+    </p>
+    <p class="mf-encadre mf-encadre--nuit"><strong>TRIFAB réussit quand on y vient pour autre chose que
+    déposer</strong>&#160;: apprendre, réparer, concourir, se retrouver.</p>
+  </section>
+
+  <section id="mesurer" aria-labelledby="h-mesurer">
+    <h2 id="h-mesurer"><span class="mf-num">11</span>Mesurer les résultats</h2>
+    <p>Un site pilote s'évalue sur des indicateurs simples, vérifiables et comparables, publiés chaque année dans un tableau de bord public. La première année sert de référence.</p>
+    <ul class="mf-cartes mf-cartes--4">
+      <li class="mf-carte"><p class="mf-carte__etiquette">Matière</p><p>Tonnes orientées vers le réemploi, objets réparés et réemployés, matières transformées, reste envoyé en traitement.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Activité</p><p>Usagers, professionnels, associations et écoles partenaires, ateliers, projets, réparations.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Économie</p><p>Coût d'exploitation, coût par tonne réemployée, recettes par pilier, financements, emplois, coûts évités.</p></li>
+      <li class="mf-carte"><p class="mf-carte__etiquette">Territoire</p><p>Communes participantes, partenaires, entreprises, projets pédagogiques, satisfaction des usagers.</p></li>
+    </ul>
+  </section>
+
+  <section id="feuille-de-route" aria-labelledby="h-feuille">
+    <h2 id="h-feuille"><span class="mf-num">12</span>Feuille de route et vigilance</h2>
+    <ol class="mf-etapes">
+      <li><strong>Décision de principe</strong> — obtenir l'accord d'étudier le dispositif&#160;: manifeste, note de synthèse, motion, présentation aux élus, cartographie des acteurs.</li>
+      <li><strong>Diagnostic territorial</strong> — tonnages et flux, déchetteries, bâtiments, filières, acteurs du réemploi, fablabs, écoles, artisans, besoins, contraintes, coûts actuels.</li>
+      <li><strong>Étude de faisabilité</strong> — plan du site, matériaux acceptés, équipements, personnel, gouvernance, budgets, calendrier, financement, indicateurs.</li>
+      <li><strong>Installation du pilote</strong> — sécurité, simplicité, qualité du tri et du stockage, accompagnement des utilisateurs.</li>
+      <li><strong>Évaluation</strong> — objectifs et résultats, coûts, volumes, usages, incidents, améliorations.</li>
+      <li><strong>Déploiement</strong> — maintien, extension des matières, nouveaux ateliers, duplication, réseau.</li>
+    </ol>
+    <details class="mf-depliant">
+      <summary>Points de vigilance</summary>
+      <ul class="mf-colonnes">
+        <li>Présenter le projet comme une <strong>optimisation</strong> de la compétence existante, non comme une dépense de plus.</li>
+        <li>Toujours accompagner les propositions de chiffres concrets.</li>
+        <li>Commencer par un site pilote de taille raisonnable.</li>
+        <li>Ne promettre aucun gain économique avant l'étude locale.</li>
+        <li>Ne pas considérer tout déchet comme réemployable&#160;; définir précisément les matières acceptées.</li>
+        <li>Séparer clairement les flux dangereux ou réglementés&#160;; organiser et contrôler le stockage.</li>
+        <li>Prévoir les responsabilités sur les objets réparés, transformés ou remis en circulation.</li>
+        <li>Garder une gouvernance simple&#160;; associer les agents de terrain dès la conception.</li>
+        <li>Identifier les financements possibles — sans en dépendre pour le fonctionnement courant.</li>
+        <li>Mesurer dès le premier jour&#160;; éviter l'équipement isolé&#160;; dimensionner selon les besoins réels.</li>
+      </ul>
+    </details>
+    <details class="mf-depliant">
+      <summary>Les questions à trancher avant de décider</summary>
+      <ul class="mf-colonnes">
+        <li><strong>Flux</strong>&#160;: quels matériaux arrivent, quelle part paraît réemployable, lesquels restent dans les filières existantes&#160;?</li>
+        <li><strong>Infrastructure</strong>&#160;: quel bâtiment, quelle surface, quel stockage, quelles machines, quelle sécurité&#160;?</li>
+        <li><strong>Usagers</strong>&#160;: qui, à quelles conditions, avec quels horaires, quel accompagnement&#160;?</li>
+        <li><strong>Économie</strong>&#160;: coût du pilote et coût annuel, financements, recettes par pilier, coûts actuels comparables&#160;?</li>
+        <li><strong>Gouvernance</strong>&#160;: qui porte le projet, recrute, répond du site, entretient les machines&#160;?</li>
+        <li><strong>Évaluation</strong>&#160;: quels indicateurs, qui les collecte, à quelle fréquence, pour qui&#160;?</li>
+      </ul>
+    </details>
+  </section>
+
+  <section id="reproductible" aria-labelledby="h-reproductible">
+    <h2 id="h-reproductible"><span class="mf-num">13</span>Un modèle reproductible</h2>
+    <p>
+      L'ambition n'est pas un équipement unique, mais un <strong>modèle territorial reproductible</strong>. Un
+      pilote réussi produit de quoi éviter à la collectivité suivante de repartir de zéro&#160;: cahier des charges,
+      liste de matériaux, protocole de tri, règlement intérieur, modèle de gouvernance, budget type, liste
+      d'équipements, programme de formation, tableau de bord, méthode de duplication.
+    </p>
+    <p>
+      À terme, plusieurs sites fonctionnent en réseau&#160;: points de collecte, ressourceries et fablabs
+      multiples, catalogue partagé de matériaux, réservation, ateliers et formations mutualisés, indicateurs
+      communs. Le territoire ne dispose plus seulement d'une chaîne de traitement des déchets, mais d'une
+      <strong>infrastructure locale de matière, de réemploi, de réparation et de fabrication</strong>.
+    </p>
+  </section>
+
+  <!-- ==================== IV. Passer à l'action ==================== -->
+
+  <p class="mf-partie">Partie IV — Passer à l'action</p>
+
+  <section id="relais" class="mf-relais" aria-labelledby="h-relais">
+    <h2 id="h-relais"><span class="mf-num">14</span>Devenez relais</h2>
+    <p class="chapeau">
+      Ce manifeste n'avancera que s'il est porté. <strong>Chacun peut en être le relais</strong> — sans mandat ni
+      expertise. Un courrier sincère d'un habitant, puis d'un deuxième, puis d'une association, pèse plus que cent
+      courriels identiques. Appropriez-vous ce texte&#160;: adaptez-le à votre commune, signez-le, faites-le
+      circuler.
+    </p>
+    <ol class="mf-gestes">
+      <li><strong>Lisez et faites lire la version courte</strong> — quatre pages, dix minutes. Imprimez-la, transmettez-la.</li>
+      <li><strong>Écrivez à votre maire et au président de votre communauté de communes</strong>, avec copie au vice-président chargé des déchets ou de la transition écologique. Joignez la version courte et demandez un rendez-vous. Leurs coordonnées&#160;: <a href="https://lannuaire.service-public.fr/">lannuaire.service-public.fr</a>.</li>
+      <li><strong>Proposez une motion à votre conseil municipal</strong> — modèle prêt à l'emploi ci-dessous. Un conseiller municipal peut la présenter&#160;; un habitant peut la suggérer.</li>
+      <li><strong>Mobilisez les acteurs locaux</strong>&#160;: ressourcerie, fablab, lycée professionnel, chambre de métiers, associations, CRESS de votre région, association des maires de votre département.</li>
+      <li><strong>Partagez cette page</strong> sur vos réseaux, dans votre association, votre conseil de quartier, à la prochaine réunion publique&#160;: <a href={adresse}>{hote(adresse)}</a>.</li>
+    </ol>
+    <div class="debordement">
+      <table class="mf-table">
+        <caption>Qui contacter, à quel niveau</caption>
+        <thead><tr><th scope="col">Niveau</th><th scope="col">À qui s'adresser</th><th scope="col">Ce qu'on demande</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Commune</th><td>Maire, conseillers municipaux</td><td>Voter une motion de soutien et la transmettre à l'intercommunalité.</td></tr>
+          <tr><th scope="row">Intercommunalité</th><td>Président, vice-président déchets ou transition, direction des services</td><td>Étudier un site pilote dans les 12&#160;mois.</td></tr>
+          <tr><th scope="row">Département</th><td>Association départementale des maires</td><td>Faire connaître le modèle à ses adhérents.</td></tr>
+          <tr><th scope="row">Région</th><td>Service déchets et économie circulaire, CRESS</td><td>Articuler le modèle avec les politiques et aides régionales.</td></tr>
+          <tr><th scope="row">National</th><td>ADEME, Intercommunalités de France, réseaux du réemploi</td><td>Faire connaître et outiller le modèle.</td></tr>
+          <tr><th scope="row">Éducation</th><td>Collèges, lycées, organismes de formation</td><td>Construire des projets pédagogiques.</td></tr>
+          <tr><th scope="row">Économie</th><td>Artisans, entreprises, chambres consulaires</td><td>Fournir ou utiliser des matières.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mf-encadre">
+      <p class="mf-encadre__titre">Les règles d'un bon relais</p>
+      <ul>
+        <li>Écrivez <strong>à vos propres élus</strong>, en votre nom, avec quelques mots sur votre commune&#160;: c'est ce qui sera lu.</li>
+        <li>Un message à la fois, personnalisé&#160;; jamais d'envoi en nombre ni de destinataires en copie visible.</li>
+        <li>Restez courtois et précis&#160;: on demande une <em>étude</em>, pas un chèque.</li>
+        <li>Une adresse publique n'est pas une invitation au démarchage&#160;: respectez les règles sur la prospection et les données personnelles.</li>
+        <li>Relancez une fois, poliment, au bout d'un mois sans réponse.</li>
+      </ul>
+    </div>
+    <blockquote class="mf-cle"><p>«&#160;Vous avez déjà la compétence du tri. Le pas suivant est logique&#160;: transformer ce tri en ressources locales plutôt qu'en coût d'élimination.&#160;»</p></blockquote>
+  </section>
+
+  <section id="modeles" aria-labelledby="h-modeles">
+    <h2 id="h-modeles"><span class="mf-num">15</span>Modèles à copier</h2>
+    <p>Sélectionnez le texte, copiez-le, remplacez les passages entre crochets. Ces modèles sont libres de droits.</p>
+
+    <details class="mf-depliant" open>
+      <summary>Courriel court à votre maire ou à votre président d'intercommunalité</summary>
+      <div class="mf-modele">
+        <p><strong>Objet&#160;:</strong> Proposition d'étude d'un site pilote «&#160;Déchetterie – Ressourcerie – Fablab&#160;»</p>
+        <p>[Madame la Maire / Monsieur le Président],</p>
+        <p>Résidant à [commune], je vous transmets le manifeste TRIFAB, qui propose d'ajouter à nos déchetteries
+        une ressourcerie et un fablab pour réemployer, réparer et transformer localement une partie de ce qui y est
+        déposé. Il s'appuie sur la compétence que notre intercommunalité exerce déjà, vise un modèle économique
+        stable porté par l'économie sociale et solidaire, et commence par un site pilote évalué sur ses résultats.</p>
+        <p>Accepteriez-vous d'en faire étudier la faisabilité dans les douze prochains mois&#160;? Je me tiens à
+        votre disposition pour vous le présenter.</p>
+        <p>[Prénom Nom, adresse, courriel]</p>
+        <p>Pièce jointe&#160;: manifeste TRIFAB, version courte — texte complet&#160;: {hote(adresse)}</p>
+      </div>
+    </details>
+
+    <details class="mf-depliant">
+      <summary>Modèle de motion pour un conseil municipal</summary>
+      <div class="mf-modele">
+        <p><strong>Objet&#160;:</strong> Soutien à la création d'un dispositif TRIFAB «&#160;Déchetterie – Ressourcerie – Fablab&#160;»</p>
+        <p>Le conseil municipal de [commune],</p>
+        <p>Considérant que la communauté de communes [nom] dispose déjà de compétences et d'équipements permettant la collecte et l'orientation des déchets&#160;;</p>
+        <p>Considérant l'intérêt de rechercher, lorsque cela est possible, le réemploi, la réparation et la valorisation locale des objets et matériaux encore utilisables&#160;;</p>
+        <p>Considérant les bénéfices environnementaux, sociaux, éducatifs et économiques potentiels d'un dispositif associant déchetterie, ressourcerie et fablab, et l'intérêt d'un portage par des acteurs de l'économie sociale et solidaire&#160;;</p>
+        <p>Considérant l'intérêt d'expérimenter le dispositif au moyen d'un site pilote avant toute généralisation&#160;;</p>
+        <p><strong>Décide&#160;:</strong></p>
+        <ol>
+          <li>d'exprimer son soutien au principe de création d'un dispositif «&#160;Déchetterie – Ressourcerie – Fablab&#160;» sur le territoire de la communauté de communes&#160;;</li>
+          <li>de demander à la communauté de communes d'étudier la faisabilité d'au moins un site pilote dans un délai de 12&#160;mois&#160;;</li>
+          <li>de demander que cette étude examine notamment les flux de matières, les besoins immobiliers, les équipements, les ressources humaines, la gouvernance, les coûts, les financements possibles, les conditions d'un équilibre économique durable, les règles de sécurité et les partenariats locaux&#160;;</li>
+          <li>de proposer l'association à cette réflexion des communes, associations, établissements scolaires, artisans, entreprises, structures de réemploi et de l'économie sociale et solidaire intéressés&#160;;</li>
+          <li>de demander que les résultats du site pilote, s'il est créé, fassent l'objet d'un bilan annuel public comprenant des indicateurs de flux, d'activité, d'emploi et de coût&#160;;</li>
+          <li>de transmettre la présente délibération à la communauté de communes et aux services compétents.</li>
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <section id="contacts" aria-labelledby="h-contacts">
+    <h2 id="h-contacts"><span class="mf-num">16</span>Contacts relais</h2>
+    <p>
+      Commencez par vos propres élus, puis l'association des maires de votre département, puis les relais
+      régionaux et nationaux. Coordonnées publiques relevées le {releve}, sans vérification une à une&#160;:
+      vérifiez-les sur le site de l'organisme avant d'écrire. La liste complète est aussi
+      <a href={documents[2].url} download>téléchargeable en PDF</a>.
+    </p>
+    <h3>Relais nationaux</h3>
+    <ul class="mf-contacts">
+      {
+        CONTACTS.nationaux.map((c) => (
+          <li>
+            <strong>{c.organisme}</strong>
+            <span>{c.role}</span>
+            {c.email ? (
+              <span class="mf-adresse">{coupe(c.email)[0]}@<wbr />{coupe(c.email)[1]}</span>
+            ) : (
+              c.url && <a href={c.url}>{hote(c.url)}</a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+    <h3>En Occitanie</h3>
+    <ul class="mf-contacts">
+      {
+        CONTACTS.occitanie.map((c) => (
+          <li>
+            <strong>{c.organisme}</strong>
+            <span>{c.role}</span>
+            {c.email ? (
+              <span class="mf-adresse">{coupe(c.email)[0]}@<wbr />{coupe(c.email)[1]}</span>
+            ) : (
+              c.url && <a href={c.url}>{hote(c.url)}</a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mf-note">Ailleurs, la chambre régionale de l'économie sociale et solidaire (CRESS) et le service économie circulaire de votre conseil régional sont les relais équivalents.</p>
+    <details class="mf-depliant">
+      <summary>Associations des maires, département par département ({CONTACTS.departements.length})</summary>
+      <div class="debordement">
+        <table class="mf-table mf-table--serree">
+          <thead><tr><th scope="col">Dép.</th><th scope="col">Association</th><th scope="col">Adresse</th></tr></thead>
+          <tbody>
+            {
+              CONTACTS.departements.map((d) => (
+                <tr>
+                  <th scope="row">{d.code}<span class="mf-dep"> {d.departement}</span></th>
+                  <td>{d.organisme}</td>
+                  <td class="mf-adresse">
+                    {d.emails.map((a, i) => (
+                      <>{i > 0 && <br />}{coupe(a)[0]}@<wbr />{coupe(a)[1]}</>
+                    ))}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="mf-note">Paris (75) ne figure pas dans le relevé. Pour toutes les communes et intercommunalités&#160;: <a href="https://lannuaire.service-public.fr/">lannuaire.service-public.fr</a>.</p>
+    </details>
+  </section>
+
+  <section id="appel" aria-labelledby="h-appel">
+    <h2 id="h-appel"><span class="mf-num">17</span>Appel aux collectivités</h2>
+    <p>Nous demandons à chaque communauté de communes compétente&#160;:</p>
+    <ol class="mf-etapes">
+      <li>d'étudier la faisabilité d'un dispositif <strong>TRIFAB — Déchetterie · Ressourcerie · Fablab</strong>&#160;;</li>
+      <li>d'identifier un site susceptible d'accueillir une expérimentation&#160;;</li>
+      <li>de réaliser un diagnostic des flux de matières&#160;;</li>
+      <li>de réunir les acteurs du réemploi, de l'économie sociale et solidaire, de la formation et de la fabrication&#160;;</li>
+      <li>de construire un <strong>modèle économique documenté et stable</strong>, fondé sur des recettes diversifiées&#160;;</li>
+      <li>de définir des règles de sécurité et de fonctionnement&#160;;</li>
+      <li>de lancer, lorsque les conditions sont réunies, un site pilote dans un délai de <strong>12&#160;mois</strong>&#160;;</li>
+      <li>de publier un bilan annuel qui mesure objectivement les résultats&#160;;</li>
+      <li>de partager les enseignements pour faciliter la reproduction du modèle ailleurs.</li>
+    </ol>
+    <div class="mf-encadre mf-encadre--nuit">
+      <p>Le tri est déjà en place. Il ne manque que deux maillons pour identifier ce qui peut encore servir et
+      transformer une partie des déchets en ressources utiles au territoire.</p>
+      <p><strong>Ce n'est pas seulement une question de gestion des déchets. C'est la capacité d'un territoire à
+      conserver, transformer et transmettre la valeur des matières qu'il possède déjà.</strong></p>
+    </div>
+    <p class="mf-fin">{MANIFESTE.punchline}</p>
+    <p class="mf-note">
+      Manifeste rédigé par {AUTEUR}, publié sous licence <a href={LICENCE.url} rel="license">{LICENCE.intitule}</a>&#160;:
+      libre de copie, de modification et de diffusion, à condition de citer l'auteur et d'indiquer les
+      modifications. Les dispositifs juridiques et financiers cités évoluent&#160;: leurs conditions sont à vérifier
+      au moment du montage d'un projet.
+    </p>
+  </section>
+</Base>
