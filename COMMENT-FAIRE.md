@@ -92,6 +92,26 @@ source HTML, dans `public\doc\mementos\`.
 La famille et la rubrique apparaissent d'elles-mêmes sur le site dès qu'elles comptent un mémento :
 les sujets encore sans mémento restent listés dans `classement-mementos.ts`, mais ne s'affichent pas.
 
+## Les affiches
+
+Une affiche est une page A3 en couleur tirée d'un ou plusieurs mémentos. Elle se rédige, elle aussi,
+dans HUMANITAS ET SCIENTIA (`91_REVISION\fiches\<domaine>-affiche-<sujet>.html` et `.pdf`). Le site
+en garde une **notice** dans `src\data\affiches\` et une copie dans `public\doc\affiches\` ; elles
+s'affichent dans la section « Affiches », sous les familles de la page Mémentos.
+
+Ajouter ou mettre à jour une affiche : même marche que pour un mémento. Copier une notice existante
+de `src\data\affiches\` (ou y porter la nouvelle `version` et la `date`), puis double-cliquer sur
+`importer-mementos.cmd`. Champs propres aux affiches :
+
+| Champ | Ce qu'on y met |
+|---|---|
+| `mementos` | les identifiants des mémentos du site dont l'affiche est tirée — le site refuse de se construire si l'un d'eux n'existe pas |
+| `blocs` | l'intitulé de chaque bloc, dans l'ordre de lecture |
+| `ordre` | le rang dans la section |
+
+L'importeur refuse une affiche dont le PDF ne compte pas exactement une page, ou dont le pied ne porte
+pas la version de la notice (celle qui suit « · v », non celle du mémento cité).
+
 ---
 
 ## Ajouter une réalisation

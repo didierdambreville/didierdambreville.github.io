@@ -5,6 +5,7 @@ import { AUTEUR, SITE } from '../lib/identite';
 
 export async function GET(context: APIContext) {
   const mementos = await getCollection('mementos', (e) => !e.data.brouillon);
+  const affiches = await getCollection('affiches', (e) => !e.data.brouillon);
   const realisations = await getCollection('realisations', (e) => !e.data.brouillon);
   const documents = await getCollection('documents', (e) => !e.data.brouillon);
   const articles = await getCollection('articles', (e) => !e.data.brouillon);
@@ -16,6 +17,12 @@ export async function GET(context: APIContext) {
       description: m.data.resume,
       pubDate: m.data.date,
       link: `/mementos/${m.id}/`,
+    })),
+    ...affiches.map((a) => ({
+      title: `Affiche — ${a.data.titre} (version ${a.data.version})`,
+      description: a.data.resume,
+      pubDate: a.data.date,
+      link: `/affiches/${a.id}/`,
     })),
     ...realisations.map((r) => ({
       title: r.data.titre,

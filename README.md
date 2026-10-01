@@ -18,11 +18,15 @@ npm run preview  # sert dist/ — le SEUL mode où la politique de sécurité es
 
 Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
 
-## État au 30 septembre 2026
+## État au 1er octobre 2026
 
 - **Contenu publié** : les 15 mémentos (`src/data/mementos/`, fichiers dans `public/doc/mementos/`),
   classés selon `src/lib/classement-mementos.ts`. Import et contrôles : `importer-mementos.cmd`
   (`outils/importer-mementos.mjs`) — voir `COMMENT-FAIRE.md`, « Les mémentos ».
+- **Affiches** (depuis le 1er octobre 2026) : 5 affiches A3 en couleur tirées des mémentos
+  (`src/data/affiches/`, fichiers dans `public/doc/affiches/`), en section « Affiches » sous les
+  familles de `/mementos/`, notices à `/affiches/<identifiant>/`. Même importeur, mêmes contrôles
+  (une page, version du pied de l'affiche) — voir `COMMENT-FAIRE.md`, « Les affiches ».
 - **Identité** : nom, adresses, réseaux et licence dans `src/lib/identite.ts`, et nulle part
   ailleurs. Logo : `public/logo-or.svg` (fichier maître : `../identite/`).
 - **Couleurs** : bleu et or sur fond gris clair, jetons en tête de `src/styles/global.css`

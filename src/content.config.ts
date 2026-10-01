@@ -174,9 +174,43 @@ const mementos = defineCollection({
     }),
 });
 
+/**
+ * Affiches : une page A3 en couleur, tirée d'un ou plusieurs mémentos, pour le mur d'un
+ * atelier ou d'un fablab. Même circuit que les mémentos : rédigées dans HUMANITAS ET
+ * SCIENTIA, copiées dans public/doc/affiches/ par `importer-mementos.cmd`, qui contrôle
+ * que la version de la notice est celle du pied de l'affiche et que le PDF compte une page.
+ */
+const affiches = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/data/affiches' }),
+  schema: ({ image }) =>
+    z.object({
+      titre: z.string().max(60),
+      /** Ligne de sous-titre de l'affiche, recopiée telle quelle. */
+      sousTitre: z.string().max(200),
+      /** Permalien : /affiches/<identifiant>/ ; égal au nom du fichier. */
+      identifiant: z.string(),
+      /** Rang dans la section. */
+      ordre: z.number().int(),
+      resume: z.string().max(280),
+      /** La version vit ici et dans le pied de l'affiche — l'import vérifie l'accord. */
+      version: z.string().regex(/^\d+\.\d+$/),
+      date: z.coerce.date(),
+      premiereEdition: z.coerce.date(),
+      /** Nom du fichier source dans HUMANITAS_ET_SCIENTIA/91_REVISION/fiches/, sans extension. */
+      source: z.string(),
+      /** Identifiants des mémentos du site dont l'affiche est tirée. */
+      mementos: z.array(z.string()).min(1),
+      /** Intitulé de chaque bloc, dans l'ordre de lecture. */
+      blocs: z.array(z.string()).min(1),
+      couverture: image(),
+      couvertureAlt: z.string(),
+      brouillon: z.boolean().default(false),
+    }),
+});
+
 const pages = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/data/pages' }),
   schema: z.object({ titre: z.string(), description: z.string() }),
 });
 
-export const collections = { realisations, documents, articles, mementos, pages };
+export const collections = { realisations, documents, articles, mementos, affiches, pages };

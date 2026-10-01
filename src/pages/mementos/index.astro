@@ -1,11 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CarteMemento from '../../components/CarteMemento.astro';
+import CarteAffiche from '../../components/CarteAffiche.astro';
 import { mementosPublies, grouper } from '../../lib/mementos';
+import { affichesPubliees } from '../../lib/affiches';
 import { AUTEUR, LICENCE } from '../../lib/identite';
 
 const mementos = await mementosPublies();
 const familles = grouper(mementos);
+const affiches = await affichesPubliees();
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -15,16 +18,23 @@ const jsonLd = {
   url: new URL('/mementos/', Astro.site).href,
   author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
   license: LICENCE.urlCanonique,
-  hasPart: mementos.map((m) => ({
-    '@type': 'LearningResource',
-    name: `Mémento — ${m.data.titre}`,
-    url: new URL(`/mementos/${m.id}/`, Astro.site).href,
-  })),
+  hasPart: [
+    ...mementos.map((m) => ({
+      '@type': 'LearningResource',
+      name: `Mémento — ${m.data.titre}`,
+      url: new URL(`/mementos/${m.id}/`, Astro.site).href,
+    })),
+    ...affiches.map((a) => ({
+      '@type': 'LearningResource',
+      name: `Affiche — ${a.data.titre}`,
+      url: new URL(`/affiches/${a.id}/`, Astro.site).href,
+    })),
+  ],
 };
 ---
 <Base
   titre={`Mémentos — ${AUTEUR}`}
-  description={`${mementos.length} aide-mémoire imprimables (A4, noir et blanc), en libre accès sous licence CC BY 4.0.`}
+  description={`${mementos.length} aide-mémoire imprimables (A4, noir et blanc)${affiches.length ? ` et ${affiches.length} affiches A3 en couleur` : ''}, en libre accès sous licence CC BY 4.0.`}
   jsonLd={jsonLd}
 >
   <h1>Mémentos</h1>
@@ -57,5 +67,24 @@ const jsonLd = {
         ))}
       </section>
     ))
+  }
+
+  {/* Les affiches viennent après les familles : chacune est tirée d'un mémento ci-dessus. */}
+  {
+    affiches.length > 0 && (
+      <section class="famille" id="affiches" aria-labelledby="titre-affiches">
+        <h2 id="titre-affiches">Affiches</h2>
+        <p class="chapeau">
+          L'essentiel d'un mémento sur une seule page A3, en couleur, pour le mur d'un atelier ou
+          d'un fablab&#160;: quelques blocs, de gros caractères, lisibles à distance. Même licence,
+          même circuit&#160;: PDF et source HTML modifiable.
+        </p>
+        <ul class="grille grille--mementos">
+          {affiches.map((a) => (
+            <CarteAffiche a={a} />
+          ))}
+        </ul>
+      </section>
+    )
   }
 </Base>

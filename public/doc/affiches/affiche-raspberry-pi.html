@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="D. Dambreville">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.fr">
+<title>Affiche — Raspberry Pi</title>
+<style>
+/* Affiches A3 — charte du portfolio didierdambreville.github.io : bleu nuit et or, sur fond gris clair bleuté. */
+@page { size: 297mm 420mm; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: #fff; }
+:root {
+  --encre: #1f2a42; --encre-douce: #4a5570; --titre: #1b3462; --fond: #e6e8ec; --fond-appuye: #dadee5; --trait: #c3c9d3;
+  --accent: #7a5810; --nuit: #0f1d3a; --nuit-trait: #2a3b62; --sur-nuit: #e8e2d0; --sur-nuit-doux: #a9b2c8; --or: #d9b35a; --or-clair: #f1dc9c;
+  --creme: #fbf6e6; --rayure: #eef0f4; --dore: #f6f0dd;
+  --serif: "Palatino Linotype", Palatino, "Iowan Old Style", Georgia, serif;
+  --sans: "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  /* alias utilisés par les styles propres à certaines affiches */
+  --ink: var(--encre); --deep: var(--titre); --tint: var(--rayure); --c1: var(--or); --c2: var(--nuit); --c3: var(--or-clair);
+}
+body { font-family: var(--sans); font-size: 13pt; line-height: 1.25; color: var(--encre); }
+
+.poster { width: 297mm; height: 420mm; overflow: hidden; display: flex; flex-direction: column; background: var(--fond); }
+
+/* ---------- en-tête : un cartouche bleu nuit, comme les cartes-titres du portfolio */
+.head { flex: none; position: relative; overflow: hidden; color: var(--sur-nuit); padding: 8.6mm 14mm 8.4mm;
+  background: var(--nuit); background-image: linear-gradient(160deg, rgb(255 255 255 / .07), transparent 48%);
+  border-bottom: .8mm solid var(--or);
+  display: grid; grid-template-columns: minmax(0, 1fr) 100mm; gap: 9mm; align-items: center; }
+.head::before { content: ""; position: absolute; inset: 3.4mm; border: .3mm solid rgb(217 179 90 / .45); border-radius: 1.2mm; pointer-events: none; }
+.head > .hl, .head > .keys { position: relative; z-index: 2; }
+.head .filigrane { position: absolute; z-index: 1; width: 118mm; height: 118mm; left: 118mm; top: -20mm; opacity: .1; }
+.kick { font-family: var(--sans); font-size: 10.5pt; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: var(--or);
+  display: flex; align-items: center; gap: 3mm; white-space: nowrap; }
+.kick svg { width: 7mm; height: 7mm; flex: none; }
+.kick .rule { width: 10mm; height: 0; border-top: .35mm solid var(--or); opacity: .7; }
+h1 { font-family: var(--serif); font-weight: 700; font-size: 74pt; line-height: 1; color: var(--creme); margin: 3.6mm 0 0 -.8mm;
+  letter-spacing: 0; white-space: nowrap; }
+.filet { display: block; width: 24mm; height: .75mm; background: var(--or); margin: 3.8mm 0 3.2mm; }
+.sub { font-family: var(--sans); font-weight: 400; font-size: 14.5pt; line-height: 1.25; color: var(--sur-nuit); }
+.by { margin-top: 2.6mm; font-family: var(--sans); font-size: 9pt; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--or); }
+.by .auteur { display: inline-block; }
+
+.keys { display: grid; grid-template-columns: 1fr 1fr; gap: 3.4mm; }
+.key { border: .3mm solid rgb(217 179 90 / .55); border-radius: 1.2mm; background: rgb(255 255 255 / .045); padding: 2.6mm 3.6mm 2.8mm; }
+.key b { display: block; font-family: var(--serif); font-weight: 700; font-size: 30pt; line-height: 1.05; color: var(--or); white-space: nowrap; }
+.key b code { font-family: var(--mono); font-size: .76em; }
+.key > span { display: block; font-size: 9.6pt; line-height: 1.22; margin-top: 1mm; color: var(--sur-nuit-doux); }
+.key code { color: var(--sur-nuit); }
+
+/* ---------- corps */
+.body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 5mm; padding: 6.5mm 11mm 5.5mm; }
+.band { display: grid; column-gap: 5mm; flex: 1 1 auto; min-height: 0; }
+.col { display: flex; flex-direction: column; gap: 5mm; min-height: 0; min-width: 0; overflow: hidden; padding: 0 .6mm 1mm 0; }
+.card { background: #fff; border: .3mm solid var(--trait); border-radius: 1.2mm; box-shadow: 0 .5mm 1.6mm rgb(15 29 58 / .1);
+  flex: none; overflow: hidden; display: flex; flex-direction: column; }
+.col > .card:last-child { flex: 1 1 auto; }
+.card > h2 { margin: 0; display: flex; align-items: center; gap: 3mm; background: var(--nuit); color: var(--creme);
+  border-bottom: .6mm solid var(--or); padding: 2.3mm 4mm 2mm; font-family: var(--sans); font-weight: 600; font-size: 14.5pt;
+  text-transform: uppercase; letter-spacing: .09em; line-height: 1.15; flex: none; }
+.card > h2 .no { font-family: var(--serif); font-size: 14pt; font-weight: 700; color: var(--or); letter-spacing: 0; flex: none;
+  padding-right: 3mm; border-right: .3mm solid rgb(217 179 90 / .6); }
+.card > h2 .tt { flex: 1 1 auto; }
+.card > h2 code { text-transform: none; }
+.card.warn > h2 { background: var(--accent); border-bottom-color: var(--or-clair); }
+.card.warn > h2 .no { color: var(--or-clair); border-right-color: rgb(241 220 156 / .6); }
+.bd { padding: 3.8mm 4.4mm 4.2mm; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: safe center; gap: 2.8mm; }
+.bd > * { flex: none; }
+
+p { margin: 0; }
+b { font-weight: 700; }
+code { font-family: var(--mono); font-size: .9em; }
+.nw { white-space: nowrap; }
+td code, p code, li code, .steps code { font-weight: 600; color: var(--titre); }
+.sm { font-size: 10.5pt; line-height: 1.22; color: var(--encre-douce); }
+.ex { background: var(--dore); border-left: .9mm solid var(--or); border-radius: .6mm; padding: 1.8mm 3mm; }
+.ex > b:first-child { font-family: var(--serif); color: var(--accent); }
+.w { border-left: .9mm solid var(--accent); padding-left: 3mm; font-weight: 600; color: var(--encre); }
+.acc { color: var(--accent); }
+
+.fx { font-family: var(--serif); font-weight: 700; font-size: 21pt; line-height: 1.12; color: var(--titre); }
+.fx .fxn { font-family: var(--sans); font-weight: 400; font-size: 11pt; display: block; margin-top: .6mm; color: var(--encre-douce); }
+.huge { font-family: var(--serif); font-weight: 700; font-size: 60pt; line-height: 1; color: var(--titre); letter-spacing: .01em; }
+.center { text-align: center; }
+
+/* tableaux */
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+td, th { padding: 1.2mm 2mm 1.1mm; vertical-align: middle; text-align: left; border-bottom: .25mm solid var(--trait); overflow-wrap: break-word; }
+th { font-family: var(--sans); font-weight: 700; font-size: 10pt; text-transform: uppercase; letter-spacing: .08em; color: var(--encre-douce);
+  border-bottom: .45mm solid var(--nuit); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(odd) td { background: var(--rayure); }
+td.k { font-weight: 700; color: var(--titre); }
+table.nost tbody tr:nth-child(odd) td { background: none; }
+
+/* listes */
+.steps { counter-reset: st; display: flex; flex-direction: column; gap: 2.4mm; }
+.steps > div { position: relative; padding-left: 11mm; min-height: 8.2mm; display: flex; flex-direction: column; justify-content: center; }
+.steps > div::before { counter-increment: st; content: counter(st); position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 8.2mm; height: 8.2mm; border-radius: 50%; background: var(--nuit); color: var(--or); border: .35mm solid var(--or);
+  font-family: var(--serif); font-weight: 700; font-size: 14pt; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.card.warn .steps > div::before { background: var(--accent); color: var(--creme); border-color: var(--or-clair); }
+.steps .st { font-family: var(--sans); font-weight: 700; font-size: 15pt; text-transform: uppercase; letter-spacing: .06em; line-height: 1.1; color: var(--titre); }
+.card.warn .steps .st { color: var(--accent); }
+.steps .sd { font-size: 11.5pt; line-height: 1.2; color: var(--encre); }
+ul.bl { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 1.8mm; }
+ul.bl li { position: relative; padding-left: 5.2mm; }
+ul.bl li::before { content: ""; position: absolute; left: .4mm; top: 2.1mm; width: 2.2mm; height: 2.2mm; background: var(--or); transform: rotate(45deg); }
+.card.warn ul.bl li::before { background: var(--accent); }
+
+/* code */
+pre { background: var(--nuit); color: var(--sur-nuit); border-radius: 1.2mm; border-left: .9mm solid var(--or); padding: 2.8mm 3.4mm;
+  font-family: var(--mono); font-size: 11.4pt; line-height: 1.32; white-space: pre; overflow: hidden; margin: 0; }
+pre .cm { color: var(--or); }
+.n { display: inline-flex; align-items: center; justify-content: center; width: 5mm; height: 5mm; border-radius: 50%; background: var(--or);
+  color: var(--nuit); font-family: var(--serif); font-weight: 700; font-size: 9.5pt; line-height: 1; vertical-align: .2mm; }
+.notes { display: flex; flex-direction: column; gap: 1.1mm; font-size: 11.5pt; }
+.notes p { padding-left: 6.6mm; text-indent: -6.6mm; }
+.notes p .n { text-indent: 0; margin-right: .8mm; }
+
+/* schémas */
+svg.fig { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--sans); }
+.row { display: flex; gap: 4.4mm; align-items: center; }
+.row > div { min-width: 0; }
+.row > div:last-child { flex: 1 1 auto; }
+.row > div:first-child { flex: none; }
+
+/* seuils : grands chiffres + légende */
+.thr { display: grid; grid-template-columns: auto 1fr; column-gap: 4.6mm; row-gap: 2.6mm; align-items: center; }
+.thr .v { font-family: var(--serif); font-weight: 700; font-size: 34pt; line-height: 1; white-space: nowrap; color: var(--titre); }
+.card.warn .thr .v { color: var(--accent); }
+.thr .l { font-size: 12.5pt; line-height: 1.2; }
+.thr .l b { font-size: 13.5pt; text-transform: uppercase; letter-spacing: .06em; color: var(--titre); }
+.thr .bar { grid-column: 1 / -1; height: 0; border-top: .25mm solid var(--trait); }
+
+/* pastilles de couleur (code des couleurs) */
+.sw { display: inline-block; width: 4.4mm; height: 4.4mm; border: .3mm solid var(--encre); border-radius: .6mm; vertical-align: -.7mm; margin-right: .6mm; }
+td .sw { width: 8mm; height: 5.2mm; margin-right: 2.2mm; vertical-align: -1.1mm; border-radius: .8mm; }
+
+/* ---------- pied : bandeau bleu nuit, filet or */
+.foot { flex: none; background: var(--nuit); border-top: .8mm solid var(--or); color: var(--sur-nuit-doux); padding: 3mm 14mm 3.4mm;
+  display: flex; justify-content: space-between; gap: 8mm; font-size: 8.3pt; line-height: 1.3; align-items: center; }
+.foot code { color: var(--sur-nuit); }
+.foot .fr { white-space: nowrap; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--or); font-size: 8pt; }
+.foot .fr b { color: var(--or); }
+.url { text-transform: none; letter-spacing: .03em; }
+
+
+.pinout { display: grid; grid-template-columns: 1fr 23mm 8.6mm 8.6mm 23mm 1fr; column-gap: 1.6mm; row-gap: 1mm; align-items: center; }
+.pinout .pf.l { text-align: right; } .pinout .pf.r { text-align: left; }
+.pinout .fn { display: inline-block; font-family: Bahnschrift, sans-serif; font-weight: 600; font-size: 9.6pt; padding: .3mm 1.8mm .2mm; border-radius: 3mm;
+  border: .25mm solid var(--nuit-trait); white-space: nowrap; line-height: 1.2; color: var(--nuit); }
+.fn.i2c { background: #cfdcf0; } .fn.spi { background: #e0d8ec; } .fn.uart { background: #d5e8de; } .fn.pwm { background: var(--or-clair); }
+.fn.ow { background: #ecd9bb; } .fn.idf { background: var(--fond-appuye); }
+.pinout .pn { font-family: "Cascadia Mono", Consolas, monospace; font-weight: 700; font-size: 11pt; white-space: nowrap; }
+.pinout .pn.l { text-align: right; } .pinout .pn.r { text-align: left; }
+.pinout .pn { color: var(--titre); } .pinout .pn.p3 { color: var(--accent); } .pinout .pn.p5 { color: #a84a34; } .pinout .pn.gnd { color: var(--encre-douce); } .pinout .pn.id { color: #8a93a6; }
+.pc { display: inline-flex; align-items: center; justify-content: center; width: 7.8mm; height: 5.6mm; border-radius: 2.8mm; border: .35mm solid var(--nuit);
+  font-family: Bahnschrift, sans-serif; font-weight: 700; font-size: 10pt; line-height: 1; }
+.pc.sq { border-radius: .6mm; }
+.pc.p3 { background: var(--or); } .pc.p5 { background: #a84a34; color: #fff; } .pc.gnd { background: var(--nuit); color: var(--or-clair); }
+.pc.io { background: #fff; } .pc.id { background: var(--fond-appuye); }
+.plg { display: flex; flex-wrap: wrap; align-items: center; gap: 1.4mm 2.4mm; font-size: 10.5pt; justify-content: center; }
+.plg .pc { width: 5.4mm; height: 4mm; font-size: 8pt; margin-left: 1.6mm; }
+
+</style>
+
+</head>
+<body>
+<div class="poster">
+<header class="head">
+  <svg class="filigrane" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  
+  <defs>
+    <linearGradient id="lf-or" x1="14" y1="8" x2="82" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f6df8c"/>
+      <stop offset="0.42" stop-color="#dcb04a"/>
+      <stop offset="0.72" stop-color="#bf8d2e"/>
+      <stop offset="1" stop-color="#94661b"/>
+    </linearGradient>
+    <g id="lf-branche">
+      <rect x="48.45" y="44.3" width="3.1" height="5.7"/>
+      <rect x="48.45" y="36.9" width="3.1" height="3.65"/>
+      <rect x="48.45" y="29.6" width="3.1" height="3.6"/>
+      <rect x="48.45" y="23.5" width="3.1" height="2.6"/>
+      <circle cx="50" cy="15" r="7.5" fill="none" stroke="#fff" stroke-width="3.1"/>
+    </g>
+    <mask id="lf-figure" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <g fill="#fff">
+        <use href="#lf-branche"/>
+        <use href="#lf-branche" transform="rotate(60 50 50)"/>
+        <use href="#lf-branche" transform="rotate(120 50 50)"/>
+        <use href="#lf-branche" transform="rotate(180 50 50)"/>
+        <use href="#lf-branche" transform="rotate(240 50 50)"/>
+        <use href="#lf-branche" transform="rotate(300 50 50)"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="url(#lf-or)" mask="url(#lf-figure)"/>
+</svg>
+  <div class="hl">
+    <div class="kick"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  
+  <defs>
+    <linearGradient id="lp-or" x1="14" y1="8" x2="82" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f6df8c"/>
+      <stop offset="0.42" stop-color="#dcb04a"/>
+      <stop offset="0.72" stop-color="#bf8d2e"/>
+      <stop offset="1" stop-color="#94661b"/>
+    </linearGradient>
+    <g id="lp-branche">
+      <rect x="48.45" y="44.3" width="3.1" height="5.7"/>
+      <rect x="48.45" y="36.9" width="3.1" height="3.65"/>
+      <rect x="48.45" y="29.6" width="3.1" height="3.6"/>
+      <rect x="48.45" y="23.5" width="3.1" height="2.6"/>
+      <circle cx="50" cy="15" r="7.5" fill="none" stroke="#fff" stroke-width="3.1"/>
+    </g>
+    <mask id="lp-figure" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <g fill="#fff">
+        <use href="#lp-branche"/>
+        <use href="#lp-branche" transform="rotate(60 50 50)"/>
+        <use href="#lp-branche" transform="rotate(120 50 50)"/>
+        <use href="#lp-branche" transform="rotate(180 50 50)"/>
+        <use href="#lp-branche" transform="rotate(240 50 50)"/>
+        <use href="#lp-branche" transform="rotate(300 50 50)"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="url(#lp-or)" mask="url(#lp-figure)"/>
+</svg><span>Fablab</span><span class="rule"></span><span>Mémento</span></div>
+    <h1 style="font-size:72pt">Raspberry Pi</h1>
+    <span class="filet"></span>
+    <div class="sub">Le connecteur GPIO · règles · premiers pas · GPIO Zero</div>
+    <div class="by"><span class="auteur">Auteur : D. Dambreville · <span class="url">didierdambreville.github.io</span> · licence CC BY 4.0</span></div>
+  </div>
+  <div class="keys"><div class="key"><b>3,3 V</b><span>niveau des broches GPIO : jamais de 5 V</span></div><div class="key"><b>16 mA</b><span>au plus par broche ; 50 mA pour tout le GPIO</span></div><div class="key"><b>40</b><span>broches GPIO, sur tous les modèles actuels</span></div><div class="key"><b>27 W</b><span>alimentation USB-C du Pi 5 (5,1 V, 5 A)</span></div></div>
+</header>
+<main class="body">
+<div class="band " style="grid-template-columns:1.45fr 1fr"><div class="col"><section class="card hero"><h2><span class="no">01</span><span class="tt">Le connecteur GPIO</span></h2><div class="bd"><div class="pinout"><div class="pf l"></div><div class="pn l p3">3,3 V</div><div class="pc p3 sq">1</div><div class="pc p5">2</div><div class="pn r p5">5 V</div><div class="pf r"></div><div class="pf l"><span class="fn i2c">I²C SDA</span></div><div class="pn l io">GPIO2</div><div class="pc io">3</div><div class="pc p5">4</div><div class="pn r p5">5 V</div><div class="pf r"></div><div class="pf l"><span class="fn i2c">I²C SCL</span></div><div class="pn l io">GPIO3</div><div class="pc io">5</div><div class="pc gnd">6</div><div class="pn r gnd">GND</div><div class="pf r"></div><div class="pf l"><span class="fn ow">1-Wire</span></div><div class="pn l io">GPIO4</div><div class="pc io">7</div><div class="pc io">8</div><div class="pn r io">GPIO14</div><div class="pf r"><span class="fn uart">UART TX</span></div><div class="pf l"></div><div class="pn l gnd">GND</div><div class="pc gnd">9</div><div class="pc io">10</div><div class="pn r io">GPIO15</div><div class="pf r"><span class="fn uart">UART RX</span></div><div class="pf l"></div><div class="pn l io">GPIO17</div><div class="pc io">11</div><div class="pc io">12</div><div class="pn r io">GPIO18</div><div class="pf r"><span class="fn pwm">PWM</span></div><div class="pf l"></div><div class="pn l io">GPIO27</div><div class="pc io">13</div><div class="pc gnd">14</div><div class="pn r gnd">GND</div><div class="pf r"></div><div class="pf l"></div><div class="pn l io">GPIO22</div><div class="pc io">15</div><div class="pc io">16</div><div class="pn r io">GPIO23</div><div class="pf r"></div><div class="pf l"></div><div class="pn l p3">3,3 V</div><div class="pc p3">17</div><div class="pc io">18</div><div class="pn r io">GPIO24</div><div class="pf r"></div><div class="pf l"><span class="fn spi">SPI0 MOSI</span></div><div class="pn l io">GPIO10</div><div class="pc io">19</div><div class="pc gnd">20</div><div class="pn r gnd">GND</div><div class="pf r"></div><div class="pf l"><span class="fn spi">SPI0 MISO</span></div><div class="pn l io">GPIO9</div><div class="pc io">21</div><div class="pc io">22</div><div class="pn r io">GPIO25</div><div class="pf r"></div><div class="pf l"><span class="fn spi">SPI0 SCLK</span></div><div class="pn l io">GPIO11</div><div class="pc io">23</div><div class="pc io">24</div><div class="pn r io">GPIO8</div><div class="pf r"><span class="fn spi">SPI0 CE0</span></div><div class="pf l"></div><div class="pn l gnd">GND</div><div class="pc gnd">25</div><div class="pc io">26</div><div class="pn r io">GPIO7</div><div class="pf r"><span class="fn spi">SPI0 CE1</span></div><div class="pf l"><span class="fn idf">ID EEPROM</span></div><div class="pn l id">GPIO0</div><div class="pc id">27</div><div class="pc id">28</div><div class="pn r id">GPIO1</div><div class="pf r"><span class="fn idf">ID EEPROM</span></div><div class="pf l"></div><div class="pn l io">GPIO5</div><div class="pc io">29</div><div class="pc gnd">30</div><div class="pn r gnd">GND</div><div class="pf r"></div><div class="pf l"></div><div class="pn l io">GPIO6</div><div class="pc io">31</div><div class="pc io">32</div><div class="pn r io">GPIO12</div><div class="pf r"><span class="fn pwm">PWM</span></div><div class="pf l"><span class="fn pwm">PWM</span></div><div class="pn l io">GPIO13</div><div class="pc io">33</div><div class="pc gnd">34</div><div class="pn r gnd">GND</div><div class="pf r"></div><div class="pf l"><span class="fn pwm">PWM</span></div><div class="pn l io">GPIO19</div><div class="pc io">35</div><div class="pc io">36</div><div class="pn r io">GPIO16</div><div class="pf r"></div><div class="pf l"></div><div class="pn l io">GPIO26</div><div class="pc io">37</div><div class="pc io">38</div><div class="pn r io">GPIO20</div><div class="pf r"></div><div class="pf l"></div><div class="pn l gnd">GND</div><div class="pc gnd">39</div><div class="pc io">40</div><div class="pn r io">GPIO21</div><div class="pf r"></div></div><div class="plg"><span class="pc p3">·</span>3,3 V<span class="pc p5">·</span>5 V<span class="pc gnd">·</span>masse (GND)<span class="pc io">·</span>GPIO<span class="pc id">·</span>réservée (HAT)</div><p class="sm">Broche 1 (carrée) à l’opposé des prises USB ; impaires côté intérieur, paires côté bord. <code><span class="nw">LED(17)</span></code> = GPIO17 = <b>broche 11</b>. Brochage complet sur le Pi : <code><span class="nw">pinout</span></code>.</p></div></section></div><div class="col"><section class="card warn"><h2><span class="no">02</span><span class="tt">Règles électriques</span></h2><div class="bd"><ul class="bl"><li>Tout est en <b>3,3 V</b> : jamais de 5 V sur une entrée.</li><li><b>16 mA</b> au plus par broche : une LED a toujours sa résistance.</li><li>Jamais de moteur ni de relais sur une broche : <b>transistor</b>.</li><li>Câbler <b>Pi éteint</b> ; vérifier deux fois avant de rebrancher.</li><li>Ne jamais relier une broche 5 V ou 3,3 V à la masse.</li></ul></div></section><section class="card "><h2><span class="no">03</span><span class="tt">Alimentation</span></h2><div class="bd"><table><colgroup><col style="width:42%"><col style="width:58%"></colgroup><tbody><tr><td class="k">Pi 5 · Pi 500</td><td>USB-C 27 W (5,1 V, 5 A)</td></tr><tr><td class="k">Pi 4 · Pi 400</td><td>USB-C 15 W (5,1 V, 3 A)</td></tr></tbody></table><p class="w">Première cause de pannes : une alimentation faible. Sous-tension → données corrompues.</p><p>Éteindre avant de débrancher : <code><span class="nw">sudo</span> <span class="nw">poweroff</span></code>.</p></div></section></div></div><div class="band " style="grid-template-columns:1fr 1fr"><div class="col"><section class="card "><h2><span class="no">04</span><span class="tt">Premier démarrage</span></h2><div class="bd"><div class="steps"><div><span class="st">Imager</span><span class="sd">sur un autre ordinateur : écrire Raspberry Pi OS sur la microSD</span></div><div><span class="st">Personnaliser</span><span class="sd">nom, utilisateur, Wi-Fi, SSH</span></div><div><span class="st">Brancher</span><span class="sd">carte, écran, clavier, souris… l’alimentation en dernier</span></div><div><span class="st">Mettre à jour</span><span class="sd"><code><span class="nw">sudo</span> <span class="nw">apt</span> <span class="nw">update</span></code> puis <code><span class="nw">sudo</span> <span class="nw">apt</span> <span class="nw">full-upgrade</span></code></span></div></div></div></section></div><div class="col"><section class="card "><h2><span class="no">05</span><span class="tt">GPIO Zero en Python</span></h2><div class="bd"><pre class="py">from gpiozero import LED, Button
+from signal import pause
+
+led = LED(17)        <span class="cm"># broche 11</span>
+bouton = Button(27)  <span class="cm"># broche 13 → GND</span>
+
+bouton.when_pressed = led.on
+bouton.when_released = led.off
+pause()</pre><p class="sm"><code><span class="nw">led.blink()</span></code> : clignoter · <code><span class="nw">Ctrl+C</span></code> : arrêter le programme.</p></div></section></div></div><div class="band " style="grid-template-columns:1fr"><div class="col"><section class="card "><h2><span class="no">06</span><span class="tt">Commandes utiles</span></h2><div class="bd"><div class="row" style="align-items:flex-start;gap:6mm"><div style="flex:1 1 0"><table><colgroup><col style="width:52%"><col style="width:48%"></colgroup><tbody><tr><td class="k"><code><span class="nw">sudo</span> <span class="nw">raspi-config</span></code></td><td>configuration</td></tr><tr><td class="k"><code><span class="nw">hostname</span> <span class="nw">-I</span></code></td><td>adresse IP du Pi</td></tr><tr><td class="k"><code><span class="nw">pinout</span></code></td><td>brochage GPIO</td></tr></tbody></table></div><div style="flex:1 1 0"><table><colgroup><col style="width:60%"><col style="width:40%"></colgroup><tbody><tr><td class="k"><code><span class="nw">vcgencmd</span> <span class="nw">measure_temp</span></code></td><td>température</td></tr><tr><td class="k"><code><span class="nw">vcgencmd</span> <span class="nw">get_throttled</span></code></td><td><code><span class="nw">0x0</span></code> : tout va bien</td></tr><tr><td class="k"><code><span class="nw">sudo</span> <span class="nw">poweroff</span></code></td><td>éteindre proprement</td></tr></tbody></table></div></div></div></section></div></div>
+</main>
+<footer class="foot">
+  <span>Tiré du mémento « Raspberry Pi » v1.1 : brochage, alimentation et commandes vérifiés le 29/09/2026 sur la documentation officielle (raspberrypi.com) et la source de GPIO Zero ; conseils : synthèse.</span>
+  <span class="fr"><b>Mémento</b> · v1.1 · octobre 2026 · <span class="url">didierdambreville.github.io</span></span>
+</footer>
+</div>
+
+</body>
+</html>
