@@ -44,6 +44,9 @@ export default defineConfig({
   },
   // Le préchargement injecterait un script sur toutes les pages.
   prefetch: false,
+  // La coloration syntaxique (Shiki) écrit ses couleurs en attributs style="", que
+  // `style-src 'self'` refuse : les blocs de code des notes restent en texte simple.
+  markdown: { syntaxHighlight: false },
   integrations: [
     sitemap({
       filter: (page) => !RUBRIQUES_VIDES.some((r) => new URL(page).pathname.startsWith(r)),

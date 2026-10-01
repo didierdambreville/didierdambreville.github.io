@@ -87,6 +87,8 @@ Toute pièce interactive porte une capture enregistrée (`apercu`) — la fiche 
   rechargement à chaud, qu'une politique stricte refuse — même symptôme, page nue. Ne jamais
   retirer cette condition : éprouver la politique avec `npm run preview`.
 - Aucun attribut `style=""`, jamais, nulle part.
+- `markdown: { syntaxHighlight: false }` dans `astro.config.mjs` : la coloration des blocs de code
+  (Shiki) écrit ses couleurs en attributs `style=""`, que la politique refuse.
 - Aucune ressource chargée depuis un tiers, polices comprises.
 - Les blocs `application/ld+json` ne sont pas exécutés : ils passent sous `default-src 'none'`.
 

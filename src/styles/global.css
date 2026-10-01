@@ -1159,7 +1159,6 @@ section[id] { scroll-margin-top: 1rem; }
 .note__corps thead th { color: var(--encre-douce); font-weight: 600; border-bottom: 2px solid var(--or); }
 .note__corps td { vertical-align: top; }
 .note__corps td:first-child { font-weight: 600; color: var(--titre); }
-.note__corps td:nth-child(3) { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .note__pied {
   margin-top: 2.5rem;
   padding-top: 0.9rem;
