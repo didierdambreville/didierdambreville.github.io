@@ -12,7 +12,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: 'Notes',
-  description: 'Notes de travail tenues à jour : bibliographies, listes, relevés.',
+  description: 'Notes publiques tenues à jour : bibliographies, listes, relevés.',
   url: new URL('/notes/', Astro.site).href,
   author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
   license: LICENCE.urlCanonique,
@@ -25,14 +25,14 @@ const jsonLd = {
 ---
 <Base
   titre={`Notes — ${AUTEUR}`}
-  description={`${notes.length} notes de travail tenues à jour — bibliographies, listes, relevés —, rangées par dossier et par mot-clé.`}
+  description={`${notes.length} notes publiques tenues à jour — bibliographies, listes, relevés —, rangées par dossier et par mot-clé.`}
   jsonLd={jsonLd}
 >
   <div class="notes notes--index">
     <div class="notes__contenu">
       <h1>Notes</h1>
       <p class="chapeau">
-        Des notes de travail tenues à jour&#160;: bibliographies, listes, relevés. Pas des
+        Des notes publiques tenues à jour&#160;: bibliographies, listes, relevés. Pas des
         articles — l'essentiel d'un sujet, à consulter plutôt qu'à lire d'une traite. Rangées par
         dossier, retrouvées par mot-clé.
       </p>
