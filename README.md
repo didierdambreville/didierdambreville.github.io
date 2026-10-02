@@ -108,6 +108,10 @@ En ligne depuis le 30 septembre 2026 : `https://didierdambreville.github.io`, d�
 `main` reconstruit et republie le site (`.github/workflows/deploy.yml`, actions `checkout` v7,
 `withastro/action` v6, `deploy-pages` v5).
 
+Commande `/publier` (depuis le 2 octobre 2026) : `../../.claude/skills/publier/` — construction,
+contrôles déterministes (`verifier-avant-envoi.py`, sortie 0 exigée), commit, envoi, attente de GitHub
+Actions, vérification en ligne.
+
 Envoi : `gh` sert de gestionnaire d'identifiants en configuration **locale** du dépôt
 (`credential.https://github.com.helper`, liste remise à zéro), faute de quoi le gestionnaire de
 Windows présente un ancien jeton dépourvu du droit `workflow`.

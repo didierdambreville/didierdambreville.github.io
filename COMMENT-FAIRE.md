@@ -363,6 +363,12 @@ Chaque modification envoyée sur la branche `main` reconstruit et republie le si
 minute (`.github/workflows/deploy.yml`). Les envois se font depuis une session Claude : c'est là, et
 non dans une invite de commandes ordinaire du poste, que vit la connexion à GitHub.
 
+**Pour publier** : dans une session Claude ouverte sur le dossier `D_Dambreville` (ou l'un de ses
+sous-dossiers), tapez `/publier`. Claude reconstruit le site, passe les contrôles automatiques
+(`D_Dambreville\.claude\skills\publier\verifier-avant-envoi.py`), enregistre et envoie les
+modifications, attend la fin de la republication, puis vérifie les pages en ligne. Taper la commande
+vaut accord pour cette mise en ligne ; si un contrôle échoue, rien n'est envoyé.
+
 ---
 
 ## Ce que GitHub Pages exige, et ce qu'il interdit
