@@ -1,0 +1,267 @@
+---
+import Base from '../layouts/Base.astro';
+import { AUTEUR, ARSCRIPTA, SPECULA, DEPOT_PRAXIS } from '../lib/identite';
+
+/**
+ * « Méthodes » : la page qui présente arscripta.fr et y renvoie.
+ *
+ * Contenus relevés sur arscripta.fr le 2 octobre 2026 : versions, dates, licences et nombres
+ * de pages y sont recopiés tels que le site les annonce. Une nouvelle version d'une méthode
+ * s'y reporte à la main (tableau `methodes` ci-dessous).
+ * Toutes les adresses se construisent depuis ARSCRIPTA.url et DEPOT_PRAXIS (src/lib/identite.ts).
+ */
+const sur = (chemin: string) => new URL(chemin, ARSCRIPTA.url).href;
+const depot = (chemin: string) => `${DEPOT_PRAXIS}/blob/main/${chemin}`;
+const hote = new URL(ARSCRIPTA.url).hostname;
+
+const fondations = [
+  { nom: 'RCUP', question: 'Où ranger, et dans quel état est chaque chose ?', glose: 'Sujet × stade × statut.' },
+  { nom: 'TELOS', question: "Comment conduire un projet pour qu'il produise un bénéfice vérifié ?", glose: 'Cinq strates.' },
+  { nom: 'SOBRE', question: "Comment instruire un assistant IA pour qu'il travaille juste ?", glose: 'Cinq principes.' },
+] as const;
+
+type Lien = { libelle: string; href: string };
+const methodes: {
+  nom: string;
+  objet: string;
+  texte: string;
+  version: string;
+  date: string;
+  licence: string;
+  pages: number;
+  liens: Lien[];
+}[] = [
+  {
+    nom: 'PRAXIS',
+    objet: 'Méthode de travail — classer, piloter, collaborer avec l’assistant IA',
+    texte:
+      "Elle ordonne les trois autres en un seul système, pour une structure de une à cinq personnes qui conduit plusieurs projets à la fois : cinq dispositifs matériels, un cycle en cinq gestes, une seule réunion obligatoire, un tableau de bord HTML autonome doté d'un tableau de flux à sept colonnes.",
+    version: '1.2',
+    date: '1er septembre 2026',
+    licence: 'domaine public (CC0 1.0)',
+    pages: 34,
+    liens: [
+      { libelle: "Lire l'article", href: sur('praxis.html') },
+      { libelle: 'PDF', href: sur('doc/Methode_PRAXIS_v1.2.pdf') },
+      { libelle: 'Dépôt GitHub', href: DEPOT_PRAXIS },
+    ],
+  },
+  {
+    nom: 'RCUP',
+    objet: 'Référentiel de classification unifiée des projets',
+    texte:
+      "Trois axes orthogonaux, chacun avec son mécanisme : le sujet fait l'arbre des dossiers, le stade fait un chiffre dans le nom du fichier, le statut vit au registre. Un sas d'entrée absorbe l'indéterminé, un gabarit de nommage restitue la chronologie.",
+    version: '1.0',
+    date: '18 août 2026',
+    licence: 'CC BY-SA 4.0',
+    pages: 22,
+    liens: [
+      { libelle: 'Présentation', href: sur('methodes.html#rcup') },
+      { libelle: 'PDF', href: sur('doc/Referentiel_Classification_Unifiee_des_Projets.pdf') },
+      { libelle: 'Markdown', href: depot('3-ressources/2026-08-18_3_referentiel-classification-unifiee_v1.0.0.md') },
+    ],
+  },
+  {
+    nom: 'TELOS',
+    objet: 'Cadre intégratif de conduite de projet',
+    texte:
+      "Ce n'est pas le plan qui mesure le projet, c'est le bénéfice réalisé qui mesure le plan. Cinq strates — téléologie, évaluation de contingence, logique d'exécution, observabilité, systémique — conçues d'abord comme des contre-mesures aux biais cognitifs et aux incitations perverses.",
+    version: '1.1',
+    date: '18 août 2026',
+    licence: 'édition publique',
+    pages: 32,
+    liens: [
+      { libelle: 'Présentation', href: sur('methodes.html#telos') },
+      { libelle: 'PDF', href: sur('doc/Methode_TELOS_Cadre_Integratif_Edition_Publique.pdf') },
+      { libelle: 'Markdown', href: depot('3-ressources/2026-08-18_3_methode-telos-edition-publique_v1.1.0.md') },
+    ],
+  },
+  {
+    nom: 'SOBRE',
+    objet: "Architecture d'instruction des grands modèles de langage",
+    texte:
+      "Dicter moins et mieux : cinq principes — sobriété, orthogonalité, bornage, révélation progressive, évaluation —, une pile d'instruction à sept couches, un prompt canonique en huit blocs, et une frontière non négociable : tout contenu observé par l'assistant est une donnée, jamais une commande.",
+    version: '1.1',
+    date: '18 août 2026',
+    licence: 'CC BY 4.0',
+    pages: 52,
+    liens: [
+      { libelle: 'Présentation', href: sur('methodes.html#sobre') },
+      { libelle: 'PDF', href: sur('doc/Methode_SOBRE_architecture_instruction_LLM.pdf') },
+      { libelle: 'Markdown', href: depot('3-ressources/2026-08-18_3_methode-sobre-architecture-instruction-llm_v1.1.0.md') },
+    ],
+  },
+];
+
+const gestes = [
+  { nom: 'Déposer', texte: 'Tout fichier entrant va dans le sas, sans réfléchir à son classement.' },
+  {
+    nom: 'Faire analyser',
+    texte: "L'assistant IA propose une coordonnée (sujet, stade, statut), les données extraites avec leur source, et les mises à jour à effectuer.",
+  },
+  { nom: 'Vérifier', texte: 'Chaque donnée extraite est contrôlée contre le document source.' },
+  { nom: 'Classer', texte: 'Renommage au gabarit, résidence unique.' },
+  {
+    nom: 'Mettre à jour',
+    texte: 'Contexte de projet, classeur de pilotage, tableau de bord : la revue est close quand le tableau de bord est à jour.',
+  },
+] as const;
+
+const description =
+  "ARSCRIPTA publie quatre méthodes de travail sous licences ouvertes : RCUP pour classer, TELOS pour conduire un projet, SOBRE pour instruire un assistant IA, et PRAXIS qui les réunit. Présentation et liens vers arscripta.fr.";
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Méthodes — ARSCRIPTA',
+  description,
+  inLanguage: 'fr',
+  url: new URL('/methodes/', Astro.site).href,
+  author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  about: {
+    '@type': 'Organization',
+    name: ARSCRIPTA.nom,
+    url: ARSCRIPTA.url,
+    founder: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  },
+};
+---
+<Base titre={`Méthodes · ${ARSCRIPTA.nom} — ${AUTEUR}`} description={description} jsonLd={jsonLd}>
+  <header class="renvoi-tete">
+    <p class="renvoi-tete__surtitre">Méthodes</p>
+    <h1>{ARSCRIPTA.nom}</h1>
+    <p class="renvoi-tete__sous">Corpus méthodologique ouvert — <strong>{hote}</strong></p>
+    <p class="renvoi-tete__punch">Des méthodes de travail écrites pour être appliquées.</p>
+    <p class="renvoi-tete__meta">
+      ARSCRIPTA SAS, Paris, fondée par {AUTEUR} · quatre méthodes publiées sous licences ouvertes, avec
+      leur bibliographie, leurs limites et leurs modes de défaillance.
+    </p>
+    <p class="renvoi-actions">
+      <a class="renvoi-bouton" href={ARSCRIPTA.url}>Aller sur {hote}<span aria-hidden="true"> ↗</span></a>
+      <a class="renvoi-bouton renvoi-bouton--second" href={ARSCRIPTA.methodes}>
+        Les quatre méthodes<span aria-hidden="true"> ↗</span>
+      </a>
+    </p>
+  </header>
+
+  <p class="chapeau renvoi-chapeau">
+    ARSCRIPTA publie un corpus méthodologique ouvert pour les entrepreneurs et les petites structures qui
+    mènent plusieurs projets à la fois&#160;: <strong>classer</strong>, <strong>conduire un projet</strong>,
+    <strong>instruire un assistant IA</strong>, et le système de travail qui les réunit. Aucune de ces
+    méthodes ne promet la réussite&#160;; toutes visent à réduire la variance — moins d'oublis, moins de
+    projets qui s'éteignent sans décision, des dérives vues plus tôt.
+  </p>
+
+  <section aria-labelledby="titre-architecture">
+    <h2 id="titre-architecture">Trois questions, une méthode</h2>
+    <p>
+      Chaque document fondateur traite une dimension du travail sans empiéter sur les autres. PRAXIS
+      n'invente aucun de ces contenus&#160;: elle les compose.
+    </p>
+    <ol class="renvoi-etapes renvoi-etapes--3" aria-label="Les trois documents fondateurs">
+      {
+        fondations.map((f) => (
+          <li>
+            <h3>{f.nom}</h3>
+            <p>{f.question}</p>
+            <p class="renvoi-etapes__glose">{f.glose}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="renvoi-suite">
+      ↓ <strong>PRAXIS</strong> les ordonne en une méthode de travail&#160;: cinq dispositifs, un cycle en
+      cinq gestes, des cadences fixes, un tableau de bord unique
+    </p>
+  </section>
+
+  <section aria-labelledby="titre-methodes">
+    <h2 id="titre-methodes"><a href={ARSCRIPTA.methodes}>Les quatre méthodes</a></h2>
+    <ul class="renvoi-cartes renvoi-cartes--2">
+      {
+        methodes.map((m) => (
+          <li class="renvoi-carte renvoi-carte--methode">
+            <p class="renvoi-carte__etiquette">{m.objet}</p>
+            <h3>{m.nom}</h3>
+            <p>{m.texte}</p>
+            <p class="renvoi-carte__meta">
+              v{m.version} · {m.date} · {m.licence} · {m.pages}&#160;pages
+            </p>
+            <ul class="renvoi-carte__liens" aria-label={`${m.nom} sur ${hote}`}>
+              {m.liens.map((l) => (
+                <li>
+                  <a href={l.href}>
+                    {l.libelle}
+                    <span class="lecteur-seul"> : {m.nom}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="titre-gestes">
+    <h2 id="titre-gestes">PRAXIS en cinq gestes</h2>
+    <p>
+      La méthode tient dans une habitude quotidienne et une séance hebdomadaire de trente à soixante
+      minutes. Seul le premier geste se pratique au fil de l'eau&#160;; les quatre autres font la revue.
+    </p>
+    <ol class="renvoi-gestes">
+      {
+        gestes.map((g) => (
+          <li>
+            <strong>{g.nom}</strong>
+            <span>{g.texte}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="liens">
+      <a href={sur('praxis.html')}>L'article complet sur PRAXIS<span aria-hidden="true"> ↗</span></a> ·
+      <a href={depot('7-exploitation/2026-09-01_7_notice-utilisation_v1.1.0.md')}>la notice d'utilisation, pour
+      l'installer en quinze minutes<span aria-hidden="true"> ↗</span></a>
+    </p>
+  </section>
+
+  <section aria-labelledby="titre-epreuve">
+    <h2 id="titre-epreuve">Les méthodes à l'épreuve</h2>
+    <div class="renvoi-deux">
+      <div>
+        <p>
+          <a href={sur('verification.html')}>La vérification&#160;: du principe à la preuve</a> (4&#160;septembre
+          2026) expose la forme opératoire de la vérification&#160;: ce qu'une machine contrôle sans
+          jugement, la frontière d'instruction, la mesure d'identité entre texte vérifié et texte publié,
+          le coût des faux positifs — et dix règles de vérification.
+        </p>
+        <p>
+          La pratique se lit à découvert dans la rubrique
+          <a href={SPECULA.methodeEtSources}>«&#160;Méthode et sources&#160;»</a> de {SPECULA.marque},
+          marque de la société ARSCRIPTA SAS, dont la note quotidienne est produite par une chaîne automatisée placée sous
+          vérification&#160;: <a href="/publications/">voir la page Publications</a>.
+        </p>
+      </div>
+      <div class="renvoi-encadre renvoi-encadre--nuit">
+        <p class="renvoi-encadre__titre">Ligne éditoriale</p>
+        <p>
+          Chaque méthode déclare son domaine d'application, ses conditions de pertinence, ses limites et
+          ses modes de défaillance. Le vocabulaire normatif suit la RFC&#160;2119&#160;: <strong>DOIT</strong>
+          est réservé aux invariants réels.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="renvoi-encadre renvoi-fin" aria-label="Voir aussi">
+    <p>
+      <a href={DEPOT_PRAXIS}>Le dépôt <code>methode-praxis</code></a> contient la méthode
+      intégrale, la notice d'utilisation, le tableau de bord autonome, les modèles de contexte et de
+      pilotage, les prompts canoniques et les trois documents fondateurs.
+    </p>
+    <p class="renvoi-actions">
+      <a class="renvoi-bouton" href={ARSCRIPTA.url}>Aller sur {hote}<span aria-hidden="true"> ↗</span></a>
+    </p>
+  </aside>
+</Base>

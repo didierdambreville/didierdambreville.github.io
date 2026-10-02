@@ -34,5 +34,9 @@ Sauf mention contraire portée par la pièce elle-même, les contenus sont publi
 
 ## Liens externes
 
-Le site renvoie vers des services tiers (ARSCRIPTA, SPECULA, GitHub, X, LinkedIn). Leur contenu et
+Le site renvoie vers des services tiers (ARSCRIPTA, SPECULA™, GitHub, X, LinkedIn). Leur contenu et
 leurs pratiques en matière de données ne relèvent pas de ce site.
+
+## Marques
+
+SPECULA™ est une marque de la société ARSCRIPTA SAS.

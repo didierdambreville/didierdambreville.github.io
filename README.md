@@ -31,10 +31,15 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   ailleurs. Logo : `public/logo-or.svg` (fichier maître : `../identite/`).
 - **Couleurs** : bleu et or sur fond gris clair, jetons en tête de `src/styles/global.css`
   (contrastes calculés, en commentaire).
-- **Menu** : Mémentos · Notes · Publications · Méthodes · Manifeste · À propos. « Publications » renvoie à
-  la rubrique « Méthode et sources » de specula.fr (`SPECULA.publications`, libellé et cible choisis
-  le 1er octobre 2026) et « Méthodes » à arscripta.fr ; dès qu'un article est publié ici, une entrée
-  « Articles » mène à `/articles/` et SPECULA la suit.
+- **Menu** : Mémentos · Notes · Publications · Méthodes · Manifeste · À propos. Depuis le 2 octobre
+  2026, « Publications » mène à `/publications/` (`src/pages/publications.astro`), qui présente
+  specula.fr et y renvoie, et « Méthodes » à `/methodes/` (`src/pages/methodes.astro`), qui présente
+  arscripta.fr. Leurs contenus ont été relevés sur ces deux sites le 2 octobre 2026 : une nouvelle
+  version d'une méthode ARSCRIPTA se reporte à la main dans `methodes.astro`. Dès qu'un article est
+  publié ici, une entrée « Articles » (`/articles/`) s'insère avant « Publications ».
+- **Marque** : « SPECULA™ » partout où le texte l'affiche (`SPECULA.marque`) — SPECULA™ est une
+  marque de la société ARSCRIPTA SAS. Le nom nu (`SPECULA.nom`) ne sert qu'aux données structurées.
+  Ne pas écrire que « l'humain vérifie et décide » : la vérification des publications est déterministe.
 - **Manifeste TRIFAB** (depuis le 1er octobre 2026) : page `/manifeste/` (`src/pages/manifeste.astro`),
   données dans `src/lib/manifeste.ts`, contacts relais dans `src/data/manifeste/contacts.json`
   (source unique, adresses génériques d'organismes seulement), schémas dans

@@ -1364,3 +1364,308 @@ section[id] { scroll-margin-top: 1rem; }
 .ac-manifeste img { width: 72px; height: 72px; flex: none; }
 .ac-manifeste h2 { margin: 0; }
 .ac-manifeste .ac-manifeste__punch { margin: 0.2rem 0 0; font-style: italic; font-size: 1.2rem; color: var(--or); }
+
+/* ---------- présentations des deux sites (/publications/, /methodes/) ---------- */
+
+/* En-tête : le cartouche bleu nuit de l'accueil et du manifeste, sans logo — ceux de
+   SPECULA et d'ARSCRIPTA ne sont pas repris ici. */
+.renvoi-tete {
+  position: relative;
+  padding: 2rem 2.25rem 2.1rem;
+  background: var(--nuit);
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.06), transparent 45%);
+  color: var(--sur-nuit);
+  border-bottom: 3px solid var(--or);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.renvoi-tete::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgb(217 179 90 / 0.45);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.renvoi-tete > * { position: relative; }
+.renvoi-tete p { margin: 0; max-width: 64ch; }
+.renvoi-tete__surtitre {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--or);
+}
+.renvoi-tete h1 {
+  color: #fbf6e6;
+  font-size: clamp(2.2rem, 1.5rem + 3vw, 3.4rem);
+  letter-spacing: 0.07em;
+  line-height: 1;
+  margin: 0.4rem 0 0.7rem;
+}
+.renvoi-tete__sous { font-family: var(--sans); font-size: 1.05rem; color: var(--sur-nuit); }
+.renvoi-tete__sous strong { color: #fbf6e6; }
+.renvoi-tete .renvoi-tete__punch { font-style: italic; font-size: 1.45rem; line-height: 1.35; color: var(--or); margin-top: 0.6rem; }
+.renvoi-tete .renvoi-tete__meta { font-family: var(--sans); font-size: 0.85rem; color: var(--sur-nuit-doux); margin-top: 0.9rem; }
+.renvoi-tete a:focus-visible { outline-color: var(--or); }
+@media (max-width: 40rem) {
+  .renvoi-tete { padding: 1.5rem 1.4rem 1.6rem; }
+}
+.renvoi-chapeau { margin-top: 2rem; }
+
+/* Boutons vers le site présenté : or plein sur le cartouche, bleu nuit ailleurs. */
+.renvoi-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.4rem 0 0;
+  max-width: none;
+}
+.renvoi-tete .renvoi-actions { margin-top: 1.4rem; }
+.renvoi-bouton {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--or);
+  border-radius: 3px;
+  background: var(--nuit);
+  color: var(--or-clair);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.renvoi-bouton:hover { background: var(--or); color: var(--nuit); }
+.renvoi-tete .renvoi-bouton { background: var(--or); color: var(--nuit); }
+.renvoi-tete .renvoi-bouton:hover { background: var(--or-clair); color: var(--nuit); }
+.renvoi-tete .renvoi-bouton--second { background: transparent; color: var(--or-clair); }
+.renvoi-tete .renvoi-bouton--second:hover { background: rgb(217 179 90 / 0.15); color: #fbf6e6; }
+
+/* Cartes : six rubriques en trois colonnes, quatre méthodes en deux — jamais une carte seule. */
+.renvoi-cartes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+.renvoi-cartes--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 56rem) {
+  .renvoi-cartes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 36rem) {
+  .renvoi-cartes, .renvoi-cartes--2 { grid-template-columns: 1fr; }
+}
+.renvoi-carte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.95rem 1.1rem 1.1rem;
+  background: var(--fond-appuye);
+  border: 1px solid var(--trait);
+  border-top: 3px solid var(--nuit);
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+.renvoi-carte p { margin: 0; }
+.renvoi-carte h3 { margin: 0; font-size: 1.08rem; }
+.renvoi-carte h3 a { text-decoration: none; }
+.renvoi-carte h3 a:hover { text-decoration: underline; }
+/* La flèche signale le départ vers un autre site ; texte de remplacement vide pour les
+   lecteurs d'écran, qui annonceraient sinon « flèche nord-est ». */
+.renvoi-carte h3 a::after { content: " ↗" / ""; font-size: 0.8em; color: var(--accent); }
+.renvoi-carte .renvoi-carte__etiquette {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.renvoi-carte--methode { border-top-color: var(--or); padding-bottom: 1rem; }
+.renvoi-carte--methode h3 { font-family: var(--serif); font-size: 1.5rem; letter-spacing: 0.04em; }
+.renvoi-carte .renvoi-carte__meta {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+.renvoi-carte__liens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.1rem;
+  margin: 0;
+  padding: 0.55rem 0 0;
+  border-top: 1px solid var(--trait);
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.renvoi-carte__liens a { color: var(--accent); text-decoration: none; }
+.renvoi-carte__liens a:hover { text-decoration: underline; }
+
+/* Les parties de la note, les trois fondations : des tuiles bleu nuit. */
+.renvoi-etapes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+.renvoi-etapes--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 56rem) {
+  .renvoi-etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .renvoi-etapes--3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 36rem) {
+  .renvoi-etapes { grid-template-columns: 1fr; }
+}
+.renvoi-etapes > li {
+  min-width: 0;
+  padding: 1rem 1.1rem 1.1rem;
+  background: var(--nuit);
+  color: var(--sur-nuit-doux);
+  border-bottom: 3px solid var(--or);
+  border-radius: 5px;
+}
+.renvoi-etapes__rang {
+  display: inline-grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 2px solid var(--or);
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--or);
+}
+.renvoi-etapes h3 { color: #fbf6e6; font-family: var(--serif); font-size: 1.2rem; margin: 0.5rem 0 0.3rem; }
+.renvoi-etapes--3 h3 { margin-top: 0; font-size: 1.4rem; letter-spacing: 0.05em; color: var(--or); }
+.renvoi-etapes p { margin: 0; font-family: var(--sans); font-size: 0.9rem; }
+.renvoi-etapes--3 p { color: #fbf6e6; font-size: 0.95rem; }
+.renvoi-etapes .renvoi-etapes__glose { margin-top: 0.4rem; color: var(--sur-nuit-doux); font-size: 0.85rem; }
+.renvoi-suite {
+  margin: 0.9rem 0 0;
+  max-width: none;
+  padding: 0.55rem 0.9rem;
+  border: 1px dashed var(--accent);
+  border-radius: 4px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--titre);
+}
+
+/* Texte et encadré côte à côte. */
+.renvoi-deux {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+.renvoi-deux p:first-child { margin-top: 0; }
+@media (max-width: 48rem) { .renvoi-deux { grid-template-columns: 1fr; } }
+.renvoi-points { margin: 0; padding-left: 1.2rem; }
+.renvoi-points li { margin-bottom: 0.75rem; }
+.renvoi-points li::marker { color: var(--accent); }
+.renvoi-points strong { color: var(--titre); }
+
+.renvoi-encadre {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  background: var(--fond-appuye);
+  border: 1px solid var(--trait);
+  border-left: 4px solid var(--or);
+  border-radius: 4px;
+}
+.renvoi-encadre p { max-width: none; }
+.renvoi-encadre > :first-child { margin-top: 0; }
+.renvoi-encadre > :last-child { margin-bottom: 0; }
+.renvoi-encadre--nuit { background: var(--nuit); color: var(--sur-nuit); border-color: var(--nuit); border-left-color: var(--or); }
+.renvoi-encadre--nuit strong { color: var(--or-clair); }
+.renvoi-encadre__titre {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.renvoi-encadre--nuit .renvoi-encadre__titre { color: var(--or); }
+
+/* Thèmes des guides : des étiquettes cliquables. */
+.renvoi-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+.renvoi-themes a {
+  display: inline-block;
+  padding: 0.25rem 0.8rem;
+  border: 1px solid var(--trait);
+  border-radius: 1rem;
+  background: var(--fond-appuye);
+  text-decoration: none;
+}
+.renvoi-themes a:hover { border-color: var(--accent); }
+
+/* Les cinq gestes : un fil or, un numéro par geste. */
+.renvoi-gestes {
+  counter-reset: geste;
+  margin: 1.25rem 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+  border-left: 2px solid var(--or);
+}
+.renvoi-gestes li {
+  counter-increment: geste;
+  position: relative;
+  padding: 0 0 0.9rem 1.6rem;
+}
+.renvoi-gestes li:last-child { padding-bottom: 0; }
+.renvoi-gestes li::before {
+  content: counter(geste);
+  position: absolute;
+  left: -0.95rem;
+  top: 0.05rem;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--nuit);
+  border: 2px solid var(--or);
+  color: var(--or);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.renvoi-gestes strong { display: block; font-family: var(--sans); color: var(--titre); }
+.renvoi-gestes span { color: var(--encre-douce); }
+
+/* Le mot de la fin : un renvoi, puis le bouton. */
+.renvoi-fin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-top: 3rem;
+  padding: 1.2rem 1.4rem;
+}
+.renvoi-fin p { margin: 0; max-width: 64ch; }
+.renvoi-fin .renvoi-actions { margin: 0; }

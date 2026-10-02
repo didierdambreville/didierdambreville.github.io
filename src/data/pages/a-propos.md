@@ -4,7 +4,7 @@ description: "Ce que ce site publie, sous quelle licence, comment il est fait, e
 ---
 
 Ce site est celui de D.&#160;Dambreville, fondateur d'[ARSCRIPTA](https://arscripta.fr/), qui publie
-des méthodes de travail, et de [SPECULA](https://specula.fr/), qui publie des analyses
+des méthodes de travail, et de [SPECULA™](https://specula.fr/), qui publie des analyses
 macro-financières.
 
 ## Ce qu'on y trouve

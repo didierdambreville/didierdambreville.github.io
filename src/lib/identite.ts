@@ -18,7 +18,11 @@ export const RESEAUX = [
   { nom: 'GitHub', libelle: 'didierdambreville', url: 'https://github.com/didierdambreville' },
 ] as const;
 
-/** Les deux sites de l'auteur, présents dans le menu. */
+/**
+ * Les deux sites de l'auteur. Chacun a sa page de présentation, liée au menu :
+ * /methodes/ pour ARSCRIPTA, /publications/ pour SPECULA. Les adresses des pages
+ * intérieures de ces sites s'écrivent relativement à `url`, dans ces deux pages.
+ */
 export const ARSCRIPTA = {
   nom: 'ARSCRIPTA',
   url: 'https://arscripta.fr/',
@@ -26,10 +30,17 @@ export const ARSCRIPTA = {
 } as const;
 
 export const SPECULA = {
+  /** Nom nu : données structurées seulement. */
   nom: 'SPECULA',
+  /**
+   * Nom affiché, partout où le texte le permet (demande de l'auteur, 2 octobre 2026) :
+   * SPECULA™ est une marque de la société ARSCRIPTA SAS. Les fichiers Markdown, qui ne
+   * lisent pas ce fichier, l'écrivent en toutes lettres.
+   */
+  marque: 'SPECULA™',
   url: 'https://specula.fr/',
-  /** Cible de l'entrée « Publications » du menu tant que le site n'a pas d'articles propres. */
-  publications: 'https://specula.fr/category/methode-et-sources/',
+  /** Rubrique « Méthode et sources » : la vérification de la note, tenue à découvert. */
+  methodeEtSources: 'https://specula.fr/category/methode-et-sources/',
 } as const;
 
 /** Dépôt public de la méthode PRAXIS (domaine public). */

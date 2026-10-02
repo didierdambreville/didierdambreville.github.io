@@ -1,0 +1,273 @@
+---
+import Base from '../layouts/Base.astro';
+import { AUTEUR, SPECULA } from '../lib/identite';
+
+/**
+ * « Publications » : la page qui présente specula.fr et y renvoie.
+ *
+ * Contenus relevés sur specula.fr le 2 octobre 2026. Seuls y figurent des éléments durables
+ * — rubriques, structure de la note, articles de méthode, thèmes des guides — jamais
+ * l'édition du jour ni le prix, qui changent sans que cette page le sache.
+ * Toutes les adresses se construisent depuis SPECULA.url (src/lib/identite.ts).
+ */
+const sur = (chemin: string) => new URL(chemin, SPECULA.url).href;
+const hote = new URL(SPECULA.url).hostname;
+
+const rubriques = [
+  {
+    rythme: 'Par e-mail · 7 h · 7 jours sur 7',
+    titre: 'La Note Sentinelle',
+    texte:
+      "La note macro-financière quotidienne, sur abonnement : le facteur dominant de la séance, les faits qui comptent, neuf actifs lus techniquement.",
+    href: sur('newsletter-financiere-quotidienne-la-note-sentinelle/'),
+  },
+  {
+    rythme: 'En accès libre',
+    titre: 'Lire une édition complète',
+    texte: 'Une édition intégrale de La Note Sentinelle, lisible sans inscription : le meilleur moyen de juger sur pièce.',
+    href: sur('exemple-note-sentinelle/'),
+  },
+  {
+    rythme: 'Chaque matin',
+    titre: 'Ce matin',
+    texte: "La synthèse publique de l'édition du jour : le fait dominant de la séance et ses points clés, datés et sourcés.",
+    href: sur('category/ce-matin/'),
+  },
+  {
+    rythme: 'Chaque mardi',
+    titre: 'Analyse de la semaine',
+    texte: 'La semaine économique et financière : indicateurs, banques centrales, taux, actions, avec des sources nommées.',
+    href: sur('category/actualite-economique-et-financiere/'),
+  },
+  {
+    rythme: 'Référence',
+    titre: 'Guides macro',
+    texte: 'Indicateurs, banques centrales, calendrier économique : comment se lisent les chiffres qui font bouger les marchés.',
+    href: sur('category/guides-macro/'),
+  },
+  {
+    rythme: 'Lettre de méthode',
+    titre: 'Méthode et sources',
+    texte: 'Comment chaque chiffre est vérifié avant l’envoi : sources primaires, contrôles automatiques, limites connues des données.',
+    href: SPECULA.methodeEtSources,
+  },
+] as const;
+
+const parties = [
+  { titre: 'Le Pôle de convergence', texte: 'Le facteur dominant de la séance, nommé.' },
+  {
+    titre: 'Le Briefing stratégique',
+    texte:
+      "Pour chaque fait : le signal, la lecture stratégique, un score d'impact argumenté, l'angle mort, la corrélation attendue, le degré d'incertitude.",
+  },
+  {
+    titre: "L'Analyse technique",
+    texte: "Neuf actifs en trois niveaux d'attention, indicateurs calculés depuis l'historique réel.",
+  },
+  { titre: 'Les Points clés', texte: "L'essentiel à retenir, puis l'avertissement légal." },
+] as const;
+
+const lectures = [
+  {
+    date: '24 septembre 2026',
+    titre: 'Contrôle éditorial IA : ce qu’un « vérifié » ne dit pas',
+    these:
+      "Une étude de 28 pages tirée de dix semaines du registre de fiabilité : comment une vérification automatisée rassure sans rien établir, et douze questions pour lire un « vérifié ».",
+    href: sur('controle-editorial-ia-verifie/'),
+  },
+  {
+    date: '19 septembre 2026',
+    titre: 'Trading automatisé par IA : l’architecture décide',
+    these:
+      "Une étude de 57 pages : un système de trading automatisé ressemble moins à un devin qu'à une tour de contrôle, dont l'office est d'empêcher qu'une erreur locale devienne une perte globale.",
+    href: sur('trading-automatise-ia-architecture/'),
+  },
+  {
+    date: '4 septembre 2026',
+    titre: 'Fiabilité des cours : pourquoi la séance close n’est pas figée',
+    these:
+      "Prix de règlement corrigés, échéances de contrats à terme, statistiques révisées : trois mécanismes qui font bouger un chiffre déjà publié, et quatre questions pour éprouver une publication financière.",
+    href: sur('fiabilite-cours-seance-close-n-est-pas-figee/'),
+  },
+  {
+    date: '7 août 2026',
+    titre: 'Fiabilité des données financières : pourquoi deux documents parfaitement cohérents peuvent être faux ensemble',
+    these: "La fiabilité d'une donnée ne se mesure pas à la propreté du document qui la porte.",
+    href: sur('fiabilite-donnees-financieres-coherence-verite/'),
+  },
+] as const;
+
+const themes = [
+  ['Indicateurs macroéconomiques', 'category/guides-macro/indicateurs-macroeconomiques/'],
+  ['Inflation et prix', 'category/guides-macro/inflation-prix/'],
+  ['Emploi et marché du travail', 'category/guides-macro/emploi-marche-travail/'],
+  ['Taux et obligations', 'category/guides-macro/taux-obligations/'],
+  ['Actions et indices', 'category/guides-macro/actions-indices/'],
+  ['Devises et changes', 'category/guides-macro/devises-changes/'],
+  ['Énergie et matières premières', 'category/guides-macro/energie-matieres-premieres/'],
+  ['Volatilité et risque', 'category/guides-macro/volatilite-risque/'],
+  ['Corrélations et régimes de marché', 'category/guides-macro/correlations-regimes-marche/'],
+] as const;
+
+const description = `${SPECULA.marque} publie La Note Sentinelle, une note macro-financière quotidienne vérifiée avant l'envoi, des guides de référence et une rubrique de méthode. Présentation et liens vers ${hote}.`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `Publications — ${SPECULA.marque}`,
+  description,
+  inLanguage: 'fr',
+  url: new URL('/publications/', Astro.site).href,
+  author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
+  about: { '@type': 'Brand', name: SPECULA.nom, url: SPECULA.url },
+};
+---
+<Base titre={`Publications · ${SPECULA.marque} — ${AUTEUR}`} description={description} jsonLd={jsonLd}>
+  <header class="renvoi-tete">
+    <p class="renvoi-tete__surtitre">Publications</p>
+    <h1>{SPECULA.marque}</h1>
+    <p class="renvoi-tete__sous">Intelligence macro-financière, chiffres sourcés et vérifiés — <strong>{hote}</strong></p>
+    <p class="renvoi-tete__punch">Chaque matin à 7&#160;h, une note vérifiée avant l'envoi.</p>
+    <p class="renvoi-tete__meta">
+      {SPECULA.marque} est une marque de la société ARSCRIPTA SAS, fondée et dirigée par {AUTEUR}, qui a conçu la chaîne éditoriale de
+      La Note Sentinelle et en assure la direction de la publication.
+    </p>
+    <p class="renvoi-actions">
+      <a class="renvoi-bouton" href={SPECULA.url}>Aller sur {hote}<span aria-hidden="true"> ↗</span></a>
+      <a class="renvoi-bouton renvoi-bouton--second" href={sur('exemple-note-sentinelle/')}>
+        Lire une édition complète<span aria-hidden="true"> ↗</span>
+      </a>
+    </p>
+  </header>
+
+  <p class="chapeau renvoi-chapeau">
+    {SPECULA.marque} ne donne pas plus d'informations&#160;: il donne des faits hiérarchisés, datés et sourcés, ce
+    que le marché paraît sous-estimer, et les corrélations observées entre classes d'actifs. Sa
+    publication phare, <strong>La Note Sentinelle</strong>, arrive chaque matin par e-mail et se lit en
+    sept à douze minutes. Elle ne recommande rien.
+  </p>
+
+  <section aria-labelledby="titre-rubriques">
+    <h2 id="titre-rubriques">Ce que publie {hote}</h2>
+    <ul class="renvoi-cartes">
+      {
+        rubriques.map((r) => (
+          <li class="renvoi-carte">
+            <p class="renvoi-carte__etiquette">{r.rythme}</p>
+            <h3>
+              <a href={r.href}>{r.titre}</a>
+            </h3>
+            <p>{r.texte}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="titre-note">
+    <h2 id="titre-note">Une note, quatre parties, chaque matin dans le même ordre</h2>
+    <p>
+      La structure ne varie pas d'un jour à l'autre, pour que le lecteur sache toujours où chercher.
+      Du mardi au samedi, l'édition suit la séance de la veille&#160;; le dimanche, la revue de la
+      semaine&#160;; le lundi, la semaine à venir.
+    </p>
+    <ol class="renvoi-etapes" aria-label="Les quatre parties de La Note Sentinelle">
+      {
+        parties.map((p, i) => (
+          <li>
+            <span class="renvoi-etapes__rang" aria-hidden="true">{i + 1}</span>
+            <h3>{p.titre}</h3>
+            <p>{p.texte}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="titre-verification">
+    <h2 id="titre-verification">Comment chaque chiffre est vérifié</h2>
+    <div class="renvoi-deux">
+      <ul class="renvoi-points">
+        <li>
+          <strong>Des données calculées, jamais estimées.</strong> Cours de clôture, moyennes mobiles,
+          RSI, rendements&#160;: récupérés auprès d'une source de marché identifiée et recalculés, jamais
+          restitués de mémoire par un modèle.
+        </li>
+        <li>
+          <strong>Des contrôles bloquants avant l'envoi.</strong> Une couche de contrôles déterministes
+          examine chaque édition&#160;: sections obligatoires, cohérence des chiffres avec les données de
+          référence, comparaison avec l'édition de la veille.
+        </li>
+        <li>
+          <strong>Une politique d'errata publique.</strong> Chaque chiffre porte sa source et sa date&#160;;
+          une erreur signalée est rectifiée dans une édition suivante, en citant la phrase corrigée.
+        </li>
+      </ul>
+      <div class="renvoi-encadre renvoi-encadre--nuit">
+        <p class="renvoi-encadre__titre">Ce que la note refuse de faire</p>
+        <p>
+          Aucune recommandation d'achat ou de vente, aucun objectif de cours, aucune projection de
+          rendement. Une donnée non confirmée est signalée comme telle, jamais remplacée par une
+          estimation.
+        </p>
+        <p><strong>De l'information, jamais un conseil en investissement.</strong></p>
+      </div>
+    </div>
+    <p class="liens">
+      <a href={sur('a-propos/')}>Qui édite {SPECULA.marque} et comment la note est fabriquée<span aria-hidden="true"> ↗</span></a>
+    </p>
+  </section>
+
+  <section aria-labelledby="titre-lectures">
+    <h2 id="titre-lectures"><a href={SPECULA.methodeEtSources}>Méthode et sources</a> : quatre lectures</h2>
+    <p>
+      La rubrique où {SPECULA.marque} raconte ce que sa chaîne a appris&#160;: ce qu'un contrôle atteste, ce qu'il
+      n'atteste pas, et pourquoi un chiffre exact peut encore tromper.
+    </p>
+    <ol class="sommaire sommaire--serre">
+      {
+        lectures.map((l) => (
+          <li>
+            <p class="etiquette">{l.date}</p>
+            <h3>
+              <a href={l.href}>{l.titre}</a>
+            </h3>
+            <p class="sommaire__these">{l.these}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="liens">
+      <a href={SPECULA.methodeEtSources}>Toute la rubrique « Méthode et sources »<span aria-hidden="true"> ↗</span></a>
+    </p>
+  </section>
+
+  <section aria-labelledby="titre-guides">
+    <h2 id="titre-guides"><a href={sur('category/guides-macro/')}>Guides de référence</a></h2>
+    <p>
+      Ce que mesure un indicateur, qui le publie, pourquoi il est révisé, et les erreurs de lecture les
+      plus courantes. Pour commencer&#160;: <a href={sur('indicateurs-macroeconomiques-guide-complet/')}>les
+      indicateurs macroéconomiques</a> et <a href={sur('taux-directeurs-fed-bce/')}>les taux directeurs de la
+      Fed et de la BCE</a>.
+    </p>
+    <ul class="renvoi-themes" aria-label="Thèmes des guides">
+      {
+        themes.map(([nom, chemin]) => (
+          <li>
+            <a href={sur(chemin)}>{nom}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <aside class="renvoi-encadre renvoi-fin" aria-label="Voir aussi">
+    <p>
+      Les méthodes de travail sur lesquelles repose {SPECULA.marque} sont publiées par
+      ARSCRIPTA&#160;: <a href="/methodes/">voir la page Méthodes</a>.
+    </p>
+    <p class="renvoi-actions">
+      <a class="renvoi-bouton" href={SPECULA.url}>Aller sur {hote}<span aria-hidden="true"> ↗</span></a>
+    </p>
+  </aside>
+</Base>

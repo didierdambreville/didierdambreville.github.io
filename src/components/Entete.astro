@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { AUTEUR, ARSCRIPTA, SPECULA } from '../lib/identite';
+import { AUTEUR } from '../lib/identite';
 
 const chemin = Astro.url.pathname;
 
@@ -14,22 +14,19 @@ const [articles, realisations, documents] = await Promise.all([
 ]);
 
 // Ordre arrêté par l'auteur : Mémentos · Notes · Publications · Méthodes · Manifeste · À propos.
-// Tant que le site n'a pas d'articles propres, « Publications » mène à la rubrique
-// « Méthode et sources » de SPECULA (libellé et cible choisis par l'auteur le 1er octobre
-// 2026) ; dès le premier article publié ici, « Articles » mène à /articles/ et SPECULA le suit.
+// « Publications » et « Méthodes » mènent, depuis le 2 octobre 2026, à deux pages du site qui
+// présentent specula.fr et arscripta.fr et y renvoient (/publications/, /methodes/) ; elles
+// menaient auparavant directement à ces sites. Dès le premier article publié ici, « Articles »
+// (/articles/) s'insère avant « Publications ».
 // « Manifeste » (TRIFAB, /manifeste/) et « Notes » (/notes/) ajoutés à la demande de
 // l'auteur le 1er octobre 2026.
 type Entree = { href: string; libelle: string; externe?: boolean };
 const rubriques: Entree[] = [
   { href: '/mementos/', libelle: 'Mémentos' },
   { href: '/notes/', libelle: 'Notes' },
-  ...(articles
-    ? [
-        { href: '/articles/', libelle: 'Articles' },
-        { href: SPECULA.url, libelle: 'SPECULA', externe: true },
-      ]
-    : [{ href: SPECULA.publications, libelle: 'Publications', externe: true }]),
-  { href: ARSCRIPTA.methodes, libelle: 'Méthodes', externe: true },
+  ...(articles ? [{ href: '/articles/', libelle: 'Articles' }] : []),
+  { href: '/publications/', libelle: 'Publications' },
+  { href: '/methodes/', libelle: 'Méthodes' },
   ...(realisations ? [{ href: '/realisations/', libelle: 'Réalisations' }] : []),
   ...(documents ? [{ href: '/documents/', libelle: 'Documents' }] : []),
   { href: '/manifeste/', libelle: 'Manifeste' },
