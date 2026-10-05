@@ -1,51 +1,34 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { RUBRIQUES, LIBELLES_RUBRIQUE } from '../../../content.config';
+import CarteArticle from '../../../components/CarteArticle.astro';
+import { articlesPublies, rubriquesPresentes } from '../../../lib/articles';
 
 export async function getStaticPaths() {
-  const tous = await getCollection('articles', (e) => !e.data.brouillon);
-  return RUBRIQUES.filter((r) => tous.some((a) => a.data.rubrique === r)).map((r) => ({
-    params: { nom: r },
-    props: {
-      rubrique: r,
-      entrees: tous
-        .filter((a) => a.data.rubrique === r)
-        .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
-    },
-  }));
+  const presentes = rubriquesPresentes(await articlesPublies());
+  return presentes.map((r) => ({ params: { nom: r.id }, props: { rubrique: r, presentes } }));
 }
 
-const { rubrique, entrees } = Astro.props;
-const libelle = LIBELLES_RUBRIQUE[rubrique];
+const { rubrique, presentes } = Astro.props;
 ---
-<Base titre={`${libelle} — Articles`} description={`Les articles de la rubrique « ${libelle} ».`}>
-  <h1>{libelle}</h1>
+<Base titre={`${rubrique.nom} — Articles`} description={`Les articles de la rubrique « ${rubrique.nom} ».`}>
+  <p class="etiquette"><a href="/articles/">Articles</a></p>
+  <h1>{rubrique.nom}</h1>
 
+  {/* Seules les rubriques qui ont des articles : les autres n'ont pas de page. */}
   <ul class="filtres">
     <li><a href="/articles/">Tous</a></li>
     {
-      RUBRIQUES.map((r) => (
+      presentes.map((r) => (
         <li>
-          <a href={`/articles/rubrique/${r}/`} aria-current={r === rubrique ? 'true' : undefined}>
-            {LIBELLES_RUBRIQUE[r]}
+          <a href={`/articles/rubrique/${r.id}/`} aria-current={r.id === rubrique.id ? 'true' : undefined}>
+            {r.nom}
           </a>
         </li>
       ))
     }
   </ul>
 
-  <ol class="sommaire">
-    {
-      entrees.map((a) => (
-        <li>
-          <p class="etiquette">
-            {a.data.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-          <h3><a href={`/articles/${a.id}/`}>{a.data.titre}</a></h3>
-          <p class="sommaire__these">{a.data.these}</p>
-        </li>
-      ))
-    }
-  </ol>
+  <ul class="grille grille--articles">
+    {rubrique.articles.map((a) => <CarteArticle a={a} />)}
+  </ul>
 </Base>

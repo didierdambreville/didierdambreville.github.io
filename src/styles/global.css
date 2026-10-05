@@ -362,6 +362,46 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
 .piliers li { margin-bottom: 0.4rem; }
 .piliers__glose { color: var(--encre-douce); }
 
+/* Lecture d'un article : le texte, puis à sa droite le panneau des rubriques et des
+   mots-clés, de même facture que celui des notes (.favoris, plus bas). Dans le document,
+   le texte vient d'abord ; sur mobile, le panneau passe dessous et un lien y mène. */
+.lecture {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 15rem);
+  grid-template-areas: "contenu panneau";
+  gap: 2.75rem;
+  align-items: start;
+}
+.lecture__texte { grid-area: contenu; min-width: 0; }
+.lecture__saut { display: none; }
+@media (max-width: 52rem) {
+  .lecture { grid-template-columns: minmax(0, 1fr); grid-template-areas: "contenu" "panneau"; gap: 2.5rem; }
+  .lecture__saut { display: inline; margin-left: 0.6rem; }
+}
+
+/* Cartes d'articles : la carte-titre des mémentos, un peu plus large et au titre plus petit
+   (les titres d'articles sont longs) ; sous la carte, la rubrique en lien simple et les
+   mots-clés en pastilles — ni l'une ni les autres en cartes. */
+.grille--articles {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 1.75rem 1.25rem;
+  margin-top: 1rem;
+}
+.carte-titre--article { display: flex; flex-direction: column; gap: 0.55rem; }
+.carte-titre--article .carte-titre__titre { font-size: 1.12rem; line-height: 1.2; }
+.carte-titre--article .carte-titre__sous { -webkit-line-clamp: 6; }
+.carte-titre--article .carte-titre__mots { margin: 0; font-size: 0.72rem; }
+.carte-titre__rubrique {
+  margin: 0.15rem 0 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+.carte-titre__rubrique a { font-weight: 700; color: var(--accent); text-decoration: none; }
+.carte-titre__rubrique a:hover { text-decoration: underline; }
+
 /* ---------- mémentos ---------- */
 
 .famille { margin-top: 3rem; }
@@ -389,7 +429,7 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
   margin-top: 1rem;
 }
 .carte-titre { min-width: 0; }
-.carte-titre a {
+.carte-titre > a {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -405,7 +445,7 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 /* Double filet or intérieur, comme un cartouche. */
-.carte-titre a::before {
+.carte-titre > a::before {
   content: "";
   position: absolute;
   inset: 5px;
@@ -413,8 +453,8 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
   border-radius: 2px;
   pointer-events: none;
 }
-.carte-titre a:hover,
-.carte-titre a:focus-visible {
+.carte-titre > a:hover,
+.carte-titre > a:focus-visible {
   transform: translateY(-3px);
   border-color: var(--or);
   box-shadow: 0 8px 20px rgb(15 29 58 / 0.25);
@@ -475,7 +515,7 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
   pointer-events: none;
   transition: opacity 0.15s ease;
 }
-.carte-titre a:hover .carte-titre__logo { opacity: 0.22; }
+.carte-titre > a:hover .carte-titre__logo { opacity: 0.22; }
 
 /* Notice d'un mémento : la couverture à gauche, la notice à droite ; empilées sur mobile. */
 .memento {
@@ -1078,14 +1118,15 @@ section[id] { scroll-margin-top: 1rem; }
 }
 .favoris__note svg { margin-top: 0.08rem; }
 .favoris__note:hover { background: var(--fond); color: var(--accent); }
-/* La note ouverte : signet bleu nuit, liseré or. */
-.favoris__note[aria-current="page"],
-.favoris__note[aria-current="page"]:hover {
+/* La note ouverte, ou la rubrique de l'article lu : signet bleu nuit, liseré or. */
+.favoris__note[aria-current],
+.favoris__note[aria-current]:hover {
   background: var(--nuit);
   color: #fbf6e6;
   box-shadow: inset 3px 0 0 var(--or);
 }
-.favoris__note[aria-current="page"] svg { color: var(--or); }
+.favoris__note[aria-current] svg,
+.favoris__note[aria-current] .favoris__compte { color: var(--or); }
 
 .favoris .favoris__sections {
   margin: 0.25rem 0 0.35rem 1.35rem;
@@ -1124,6 +1165,10 @@ section[id] { scroll-margin-top: 1rem; }
 }
 .mots a::before { content: "#"; margin-right: 0.08em; color: var(--accent); }
 .mots a:hover { border-color: var(--accent); color: var(--accent); }
+/* Dans le panneau d'un article, ses propres mots-clés : pastilles pleines. */
+.mots a.mots__courant,
+.mots a.mots__courant:hover { background: var(--nuit); border-color: var(--nuit); color: #fbf6e6; }
+.mots a.mots__courant::before { color: var(--or); }
 
 /* Le corps d'une note : des listes, des tableaux, peu de prose. */
 .note__corps { max-width: var(--mesure); }

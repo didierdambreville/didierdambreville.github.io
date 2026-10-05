@@ -1,16 +1,16 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import CarteArticle from '../../components/CarteArticle.astro';
 import { AUTEUR } from '../../lib/identite';
-import { RUBRIQUES, LIBELLES_RUBRIQUE } from '../../content.config';
+import { articlesPublies, rubriquesPresentes } from '../../lib/articles';
+import { indexMotsCles } from '../../lib/notes';
 
-const articles = (await getCollection('articles', (e) => !e.data.brouillon)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-);
+const articles = await articlesPublies();
 
 // Regroupement par année : un corpus se lit par vagues, pas en liste plate.
 const annees = [...new Set(articles.map((a) => a.data.date.getFullYear()))].sort((a, b) => b - a);
-const presentes = RUBRIQUES.filter((r) => articles.some((a) => a.data.rubrique === r));
+const presentes = rubriquesPresentes(articles);
+const mots = indexMotsCles(articles);
 ---
 <Base
   titre={`Articles — ${AUTEUR}`}
@@ -27,7 +27,7 @@ const presentes = RUBRIQUES.filter((r) => articles.some((a) => a.data.rubrique =
       <ul class="filtres">
         <li><a href="/articles/" aria-current="true">Tous</a></li>
         {presentes.map((r) => (
-          <li><a href={`/articles/rubrique/${r}/`}>{LIBELLES_RUBRIQUE[r]}</a></li>
+          <li><a href={`/articles/rubrique/${r.id}/`}>{r.nom}</a></li>
         ))}
       </ul>
     )
@@ -38,24 +38,38 @@ const presentes = RUBRIQUES.filter((r) => articles.some((a) => a.data.rubrique =
       <p>Aucun article publié pour l'instant.</p>
     ) : (
       annees.map((annee) => (
-        <section>
-          <h2>{annee}</h2>
-          <ol class="sommaire">
+        <section aria-labelledby={`annee-${annee}`}>
+          <h2 id={`annee-${annee}`}>{annee}</h2>
+          <ul class="grille grille--articles">
             {articles
               .filter((a) => a.data.date.getFullYear() === annee)
-              .map((a) => (
-                <li>
-                  <p class="etiquette">
-                    {LIBELLES_RUBRIQUE[a.data.rubrique]} ·{' '}
-                    {a.data.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-                  </p>
-                  <h3><a href={`/articles/${a.id}/`}>{a.data.titre}</a></h3>
-                  <p class="sommaire__these">{a.data.these}</p>
-                </li>
-              ))}
-          </ol>
+              .map((a) => <CarteArticle a={a} />)}
+          </ul>
         </section>
       ))
+    )
+  }
+
+  {
+    mots.length > 0 && (
+      <section id="mots-cles" aria-labelledby="titre-mots-cles">
+        <h2 id="titre-mots-cles">Mots-clés</h2>
+        <dl class="index-mots">
+          {mots.map(({ mot, ancre, notes: liste }) => (
+            <div id={ancre}>
+              <dt>{mot}</dt>
+              <dd>
+                {liste.map((a, i) => (
+                  <>
+                    {i > 0 && ' · '}
+                    <a href={`/articles/${a.id}/`}>{a.data.titre}</a>
+                  </>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     )
   }
 </Base>

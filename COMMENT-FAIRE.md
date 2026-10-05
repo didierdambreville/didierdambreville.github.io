@@ -244,6 +244,14 @@ et économie dans `sciences`. Pour en ajouter une, il suffit de deux lignes dans
 `src\content.config.ts`, mais attendez d'avoir vingt articles : une classification ne se corrige
 utilement qu'une fois qu'on sait ce qu'elle range.
 
+### Les mots-clés
+
+Cinq au plus par article (`motsCles`), en minuscules sauf nom propre. Avec la rubrique, ils
+s'affichent sous la carte de l'article dans `/articles/`, dans le panneau de droite à la lecture
+(ceux de l'article en évidence) et dans l'index des mots-clés, en bas de `/articles/`. Un même mot
+s'écrit toujours de la même façon : deux graphies (« Fablab », « fablab ») font échouer la
+construction, qui dit laquelle corriger.
+
 ### Une précaution sur la reprise de vos autres publications
 
 Vous publiez déjà ailleurs. Un texte recopié à l'identique sur deux adresses se fait du tort aux

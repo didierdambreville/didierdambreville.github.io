@@ -1,23 +1,23 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import PanneauArticles from '../../components/PanneauArticles.astro';
+import { articlesPublies, minutesLecture } from '../../lib/articles';
 import { AUTEUR } from '../../lib/identite';
 import { verifierIdentifiants } from '../../lib/identifiants';
 import { LIBELLES_RUBRIQUE } from '../../content.config';
 
 export async function getStaticPaths() {
-  const articles = await getCollection('articles', (e) => !e.data.brouillon);
+  const articles = await articlesPublies();
   verifierIdentifiants(articles);
-  return articles.map((a) => ({ params: { slug: a.id }, props: { entree: a } }));
+  return articles.map((a) => ({ params: { slug: a.id }, props: { entree: a, articles } }));
 }
 
-const { entree } = Astro.props;
+const { entree, articles } = Astro.props;
 const d = entree.data;
 const { Content } = await render(entree);
-
-const mots = (entree.body ?? '').split(/\s+/).filter(Boolean).length;
-const minutes = Math.max(1, Math.round(mots / 220));
+const minutes = minutesLecture(entree);
 
 const dateFr = d.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -34,9 +34,13 @@ const jsonLd = {
 };
 ---
 <Base titre={`${d.titre} — ${AUTEUR}`} description={d.these} jsonLd={jsonLd}>
-  <article>
+  {/* Le texte d'abord, le panneau des rubriques et mots-clés à sa droite (dessous sur mobile). */}
+  <div class="lecture">
+  <article class="lecture__texte">
     <p class="etiquette">
-      {LIBELLES_RUBRIQUE[d.rubrique]} · {dateFr} · {minutes}&#160;min de lecture
+      <a href={`/articles/rubrique/${d.rubrique}/`}>{LIBELLES_RUBRIQUE[d.rubrique]}</a> · {dateFr} ·
+      {minutes}&#160;min de lecture
+      <a class="lecture__saut" href="#panneau">Rubriques et mots-clés ↓</a>
     </p>
     <h1>{d.titre}</h1>
     <p class="chapeau">{d.these}</p>
@@ -83,4 +87,7 @@ const jsonLd = {
       {d.licence} · <a href="/articles/">Tous les articles</a>
     </p>
   </article>
+
+  <PanneauArticles articles={articles} courant={entree} />
+  </div>
 </Base>

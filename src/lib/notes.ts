@@ -11,7 +11,10 @@ export async function notesPubliees(): Promise<Note[]> {
   return getCollection('notes', (e) => !e.data.brouillon);
 }
 
-const parTitre = (a: Note, b: Note) => a.data.titre.localeCompare(b.data.titre, 'fr');
+/** Ce qu'il faut pour figurer dans un index de mots-clés : les notes comme les articles. */
+type AvecMotsCles = { id: string; data: { titre: string; motsCles: string[] } };
+
+const parTitre = (a: AvecMotsCles, b: AvecMotsCles) => a.data.titre.localeCompare(b.data.titre, 'fr');
 
 /** Les dossiers qui comptent au moins une note, dans l'ordre du classement ; les notes par titre. */
 export function grouper(notes: Note[]) {
@@ -21,7 +24,7 @@ export function grouper(notes: Note[]) {
   })).filter((g) => g.notes.length > 0);
 }
 
-/** Ancre d'un mot-clé dans l'index de /notes/ : « XIXe siècle » → « mot-xixe-siecle ». */
+/** Ancre d'un mot-clé dans l'index de /notes/ ou de /articles/ : « XIXe siècle » → « mot-xixe-siecle ». */
 export function ancre(mot: string): string {
   const s = mot
     .normalize('NFD')
@@ -33,14 +36,14 @@ export function ancre(mot: string): string {
 }
 
 /**
- * Index des mots-clés : chaque mot dans l'ordre alphabétique, avec ses notes.
+ * Index des mots-clés : chaque mot dans l'ordre alphabétique, avec ses notes (ou ses articles).
  *
  * Garde-fou : deux graphies d'un même mot (« Patrimoine », « patrimoine ») donneraient
  * la même ancre et deux entrées d'index — la construction échoue plutôt que de les
  * laisser diverger en silence.
  */
-export function indexMotsCles(notes: Note[]) {
-  const index = new Map<string, Note[]>();
+export function indexMotsCles<T extends AvecMotsCles>(notes: T[]) {
+  const index = new Map<string, T[]>();
   const graphies = new Map<string, string>();
   for (const n of notes) {
     for (const mot of n.data.motsCles) {
@@ -48,7 +51,7 @@ export function indexMotsCles(notes: Note[]) {
       const deja = graphies.get(a);
       if (deja !== undefined && deja !== mot) {
         throw new Error(
-          `Mot-clé écrit de deux façons : « ${deja} » et « ${mot} » (note « ${n.id} »). Choisir une graphie.`,
+          `Mot-clé écrit de deux façons : « ${deja} » et « ${mot} » (« ${n.id} »). Choisir une graphie.`,
         );
       }
       graphies.set(a, mot);

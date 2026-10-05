@@ -1,0 +1,76 @@
+---
+import { rubriquesPresentes, type Article } from '../lib/articles';
+import { indexMotsCles } from '../lib/notes';
+
+/**
+ * Le panneau de droite d'un article, de même facture que celui des notes : les rubriques
+ * (celle de l'article en évidence), puis tous les mots-clés (ceux de l'article en
+ * évidence). Aucun script : les dossiers se plient avec <details>. Sur mobile, il passe
+ * sous le texte.
+ */
+interface Props {
+  articles: Article[];
+  /** L'article affiché. */
+  courant: Article;
+}
+const { articles, courant } = Astro.props;
+const rubriques = rubriquesPresentes(articles);
+const mots = indexMotsCles(articles);
+const sesMots = new Set(courant.data.motsCles);
+---
+<nav class="favoris" id="panneau" aria-label="Rubriques et mots-clés des articles">
+  <p class="favoris__tete">
+    <a href="/articles/">Articles</a>
+    <span class="favoris__compte">{articles.length}</span>
+  </p>
+
+  <details class="favoris__dossier" open>
+    <summary>
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M1.5 3.5h4.2l1.5 1.6h7.3v7.4H1.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+      </svg>
+      <span>Rubriques</span>
+    </summary>
+    <ul>
+      {
+        rubriques.map((r) => (
+          <li>
+            <a
+              class="favoris__note"
+              href={`/articles/rubrique/${r.id}/`}
+              aria-current={r.id === courant.data.rubrique ? 'true' : undefined}
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M4 1.8h8v12.4L8 11.3l-4 2.9z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+              </svg>
+              <span>{r.nom}</span>
+              <span class="favoris__compte">{r.articles.length}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+
+  <details class="favoris__dossier" open>
+    <summary>
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M1.8 1.8h6l6.4 6.4-6 6-6.4-6.4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+        <circle cx="5" cy="5" r="1.1" fill="currentColor" />
+      </svg>
+      <span>Mots-clés</span>
+    </summary>
+    <ul class="mots favoris__mots">
+      {
+        mots.map(({ mot, ancre }) => (
+          <li>
+            <a href={`/articles/#${ancre}`} class={sesMots.has(mot) ? 'mots__courant' : undefined}>
+              {mot}
+              {sesMots.has(mot) && <span class="lecteur-seul"> (mot-clé de cet article)</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+</nav>
