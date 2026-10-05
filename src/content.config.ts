@@ -176,37 +176,54 @@ const mementos = defineCollection({
 });
 
 /**
- * Affiches : une page A3 en couleur, tirée d'un ou plusieurs mémentos, pour le mur d'un
- * atelier ou d'un fablab. Même circuit que les mémentos : rédigées dans HUMANITAS ET
- * SCIENTIA, copiées dans public/doc/affiches/ par `importer-mementos.cmd`, qui contrôle
- * que la version de la notice est celle du pied de l'affiche et que le PDF compte une page.
+ * Affiches : une page pour le mur d'un atelier ou d'un fablab — le plus souvent l'essentiel
+ * d'un ou plusieurs mémentos en A3 couleur. Même circuit que les mémentos : rédigées dans
+ * HUMANITAS ET SCIENTIA, copiées dans public/doc/affiches/ par `importer-mementos.cmd`, qui
+ * contrôle que la version de la notice est celle du pied de l'affiche et que le PDF compte une
+ * page. Une affiche sans `source` est un PDF déposé tel quel dans public/doc/affiches/
+ * (affiche-<identifiant>.pdf) : ni source HTML, ni contrôle, vignette fabriquée à part.
  */
 const affiches = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/data/affiches' }),
   schema: ({ image }) =>
-    z.object({
-      titre: z.string().max(60),
-      /** Ligne de sous-titre de l'affiche, recopiée telle quelle. */
-      sousTitre: z.string().max(200),
-      /** Permalien : /affiches/<identifiant>/ ; égal au nom du fichier. */
-      identifiant: z.string(),
-      /** Rang dans la section. */
-      ordre: z.number().int(),
-      resume: z.string().max(280),
-      /** La version vit ici et dans le pied de l'affiche — l'import vérifie l'accord. */
-      version: z.string().regex(/^\d+\.\d+$/),
-      date: z.coerce.date(),
-      premiereEdition: z.coerce.date(),
-      /** Nom du fichier source dans HUMANITAS_ET_SCIENTIA/91_REVISION/fiches/, sans extension. */
-      source: z.string(),
-      /** Identifiants des mémentos du site dont l'affiche est tirée. */
-      mementos: z.array(z.string()).min(1),
-      /** Intitulé de chaque bloc, dans l'ordre de lecture. */
-      blocs: z.array(z.string()).min(1),
-      couverture: image(),
-      couvertureAlt: z.string(),
-      brouillon: z.boolean().default(false),
-    }),
+    z
+      .object({
+        titre: z.string().max(60),
+        /** Ligne de sous-titre de l'affiche, recopiée telle quelle. */
+        sousTitre: z.string().max(200),
+        /** Permalien : /affiches/<identifiant>/ ; égal au nom du fichier. */
+        identifiant: z.string(),
+        /** Rang dans la section. */
+        ordre: z.number().int(),
+        resume: z.string().max(280),
+        format: z.enum(['A3', 'A4']).default('A3'),
+        couleur: z.boolean().default(true),
+        /** Langue du texte de l'affiche. */
+        langue: z.enum(['fr', 'en']).default('fr'),
+        /** La version vit ici et dans le pied de l'affiche — l'import vérifie l'accord. */
+        version: z.string().regex(/^\d+\.\d+$/),
+        date: z.coerce.date(),
+        /** Laissée vide quand on ne la connaît pas : la ligne ne s'affiche pas. */
+        premiereEdition: z.coerce.date().optional(),
+        /**
+         * Nom du fichier source dans HUMANITAS_ET_SCIENTIA/91_REVISION/fiches/, sans extension.
+         * Absent : PDF déposé directement, sans source HTML.
+         */
+        source: z.string().optional(),
+        /** Identifiants des mémentos du site dont l'affiche est tirée. */
+        mementos: z.array(z.string()).default([]),
+        /** Identifiants des mémentos proposés pour aller plus loin, sans que l'affiche en soit tirée. */
+        renvois: z.array(z.string()).default([]),
+        /** Intitulé de chaque bloc, dans l'ordre de lecture ; vide pour une affiche d'un seul tenant. */
+        blocs: z.array(z.string()).default([]),
+        couverture: image(),
+        couvertureAlt: z.string(),
+        brouillon: z.boolean().default(false),
+      })
+      .refine((d) => !d.source || (d.mementos.length > 0 && d.blocs.length > 0), {
+        message: 'Une affiche tirée de HUMANITAS ET SCIENTIA nomme ses mémentos et ses blocs.',
+        path: ['mementos'],
+      }),
 });
 
 /**

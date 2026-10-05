@@ -1,5 +1,5 @@
 ---
-import type { Affiche } from '../lib/affiches';
+import { type Affiche, formatAffiche, teinte } from '../lib/affiches';
 
 interface Props {
   a: Affiche;
@@ -8,12 +8,14 @@ const { a } = Astro.props;
 const d = a.data;
 ---
 <li class="carte-titre">
-  <a href={`/affiches/${a.id}/`} aria-label={`Affiche — ${d.titre}, A3 en couleur`}>
+  <a href={`/affiches/${a.id}/`} aria-label={`Affiche — ${d.titre}, ${formatAffiche(a)}`}>
     <span class="carte-titre__surtitre">Affiche</span>
     <span class="carte-titre__titre">{d.titre}</span>
     <span class="carte-titre__filet" aria-hidden="true"></span>
     <span class="carte-titre__sous">{d.sousTitre}</span>
-    <span class="carte-titre__pied">A3 · couleur · {d.blocs.length}&#160;blocs</span>
+    <span class="carte-titre__pied">
+      {d.format} · {teinte(a)}{d.blocs.length > 0 && <> · {d.blocs.length}&#160;blocs</>}
+    </span>
     <img class="carte-titre__logo" src="/logo-or.svg" alt="" width="20" height="20" />
   </a>
 </li>

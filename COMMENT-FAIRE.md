@@ -112,6 +112,23 @@ de `src\data\affiches\` (ou y porter la nouvelle `version` et la `date`), puis d
 L'importeur refuse une affiche dont le PDF ne compte pas exactement une page, ou dont le pied ne porte
 pas la version de la notice (celle qui suit « · v », non celle du mémento cité).
 
+### Une affiche venue d'ailleurs
+
+Une affiche qui n'est pas rédigée dans HUMANITAS ET SCIENTIA (exemple : `free-wifi`) se dépose à la
+main : le PDF dans `public\doc\affiches\affiche-<identifiant>.pdf`, la vignette dans
+`src\assets\affiches\<identifiant>.webp` (1 123 × 1 588 pixels). Sa notice n'a pas de champ `source` :
+l'importeur la laisse de côté, et sa page ne propose pas de source HTML. Champs facultatifs :
+
+| Champ | Ce qu'on y met |
+|---|---|
+| `format` | `"A3"` (par défaut) ou `"A4"` |
+| `couleur` | `true` (par défaut) ou `false` pour une affiche en noir et blanc |
+| `langue` | `"fr"` (par défaut) ou `"en"` |
+| `renvois` | des mémentos à proposer « pour aller plus loin », sans que l'affiche en soit tirée |
+| `premiereEdition` | à omettre si on ne la connaît pas : la ligne disparaît de la page |
+
+`mementos` et `blocs` peuvent alors rester absents.
+
 ---
 
 ## Les notes

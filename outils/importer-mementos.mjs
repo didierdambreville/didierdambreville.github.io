@@ -1,7 +1,8 @@
 /**
  * Importe les mémentos et les affiches depuis HUMANITAS ET SCIENTIA vers le site.
  *
- * Pour chaque notice de src/data/mementos/ et de src/data/affiches/ :
+ * Pour chaque notice de src/data/mementos/ et de src/data/affiches/ — sauf une affiche sans
+ * champ « source », dont le PDF et la vignette sont déposés à la main :
  *   1. contrôle que la version écrite dans les pieds de page du document et son nombre de
  *      pages sont ceux de la notice — sinon, arrêt : la notice et le fichier divergeraient ;
  *   2. copie le PDF et la source HTML dans public/doc/mementos/ (memento-<identifiant>.pdf / .html)
@@ -95,6 +96,7 @@ for (const sorte of SORTES) {
 
   const notices = readdirSync(sorte.notices).filter((f) => f.endsWith('.md'));
   let importes = 0;
+  let deposees = 0;
 
   for (const fichier of notices) {
     const id = fichier.replace(/\.md$/, '');
@@ -102,6 +104,11 @@ for (const sorte of SORTES) {
     const source = champ(notice, 'source');
     const version = champ(notice, 'version');
     const pages = sorte.pages(notice);
+    if (!source && sorte.nom === 'affiche') {
+      deposees += 1;
+      console.log(`  ${id.padEnd(20)} sans source : PDF déposé à la main, non importé`);
+      continue;
+    }
     const html = join(FICHES, `${source}.html`);
     const pdf = join(FICHES, `${source}.pdf`);
 
@@ -150,7 +157,7 @@ for (const sorte of SORTES) {
     console.log(`  ${id.padEnd(20)} v${version}, ${pages} page(s)`);
   }
 
-  console.log(`\n  ${importes} ${sorte.nom}(s) ${sorte.importes} sur ${notices.length}.\n`);
+  console.log(`\n  ${importes} ${sorte.nom}(s) ${sorte.importes} sur ${notices.length - deposees}.\n`);
 }
 
 rmSync(tmp, { recursive: true, force: true });

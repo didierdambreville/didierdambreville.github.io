@@ -34,7 +34,7 @@ const jsonLd = {
 ---
 <Base
   titre={`Mémentos — ${AUTEUR}`}
-  description={`${mementos.length} aide-mémoire imprimables (A4, noir et blanc)${affiches.length ? ` et ${affiches.length} affiches A3 en couleur` : ''}, en libre accès sous licence CC BY 4.0.`}
+  description={`${mementos.length} aide-mémoire imprimables (A4, noir et blanc)${affiches.length ? ` et ${affiches.length} affiches murales` : ''}, en libre accès sous licence CC BY 4.0.`}
   jsonLd={jsonLd}
 >
   <h1>Mémentos</h1>
@@ -69,7 +69,7 @@ const jsonLd = {
     ))
   }
 
-  {/* Les affiches viennent après les familles : chacune est tirée d'un mémento ci-dessus. */}
+  {/* Les affiches viennent après les familles : la plupart sont tirées d'un mémento ci-dessus. */}
   {
     affiches.length > 0 && (
       <section class="famille" id="affiches" aria-labelledby="titre-affiches">
@@ -77,7 +77,8 @@ const jsonLd = {
         <p class="chapeau">
           L'essentiel d'un mémento sur une seule page A3, en couleur, pour le mur d'un atelier ou
           d'un fablab&#160;: quelques blocs, de gros caractères, lisibles à distance. Même licence,
-          même circuit&#160;: PDF et source HTML modifiable.
+          même circuit&#160;: PDF et source HTML modifiable. S'y ajoute une affiche-jeu, en A4 noir
+          et blanc&#160;: une énigme en Python qui ouvre le Wi-Fi des invités.
         </p>
         <ul class="grille grille--mementos">
           {affiches.map((a) => (

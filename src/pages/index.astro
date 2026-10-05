@@ -15,6 +15,7 @@ const mementos = await mementosPublies();
 const familles = grouperMementos(mementos);
 const pagesMementos = mementos.reduce((n, m) => n + m.data.pages, 0);
 const affiches = await affichesPubliees();
+const formatsAffiches = [...new Set(affiches.map((a) => a.data.format))].sort().join(' et ');
 const notes = await notesPubliees();
 const dossiers = grouperNotes(notes);
 const documents = documentsManifeste();
@@ -26,7 +27,7 @@ const articles = (await getCollection('articles', (e) => !e.data.brouillon))
 const chiffres = [
   { nombre: mementos.length, libelle: 'mémentos', detail: `${pagesMementos} pages A4`, href: '#mementos' },
   { nombre: notes.length, libelle: 'notes', detail: `en ${dossiers.length} dossiers`, href: '#notes' },
-  { nombre: affiches.length, libelle: 'affiches', detail: 'A3 en couleur', href: '#affiches' },
+  { nombre: affiches.length, libelle: 'affiches', detail: formatsAffiches, href: '#affiches' },
   { nombre: documents.length, libelle: 'documents', detail: `manifeste ${MANIFESTE.nom}`, href: '#manifeste' },
 ];
 
@@ -112,7 +113,7 @@ const jsonLd = {
             <h2 id="titre-affiches"><a href="/mementos/#affiches">Affiches</a></h2>
             <p class="ac-bloc__chapeau">
               L'essentiel d'un mémento sur une page A3 en couleur, pour le mur d'un atelier ou d'un
-              fablab.
+              fablab — et une énigme en Python pour le Wi-Fi des invités.
             </p>
             <ul class="ac-puces">
               {affiches.map((a) => (

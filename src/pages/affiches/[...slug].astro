@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import { affichesPubliees, urlPdfAffiche, urlSourceAffiche } from '../../lib/affiches';
+import { affichesPubliees, urlPdfAffiche, urlSourceAffiche, teinte, LANGUES } from '../../lib/affiches';
 import { mementosPublies, poids, dateFr } from '../../lib/mementos';
 import { verifierIdentifiants } from '../../lib/identifiants';
 import { AUTEUR, LICENCE } from '../../lib/identite';
@@ -12,16 +12,16 @@ export async function getStaticPaths() {
   const mementos = await mementosPublies();
   const titres = new Map(mementos.map((m) => [m.id, m.data.titre]));
   return affiches.map((a) => {
-    // Une affiche renvoie à ses mémentos : un renvoi vers une page absente échoue à la construction.
-    const absents = a.data.mementos.filter((id) => !titres.has(id));
+    // Une affiche renvoie à des mémentos : un renvoi vers une page absente échoue à la construction.
+    const absents = [...a.data.mementos, ...a.data.renvois].filter((id) => !titres.has(id));
     if (absents.length)
       throw new Error(`Affiche « ${a.id} » : mémento(s) inconnu(s) ou non publié(s) : ${absents.join(', ')}.`);
-    const sources = a.data.mementos.map((id) => ({ id, titre: titres.get(id) as string }));
-    return { params: { slug: a.id }, props: { a, sources } };
+    const lier = (ids: string[]) => ids.map((id) => ({ id, titre: titres.get(id) as string }));
+    return { params: { slug: a.id }, props: { a, sources: lier(a.data.mementos), renvois: lier(a.data.renvois) } };
   });
 }
 
-const { a, sources } = Astro.props;
+const { a, sources, renvois } = Astro.props;
 const d = a.data;
 const pdf = urlPdfAffiche(a.id);
 const source = urlSourceAffiche(a.id);
@@ -36,18 +36,20 @@ const jsonLd = {
   alternativeHeadline: d.sousTitre,
   description: d.resume,
   learningResourceType: 'Affiche',
-  inLanguage: 'fr',
+  inLanguage: d.langue,
   author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
   license: LICENCE.urlCanonique,
   isAccessibleForFree: true,
   version: d.version,
-  datePublished: d.premiereEdition.toISOString().slice(0, 10),
+  datePublished: (d.premiereEdition ?? d.date).toISOString().slice(0, 10),
   dateModified: d.date.toISOString().slice(0, 10),
   url: adresse,
-  isBasedOn: sources.map((s) => new URL(`/mementos/${s.id}/`, Astro.site).href),
+  isBasedOn: sources.length ? sources.map((s) => new URL(`/mementos/${s.id}/`, Astro.site).href) : undefined,
   encoding: [
     { '@type': 'MediaObject', contentUrl: new URL(pdf, Astro.site).href, encodingFormat: 'application/pdf' },
-    { '@type': 'MediaObject', contentUrl: new URL(source, Astro.site).href, encodingFormat: 'text/html' },
+    ...(d.source
+      ? [{ '@type': 'MediaObject', contentUrl: new URL(source, Astro.site).href, encodingFormat: 'text/html' }]
+      : []),
   ],
 };
 ---
@@ -82,38 +84,69 @@ const jsonLd = {
       <dl class="meta">
         <dt>Auteur</dt><dd>{AUTEUR}</dd>
         <dt>Version</dt><dd>{d.version} — {dateFr(d.date)}</dd>
-        <dt>Première édition</dt><dd>{dateFr(d.premiereEdition)}</dd>
-        <dt>Format</dt><dd>A3, couleur, une page</dd>
-        <dt>Tirée de</dt>
-        <dd>
-          {sources.map((s, i) => (
-            <>{i > 0 && ', '}<a href={`/mementos/${s.id}/`}>mémento « {s.titre} »</a></>
-          ))}
-        </dd>
+        {d.premiereEdition && <><dt>Première édition</dt><dd>{dateFr(d.premiereEdition)}</dd></>}
+        <dt>Format</dt><dd>{d.format}, {teinte(a)}, une page</dd>
+        {d.langue !== 'fr' && <><dt>Langue</dt><dd>{LANGUES[d.langue]}</dd></>}
+        {
+          sources.length > 0 && (
+            <>
+              <dt>Tirée de</dt>
+              <dd>
+                {sources.map((s, i) => (
+                  <>{i > 0 && ', '}<a href={`/mementos/${s.id}/`}>mémento « {s.titre} »</a></>
+                ))}
+              </dd>
+            </>
+          )
+        }
+        {
+          renvois.length > 0 && (
+            <>
+              <dt>Pour aller plus loin</dt>
+              <dd>
+                {renvois.map((s, i) => (
+                  <>{i > 0 && ', '}<a href={`/mementos/${s.id}/`}>mémento « {s.titre} »</a></>
+                ))}
+              </dd>
+            </>
+          )
+        }
         <dt>Licence</dt><dd><a href={LICENCE.url} rel="license">{LICENCE.nom}</a></dd>
       </dl>
       <p class="actions">
         <a class="telecharger" href={pdf} download>
           Télécharger le PDF{poidsPdf && <span class="actions__poids"> ({poidsPdf})</span>}
         </a>
-        <a class="actions__secondaire" href={source} download>Source HTML modifiable</a>
+        {d.source && <a class="actions__secondaire" href={source} download>Source HTML modifiable</a>}
       </p>
     </div>
   </div>
 
-  <h2>Les blocs</h2>
-  <ol class="sommaire-memento">
-    {d.blocs.map((intitule) => <li>{intitule}</li>)}
-  </ol>
+  {
+    d.blocs.length > 0 && (
+      <>
+        <h2>Les blocs</h2>
+        <ol class="sommaire-memento">
+          {d.blocs.map((intitule) => <li>{intitule}</li>)}
+        </ol>
+      </>
+    )
+  }
 
   <h2>Imprimer, réutiliser et citer</h2>
   <p>
-    L'affiche s'imprime au format A3, à taille réelle, marges nulles et arrière-plans activés. Elle
+    L'affiche s'imprime au format {d.format}, à taille réelle, marges nulles et arrière-plans activés. Elle
     est publiée sous licence <a href={LICENCE.url} rel="license">{LICENCE.intitule}</a>&#160;: vous
     pouvez la copier, l'imprimer, la distribuer, la modifier et la réutiliser, y compris à des fins
-    commerciales, à deux conditions&#160;: citer l'auteur et signaler vos modifications. Les sources
-    et le degré de vérification de son contenu sont ceux du mémento dont elle est tirée&#160;; ils
-    sont rappelés en pied de page.
+    commerciales, à deux conditions&#160;: citer l'auteur et signaler vos modifications.
+    {
+      sources.length > 0 && (
+        <>
+          Les sources et le degré de vérification de son contenu sont ceux du mémento dont elle est
+          tirée&#160;; ils sont rappelés en pied de page.
+        </>
+      )
+    }
   </p>
   <p>Pour la citer&#160;:</p>
   <p class="citation">
