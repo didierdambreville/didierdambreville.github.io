@@ -13,18 +13,18 @@ const [articles, realisations, documents] = await Promise.all([
   nombre('documents'),
 ]);
 
-// Ordre arrêté par l'auteur : Mémentos · Notes · Publications · Méthodes · Manifeste · À propos.
+// Ordre arrêté par l'auteur le 5 octobre 2026, avec les premiers articles :
+// Articles · Mémentos · Notes · Publications · Méthodes · Manifeste · À propos.
 // « Publications » et « Méthodes » mènent, depuis le 2 octobre 2026, à deux pages du site qui
 // présentent specula.fr et arscripta.fr et y renvoient (/publications/, /methodes/) ; elles
-// menaient auparavant directement à ces sites. Dès le premier article publié ici, « Articles »
-// (/articles/) s'insère avant « Publications ».
+// menaient auparavant directement à ces sites.
 // « Manifeste » (TRIFAB, /manifeste/) et « Notes » (/notes/) ajoutés à la demande de
 // l'auteur le 1er octobre 2026.
 type Entree = { href: string; libelle: string; externe?: boolean };
 const rubriques: Entree[] = [
+  ...(articles ? [{ href: '/articles/', libelle: 'Articles' }] : []),
   { href: '/mementos/', libelle: 'Mémentos' },
   { href: '/notes/', libelle: 'Notes' },
-  ...(articles ? [{ href: '/articles/', libelle: 'Articles' }] : []),
   { href: '/publications/', libelle: 'Publications' },
   { href: '/methodes/', libelle: 'Méthodes' },
   ...(realisations ? [{ href: '/realisations/', libelle: 'Réalisations' }] : []),
