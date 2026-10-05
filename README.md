@@ -26,17 +26,19 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
 - **Affiches** (depuis le 1er octobre 2026) : 5 affiches A3 en couleur tirées des mémentos
   (`src/data/affiches/`, fichiers dans `public/doc/affiches/`), en section « Affiches » sous les
   familles de `/mementos/`, notices à `/affiches/<identifiant>/`. Même importeur, mêmes contrôles
-  (une page, version du pied de l'affiche) — voir `COMMENT-FAIRE.md`, « Les affiches ».
+  (une page, version du pied de l'affiche) — voir `COMMENT-FAIRE.md`, « Les affiches ». Depuis le
+  5 octobre 2026, une sixième, « Free WiFi » (A4, noir et blanc), déposée à la main sans source HTML :
+  sa notice n'a pas de champ `source` et l'importeur la laisse de côté.
 - **Identité** : nom, adresses, réseaux et licence dans `src/lib/identite.ts`, et nulle part
   ailleurs. Logo : `public/logo-or.svg` (fichier maître : `../identite/`).
 - **Couleurs** : bleu et or sur fond gris clair, jetons en tête de `src/styles/global.css`
   (contrastes calculés, en commentaire).
-- **Menu** : Mémentos · Notes · Publications · Méthodes · Manifeste · À propos. Depuis le 2 octobre
+- **Menu** : Articles · Mémentos · Notes · Publications · Méthodes · Manifeste · À propos (ordre
+  arrêté le 5 octobre 2026, avec les premiers articles). Depuis le 2 octobre
   2026, « Publications » mène à `/publications/` (`src/pages/publications.astro`), qui présente
   specula.fr et y renvoie, et « Méthodes » à `/methodes/` (`src/pages/methodes.astro`), qui présente
   arscripta.fr. Leurs contenus ont été relevés sur ces deux sites le 2 octobre 2026 : une nouvelle
-  version d'une méthode ARSCRIPTA se reporte à la main dans `methodes.astro`. Dès qu'un article est
-  publié ici, une entrée « Articles » (`/articles/`) s'insère avant « Publications ».
+  version d'une méthode ARSCRIPTA se reporte à la main dans `methodes.astro`.
 - **Marque** : « SPECULA™ » partout où le texte l'affiche (`SPECULA.marque`) — SPECULA™ est une
   marque de la société ARSCRIPTA SAS. Le nom nu (`SPECULA.nom`) ne sert qu'aux données structurées.
   Ne pas écrire que « l'humain vérifie et décide » : la vérification des publications est déterministe.
@@ -57,7 +59,11 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   chiffres, un résumé de chaque rubrique (mémentos par famille, notes par dossier, affiches,
   manifeste), puis « Ailleurs ». Tout y est calculé depuis le contenu publié : rien à y retoucher
   quand une pièce s'ajoute.
-- **Rubriques en attente** (articles, réalisations, documents) : leurs pages existent, mais une
+- **Articles** (depuis le 5 octobre 2026) : `/articles/`, un fichier Markdown par article dans
+  `src/data/articles/`, 800 à 1 200 mots, sources affichées en fin d'article. Chaque article passe
+  d'abord par une fiche de structuration (`_gabarits/fiche-de-structuration.md`, copiée dans
+  `_brouillons/`, jamais publiée). Voir `COMMENT-FAIRE.md`, « Écrire un article ».
+- **Rubriques en attente** (réalisations, documents) : leurs pages existent, mais une
   rubrique sans pièce publiée n'apparaît ni au menu ni au plan du site (`astro.config.mjs`).
 
 ## Ajouter une pièce
