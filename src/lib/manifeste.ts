@@ -21,6 +21,20 @@ export const MANIFESTE = {
   logoPng: '/doc/manifeste/trifab-logo.png',
 } as const;
 
+/**
+ * trifab.si : TRIFAB en anglais, pour l'Europe et au-delà, publié par ARSCRIPTA SAS.
+ * « .si » vaut « super-intelligence » — SI, relais de « IA » — et non la Slovénie : ne jamais
+ * présenter le domaine comme slovène. Pages relevées le 6 octobre 2026.
+ */
+export const TRIFAB_SI = {
+  url: 'https://trifab.si/',
+  europe: 'https://trifab.si/europe/',
+  guide: 'https://trifab.si/blog/what-is-a-trifab/',
+  pilote: 'https://trifab.si/pilot-site/',
+  manifeste: 'https://trifab.si/manifesto/',
+  relais: 'https://trifab.si/get-involved/',
+} as const;
+
 export const DOCUMENTS_MANIFESTE = [
   {
     id: 'courte',

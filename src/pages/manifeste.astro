@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SchemaReseau from '../components/manifeste/SchemaReseau.astro';
 import SchemaBoucle from '../components/manifeste/SchemaBoucle.astro';
 import { AUTEUR, LICENCE } from '../lib/identite';
-import { MANIFESTE, CONTACTS, documentsManifeste } from '../lib/manifeste';
+import { MANIFESTE, CONTACTS, TRIFAB_SI, documentsManifeste } from '../lib/manifeste';
 import { dateFr } from '../lib/mementos';
 import partage from '../assets/manifeste/trifab-partage.png';
 
@@ -29,6 +29,8 @@ const jsonLd = {
   version: MANIFESTE.version,
   datePublished: MANIFESTE.date.toISOString().slice(0, 10),
   url: adresse,
+  // Le site qui présente TRIFAB en anglais, pour l'Europe et au-delà.
+  subjectOf: { '@type': 'WebSite', name: 'TRIFAB', url: TRIFAB_SI.url, inLanguage: 'en' },
   encoding: documents.map((d) => ({
     '@type': 'MediaObject',
     name: d.titre,
@@ -85,6 +87,17 @@ const sommaire = [
     <strong>fablab</strong> qui répare et transforme. Ce manifeste vous appartient&#160;: lisez-le,
     adaptez-le, portez-le devant vos élus.
   </p>
+
+  <aside class="mf-encadre" aria-label="TRIFAB en Europe">
+    <p class="mf-encadre__titre">TRIFAB en Europe · <span lang="en">in English</span></p>
+    <p>
+      Né en France, le modèle n'appartient à aucun pays&#160;: partout où l'on collecte déjà les encombrants, on
+      peut ajouter un maillon de réemploi et un maillon de fabrication. Le site
+      <a href={TRIFAB_SI.url} hreflang="en"><strong>trifab.si</strong></a> le présente en anglais aux collectivités,
+      aux acteurs du réemploi et de la réparation, aux makers et aux citoyens, en Europe et au-delà&#160;: le
+      concept, le modèle économique, le site pilote et un résumé du manifeste.
+    </p>
+  </aside>
 
   <section aria-labelledby="titre-documents">
     <h2 id="titre-documents">Télécharger le manifeste</h2>
@@ -604,6 +617,22 @@ const sommaire = [
       communs. Le territoire ne dispose plus seulement d'une chaîne de traitement des déchets, mais d'une
       <strong>infrastructure locale de matière, de réemploi, de réparation et de fabrication</strong>.
     </p>
+    <div class="mf-encadre">
+      <p class="mf-encadre__titre">En Europe et au-delà</p>
+      <p>
+        Rien, dans TRIFAB, n'est propre à la France. Le modèle travaille sur les premiers échelons de la hiérarchie
+        européenne des déchets, qui place la préparation en vue du réemploi avant le recyclage. Formes juridiques,
+        financements et règles de sécurité changent d'un pays à l'autre&#160;; la logique de la chaîne
+        demeure&#160;: collecter, trier, réparer et fabriquer, documenter, partager. À lire en anglais sur
+        trifab.si&#160;:
+      </p>
+      <ul>
+        <li><a href={TRIFAB_SI.europe} hreflang="en">TRIFAB en Europe et dans le monde</a> — le cadre européen, l'adaptation aux territoires ruraux, industriels et urbains, le passage au réseau&#160;;</li>
+        <li><a href={TRIFAB_SI.guide} hreflang="en">Qu'est-ce qu'un TRIFAB&#160;?</a> — le guide complet&#160;;</li>
+        <li><a href={TRIFAB_SI.pilote} hreflang="en">Le site pilote en douze mois</a> — plan, indicateurs, points de vigilance&#160;;</li>
+        <li><a href={TRIFAB_SI.manifeste} hreflang="en">Le manifeste résumé en anglais</a>.</li>
+      </ul>
+    </div>
   </section>
 
   <!-- ==================== IV. Passer à l'action ==================== -->
@@ -625,6 +654,7 @@ const sommaire = [
       <li><strong>Mobilisez les acteurs locaux</strong>&#160;: ressourcerie, fablab, lycée professionnel, chambre de métiers, associations, CRESS de votre région, association des maires de votre département.</li>
       <li><strong>Partagez cette page</strong> sur vos réseaux, dans votre association, votre conseil de quartier, à la prochaine réunion publique&#160;: <a href={adresse}>{hote(adresse)}</a>.</li>
     </ol>
+    <p class="mf-note">Hors de France, ou pour un interlocuteur qui ne lit pas le français&#160;: les mêmes gestes, qui contacter à chaque niveau et des modèles de lettre et de motion à adapter, en anglais, sur <a href={TRIFAB_SI.relais} hreflang="en">trifab.si/get-involved</a>.</p>
     <div class="debordement">
       <table class="mf-table">
         <caption>Qui contacter, à quel niveau</caption>
