@@ -373,6 +373,19 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
   align-items: start;
 }
 .lecture__texte { grid-area: contenu; min-width: 0; }
+/* Un tableau d'article (article pilier) : même facture que ceux des notes ; trop large, il
+   défile seul, sans élargir la page. */
+.lecture__texte table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 1rem 0 1.5rem;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+.lecture__texte thead th { color: var(--encre-douce); font-weight: 600; border-bottom: 2px solid var(--or); }
+.lecture__texte td { vertical-align: top; }
+.lecture__texte td:first-child { font-weight: 600; color: var(--titre); }
 .lecture__saut { display: none; }
 @media (max-width: 52rem) {
   .lecture { grid-template-columns: minmax(0, 1fr); grid-template-areas: "contenu" "panneau"; gap: 2.5rem; }
