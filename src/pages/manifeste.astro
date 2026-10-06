@@ -28,6 +28,7 @@ const jsonLd = {
   isAccessibleForFree: true,
   version: MANIFESTE.version,
   datePublished: MANIFESTE.date.toISOString().slice(0, 10),
+  dateModified: MANIFESTE.modifie.toISOString().slice(0, 10),
   url: adresse,
   // Le site qui présente TRIFAB en anglais, pour l'Europe et au-delà.
   subjectOf: { '@type': 'WebSite', name: 'TRIFAB', url: TRIFAB_SI.url, inLanguage: 'en' },

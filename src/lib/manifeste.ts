@@ -2,7 +2,7 @@
  * Le manifeste TRIFAB : documents publiés et contacts relais.
  *
  * Les PDF sont fabriqués hors du site, depuis 0_portfolio/manifeste/ (script
- * 2026-10-01_6_fabriquer-pdf-trifab_v1.0.0.py), qui les copie dans public/doc/manifeste/.
+ * 2026-10-06_6_fabriquer-pdf-trifab_v1.1.0.py), qui les copie dans public/doc/manifeste/.
  * Les contacts vivent dans src/data/manifeste/contacts.json, source unique lue aussi par ce
  * script pour l'annexe et le document « Contacts relais ».
  */
@@ -15,8 +15,11 @@ export const MANIFESTE = {
   nom: 'TRIFAB',
   punchline: "De la benne à l'établi.",
   chaine: 'Déchetterie · Ressourcerie · Fablab',
-  version: '1.0',
+  version: '1.1',
+  /** Première publication. */
   date: new Date('2026-10-01'),
+  /** Version 1.1 : liens vers trifab.si dans les trois PDF. */
+  modifie: new Date('2026-10-06'),
   logo: '/doc/manifeste/trifab-logo.svg',
   logoPng: '/doc/manifeste/trifab-logo.png',
 } as const;
