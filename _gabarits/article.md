@@ -4,13 +4,16 @@
 # src\data\articles\  et passez brouillon à false pour le publier.
 # Nom du fichier : <identifiant>.md — minuscules, tirets, sans accent.
 
+# ★ 70 caractères au plus, la requête cible en tête (fiche, §6).
 titre: "Un titre qui annonce la thèse, pas le sujet"
 
 # LE SIGNAL. La thèse en une phrase, reprise de la §1 de la fiche de structuration.
 # Elle s'affiche en chapeau, sert de description sociale et de résumé dans le flux.
 # Si elle ne tient pas en une phrase, l'article n'est pas prêt à être écrit.
+# ★ 150 à 200 caractères : c'est aussi la description que lisent les moteurs.
 these: "…"
 
+# ★ La requête cible : minuscules, tirets, sans accent, cinq mots au plus.
 identifiant: "nom-du-fichier-sans-md"
 
 # methode | sources | heritage | sciences | livres
@@ -35,6 +38,7 @@ sources:
     url: "https://…"
     note: "Ce qu'on y trouve exactement — facultatif mais utile."
 
+# Cinq au plus, dans les graphies déjà en usage sur le site.
 motsCles: []
 licence: "CC BY 4.0"
 miseEnAvant: false

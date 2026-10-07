@@ -194,7 +194,8 @@ affiche simplement les six plus récentes.
 
 Les articles sont la troisième rubrique du site, à côté des réalisations et des documents. Ce sont
 des textes courts — 800 à 1 200 mots, quatre à six minutes — organisés autour d'une thèse énoncée en
-une phrase.
+une phrase. Un sujet qui appelle un guide de référence prend la forme d'un **article pilier** :
+2 500 à 3 500 mots, avec tableaux, liste de contrôle et questions fréquentes.
 
 ### Deux temps, jamais un seul
 
@@ -225,6 +226,18 @@ fiche indique section par section où chacune de ses réponses atterrit :
 | §7 le terrain | nulle part : reste dans la fiche |
 
 Quand le texte est prêt, déplacez-le dans `src\data\articles\` et passez `brouillon` à `false`.
+
+La fiche porte aussi des champs marqués ★, pour le référencement : l'intention de recherche, la
+requête cible et sa longue traîne, les liens vers les autres pages du site, les longueurs du titre
+et de la thèse. Ils se remplissent pour les deux formats.
+
+### Les commandes `/article` et `/article-pilier`
+
+Dans une session Claude ouverte sur `D_Dambreville`, tapez `/article` suivi d'un lien ou du chemin
+d'un fichier — par exemple un texte déposé dans `_SAS\` — ou `/article-pilier` pour un guide de
+référence. La commande lit la source, vérifie chaque fait chez son émetteur, remplit la fiche,
+écrit l'article, le contrôle et l'ouvre dans l'aperçu. Elle ne publie rien : la mise en ligne reste
+`/publier`.
 
 ### Les six mouvements
 
