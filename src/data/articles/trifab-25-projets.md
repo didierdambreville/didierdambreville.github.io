@@ -2,7 +2,7 @@
 titre: "TRIFAB : 25 projets pour un atelier qui fabrique ses propres machines"
 these: "Le fablab d'un TRIFAB ne se mesure pas au nombre de ses machines, mais à sa capacité à fabriquer ses propres moyens de fabrication — et à documenter chaque pas pour qu'un autre territoire le refasse."
 identifiant: "trifab-25-projets"
-rubrique: "sciences"
+rubriques: ["fabrication", "ecologie"]
 date: 2026-10-05
 prolonge:
   libelle: "le manifeste TRIFAB — De la benne à l'établi"

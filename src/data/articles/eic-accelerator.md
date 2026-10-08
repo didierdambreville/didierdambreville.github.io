@@ -2,7 +2,7 @@
 titre: "EIC Accelerator : candidater quand on peut prouver, pas quand on peut raconter"
 these: "L'EIC Accelerator ne finance ni une idée ni un premier prototype : il prend le relais d'une technologie déjà validée et ne laisse que trois essais. La question n'est pas « suis-je éligible ? » mais « puis-je déjà prouver ? »."
 identifiant: "eic-accelerator"
-rubrique: "methode"
+rubriques: ["entreprendre", "methode"]
 date: 2026-10-06
 sources:
   - libelle: "Conseil européen de l'innovation, page « EIC Accelerator »"

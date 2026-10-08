@@ -76,27 +76,67 @@ const documents = defineCollection({
 });
 
 /**
- * Cinq rubriques, pas huit. Une classification n'est utilisée que si l'on range
- * sans hésiter ; au-delà de cinq cases, on hésite une fois sur trois et l'on finit
- * par ne plus s'en servir.
+ * Les rubriques des articles. Un article en porte une à trois (`rubriques`), la première
+ * étant la principale : on range sans hésiter parce qu'on n'a pas à choisir entre deux
+ * cases voisines. Une rubrique sans article n'apparaît nulle part sur le site.
  *
- * Où tombent les sujets annoncés :
- *   methode    — méthodes de travail, outils de pensée, conduite de projet
- *   sources    — fiabilité, vérification, provenance d'une information
- *   heritage   — théologie, histoire, archéologie, arts et culture
- *   sciences   — sciences, techniques, géopolitique, économie
- *   livres     — les ouvrages et ce qui les entoure
+ * Où tombent les sujets :
+ *   methode                    — méthodes de travail, outils de pensée, conduite de projet
+ *   sources                    — fiabilité, vérification, provenance d'une information
+ *   intelligence-artificielle  — modèles, usages et limites de l'IA
+ *   robotique                  — robots, automates, machines qui agissent
+ *   informatique               — logiciels, réseaux, sécurité, logiciel libre
+ *   electronique               — cartes, microcontrôleurs, montages
+ *   fabrication                — fablabs, ateliers, open hardware, fabriquer soi-même
+ *   sciences                   — recherche fondamentale, découvertes, méthode scientifique
+ *   neurosciences              — cerveau, système nerveux, neurotechnologies
+ *   sante                      — médecine, thérapies, prévention
+ *   travail                    — emploi, compétences, organisation du travail
+ *   economie                   — marchés, prévisions, géopolitique, politiques publiques
+ *   entreprendre               — créer, financer, conduire un projet ou une entreprise
+ *   ecologie                   — réemploi, ressources, environnement
+ *   heritage                   — théologie, histoire, archéologie, arts et culture
+ *   livres                     — les ouvrages et ce qui les entoure
  *
- * Pour en ajouter une : cette liste, le libellé ci-dessous, et rien d'autre.
- * Attendez d'avoir vingt articles avant d'y toucher.
+ * L'ordre de cette liste est celui des filtres de /articles/. Pour en ajouter une :
+ * cette liste et le libellé ci-dessous ; l'identifiant fait l'adresse
+ * /articles/rubrique/<identifiant>/ et ne change plus.
  */
-export const RUBRIQUES = ['methode', 'sources', 'heritage', 'sciences', 'livres'] as const;
+export const RUBRIQUES = [
+  'methode',
+  'sources',
+  'intelligence-artificielle',
+  'robotique',
+  'informatique',
+  'electronique',
+  'fabrication',
+  'sciences',
+  'neurosciences',
+  'sante',
+  'travail',
+  'economie',
+  'entreprendre',
+  'ecologie',
+  'heritage',
+  'livres',
+] as const;
 
 export const LIBELLES_RUBRIQUE: Record<(typeof RUBRIQUES)[number], string> = {
   methode: 'Méthode',
   sources: 'Sources',
-  heritage: 'Héritage',
+  'intelligence-artificielle': 'Intelligence artificielle',
+  robotique: 'Robotique',
+  informatique: 'Informatique',
+  electronique: 'Électronique',
+  fabrication: 'Fabrication',
   sciences: 'Sciences',
+  neurosciences: 'Neurosciences',
+  sante: 'Santé',
+  travail: 'Travail',
+  economie: 'Économie',
+  entreprendre: 'Entreprendre',
+  ecologie: 'Écologie',
+  heritage: 'Héritage',
   livres: 'Livres',
 };
 
@@ -112,7 +152,12 @@ const articles = defineCollection({
        */
       these: z.string().max(240),
       identifiant: z.string(),
-      rubrique: z.enum(RUBRIQUES),
+      /** Une à trois, la principale en tête ; chacune mène à /articles/rubrique/<id>/. */
+      rubriques: z
+        .array(z.enum(RUBRIQUES))
+        .min(1)
+        .max(3)
+        .refine((r) => new Set(r).size === r.length, { message: 'Rubrique citée deux fois.' }),
       date: z.coerce.date(),
       /** Facultative : un article n'a pas besoin d'image pour exister. */
       couverture: image().optional(),

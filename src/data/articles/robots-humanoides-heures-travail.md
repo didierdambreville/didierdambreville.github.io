@@ -2,7 +2,7 @@
 titre: "Robots humanoïdes : la preuve se compte en heures, pas en prévisions"
 these: "Les robots humanoïdes se jugeront aux heures de travail réel, pas aux prévisions des banques : la flotte de Digit 4 d'Agility Robotics totalise l'année d'une quarantaine de salariés."
 identifiant: "robots-humanoides-heures-travail"
-rubrique: "sciences"
+rubriques: ["robotique", "intelligence-artificielle", "travail"]
 date: 2026-10-07
 sources:
   - libelle: "Goldman Sachs Research, « The global market for humanoid robots could reach $38 billion by 2035 », 27 février 2024"

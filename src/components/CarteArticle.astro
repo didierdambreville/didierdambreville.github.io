@@ -1,19 +1,19 @@
 ---
-import { LIBELLES_RUBRIQUE } from '../content.config';
-import { type Article, minutesLecture } from '../lib/articles';
-import { ancre, dateNote } from '../lib/notes';
+import { type Article, minutesLecture, rubriquesDe } from '../lib/articles';
+import { dateNote } from '../lib/notes';
 
 /**
- * Un article en carte-titre : surtitre, titre, thèse, date. La rubrique et les mots-clés
- * suivent la carte, hors du lien — un lien ne peut pas en contenir d'autres : la rubrique
- * mène à sa page, chaque mot-clé à l'index de /articles/.
+ * Un article en carte-titre horizontale (16:9) : surtitre, titre, thèse, date. Ses
+ * rubriques suivent la carte, hors du lien — un lien ne peut pas en contenir d'autres —
+ * et chacune mène à sa page. Les mots-clés ne s'affichent pas ici : une sélection figure
+ * en bas de /articles/, l'index complet sur /articles/mots-cles/.
  */
 interface Props {
   a: Article;
 }
 const { a } = Astro.props;
 const d = a.data;
-const rubrique = LIBELLES_RUBRIQUE[d.rubrique];
+const rubriques = rubriquesDe(a);
 ---
 <li class="carte-titre carte-titre--article">
   <a href={`/articles/${a.id}/`} aria-label={`Article — ${d.titre}`}>
@@ -25,15 +25,7 @@ const rubrique = LIBELLES_RUBRIQUE[d.rubrique];
     <img class="carte-titre__logo" src="/logo-or.svg" alt="" width="20" height="20" />
   </a>
   <p class="carte-titre__rubrique">
-    Rubrique <a href={`/articles/rubrique/${d.rubrique}/`}>{rubrique}</a>
+    {rubriques.length > 1 ? 'Rubriques' : 'Rubrique'}
+    {rubriques.map((r, i) => <>{i > 0 && <span aria-hidden="true"> · </span>}<a href={`/articles/rubrique/${r.id}/`}>{r.nom}</a></>)}
   </p>
-  {
-    d.motsCles.length > 0 && (
-      <ul class="mots carte-titre__mots" aria-label={`Mots-clés — ${d.titre}`}>
-        {d.motsCles.map((m) => (
-          <li><a href={`/articles/#${ancre(m)}`}>{m}</a></li>
-        ))}
-      </ul>
-    )
-  }
 </li>

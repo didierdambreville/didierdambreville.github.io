@@ -392,18 +392,43 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
   .lecture__saut { display: inline; margin-left: 0.6rem; }
 }
 
-/* Cartes d'articles : la carte-titre des mémentos, un peu plus large et au titre plus petit
-   (les titres d'articles sont longs) ; sous la carte, la rubrique en lien simple et les
-   mots-clés en pastilles — ni l'une ni les autres en cartes. */
+/* Cartes d'articles : la carte-titre des mémentos couchée au format 16:9, deux de front
+   sur un écran de bureau, une sur téléphone. Les tailles suivent la largeur de la carte
+   (unités cqi) et le nombre de lignes de la thèse aussi (requêtes de conteneur) : le texte
+   tient dans le cadre à toute largeur. Sous la carte, les rubriques en liens simples. */
 .grille--articles {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
-  gap: 1.75rem 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 2rem 1.5rem;
   margin-top: 1rem;
 }
-.carte-titre--article { display: flex; flex-direction: column; gap: 0.55rem; }
-.carte-titre--article .carte-titre__titre { font-size: 1.12rem; line-height: 1.2; }
-.carte-titre--article .carte-titre__sous { -webkit-line-clamp: 6; }
-.carte-titre--article .carte-titre__mots { margin: 0; font-size: 0.72rem; }
+.carte-titre--article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  container-type: inline-size;
+}
+.carte-titre.carte-titre--article > a {
+  aspect-ratio: 16 / 9;
+  padding: 4.2cqi 4.8cqi 3.6cqi;
+}
+.carte-titre--article .carte-titre__titre {
+  margin-top: 2.4cqi;
+  font-size: clamp(1rem, 4.6cqi, 1.4rem);
+  line-height: 1.18;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.carte-titre--article .carte-titre__filet { margin: 2.4cqi 0 2.2cqi; }
+.carte-titre--article .carte-titre__sous { font-size: clamp(0.7rem, 2.9cqi, 0.82rem); -webkit-line-clamp: 2; }
+.carte-titre--article .carte-titre__logo { width: 30%; right: -3%; bottom: -16%; }
+@container (min-width: 400px) {
+  .carte-titre--article .carte-titre__sous { -webkit-line-clamp: 3; }
+}
+@container (min-width: 480px) {
+  .carte-titre--article .carte-titre__sous { -webkit-line-clamp: 4; }
+}
 .carte-titre__rubrique {
   margin: 0.15rem 0 0;
   font-family: var(--sans);
@@ -414,6 +439,10 @@ pre { overflow-x: auto; background: var(--fond-appuye); padding: 1rem; border: 1
 }
 .carte-titre__rubrique a { font-weight: 700; color: var(--accent); text-decoration: none; }
 .carte-titre__rubrique a:hover { text-decoration: underline; }
+
+/* /articles/ ne montre qu'une sélection de mots-clés ; l'index complet a sa page. */
+.vitrine-mots { margin-top: 3rem; }
+.vitrine-mots .mots { margin-bottom: 0.9rem; }
 
 /* ---------- mémentos ---------- */
 
@@ -1154,6 +1183,18 @@ section[id] { scroll-margin-top: 1rem; }
 }
 .favoris__sections a:hover { color: var(--accent); text-decoration: underline; }
 .favoris .favoris__mots { margin: 0.35rem 0.4rem 0 1.4rem; }
+/* Panneau d'un article : les mots-clés de l'article, puis quelques autres à découvrir,
+   chaque groupe sous une petite légende ; l'index complet en lien au bas du dossier. */
+.favoris__legende {
+  margin: 0.6rem 0.4rem 0 1.4rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+.favoris__tous { margin: 0.7rem 0.4rem 0 1.4rem; font-size: 0.8rem; }
+.favoris__tous a { color: var(--accent); }
 
 /* Mots-clés : pastilles, dans le panneau, sous le titre d'une note et dans l'index. */
 .mots {

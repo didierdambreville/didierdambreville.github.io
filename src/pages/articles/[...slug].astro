@@ -3,10 +3,9 @@ import { render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PanneauArticles from '../../components/PanneauArticles.astro';
-import { articlesPublies, minutesLecture } from '../../lib/articles';
+import { articlesPublies, minutesLecture, rubriquesDe } from '../../lib/articles';
 import { AUTEUR } from '../../lib/identite';
 import { verifierIdentifiants } from '../../lib/identifiants';
-import { LIBELLES_RUBRIQUE } from '../../content.config';
 
 export async function getStaticPaths() {
   const articles = await articlesPublies();
@@ -18,6 +17,7 @@ const { entree, articles } = Astro.props;
 const d = entree.data;
 const { Content } = await render(entree);
 const minutes = minutesLecture(entree);
+const rubriques = rubriquesDe(entree);
 
 const dateFr = d.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -29,6 +29,7 @@ const jsonLd = {
   datePublished: d.date.toISOString().slice(0, 10),
   identifier: d.identifiant,
   license: d.licence,
+  articleSection: rubriques.map((r) => r.nom),
   keywords: d.motsCles.join(', ') || undefined,
   url: new URL(`/articles/${entree.id}/`, Astro.site).href,
 };
@@ -38,8 +39,8 @@ const jsonLd = {
   <div class="lecture">
   <article class="lecture__texte">
     <p class="etiquette">
-      <a href={`/articles/rubrique/${d.rubrique}/`}>{LIBELLES_RUBRIQUE[d.rubrique]}</a> · {dateFr} ·
-      {minutes}&#160;min de lecture
+      {rubriques.map((r, i) => <>{i > 0 && ', '}<a href={`/articles/rubrique/${r.id}/`}>{r.nom}</a></>)}
+      · {dateFr} · {minutes}&#160;min de lecture
       <a class="lecture__saut" href="#panneau">Rubriques et mots-clés ↓</a>
     </p>
     <h1>{d.titre}</h1>

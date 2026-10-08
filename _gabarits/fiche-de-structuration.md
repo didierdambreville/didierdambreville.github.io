@@ -172,7 +172,7 @@ les moteurs montrent déjà.
 | `titre` | 70 caractères au plus — la page y ajoute « — D. Dambreville » et les moteurs coupent vers 60 ; la requête cible en tête ; après les deux-points, ce que le texte établit, jamais « le guide complet » | … |
 | `these` | une phrase de 150 à 200 caractères ; les 155 premiers se suffisent, c'est ce qu'affichent les moteurs | … |
 | `identifiant` | la requête cible en minuscules, tirets, sans accent ni mot vide, cinq mots au plus ; il fait l'adresse et ne change plus après publication | … |
-| `rubrique` | `methode`, `sources`, `heritage`, `sciences` ou `livres` | … |
+| `rubriques` | une à trois, la principale en tête, parmi la liste de `src\content.config.ts` (`COMMENT-FAIRE.md`, « Les rubriques ») | … |
 | `motsCles` | cinq au plus, dans les graphies déjà en usage sur le site | … |
 
 ## 7. Le terrain

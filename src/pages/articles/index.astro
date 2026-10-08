@@ -2,19 +2,21 @@
 import Base from '../../layouts/Base.astro';
 import CarteArticle from '../../components/CarteArticle.astro';
 import { AUTEUR } from '../../lib/identite';
-import { articlesPublies, rubriquesPresentes } from '../../lib/articles';
-import { indexMotsCles } from '../../lib/notes';
+import { articlesPublies, motsClesEnVitrine, rubriquesPresentes } from '../../lib/articles';
+import { ancre, indexMotsCles } from '../../lib/notes';
 
 const articles = await articlesPublies();
 
 // Regroupement par année : un corpus se lit par vagues, pas en liste plate.
 const annees = [...new Set(articles.map((a) => a.data.date.getFullYear()))].sort((a, b) => b - a);
 const presentes = rubriquesPresentes(articles);
-const mots = indexMotsCles(articles);
+// Une sélection seulement : l'index complet a sa page, /articles/mots-cles/.
+const vitrine = motsClesEnVitrine(articles);
+const nombreMots = indexMotsCles(articles).length;
 ---
 <Base
   titre={`Articles — ${AUTEUR}`}
-  description="Textes courts : méthode, vérification des sources, héritage, sciences, livres."
+  description="Textes courts : méthode, intelligence artificielle, robotique, informatique, sciences, travail, écologie."
 >
   <h1>Articles</h1>
   <p class="chapeau">
@@ -24,7 +26,7 @@ const mots = indexMotsCles(articles);
 
   {
     presentes.length > 1 && (
-      <ul class="filtres">
+      <ul class="filtres" id="rubriques" aria-label="Rubriques">
         <li><a href="/articles/" aria-current="true">Tous</a></li>
         {presentes.map((r) => (
           <li><a href={`/articles/rubrique/${r.id}/`}>{r.nom}</a></li>
@@ -51,24 +53,19 @@ const mots = indexMotsCles(articles);
   }
 
   {
-    mots.length > 0 && (
-      <section id="mots-cles" aria-labelledby="titre-mots-cles">
+    vitrine.length > 0 && (
+      <section class="vitrine-mots" aria-labelledby="titre-mots-cles">
         <h2 id="titre-mots-cles">Mots-clés</h2>
-        <dl class="index-mots">
-          {mots.map(({ mot, ancre, notes: liste }) => (
-            <div id={ancre}>
-              <dt>{mot}</dt>
-              <dd>
-                {liste.map((a, i) => (
-                  <>
-                    {i > 0 && ' · '}
-                    <a href={`/articles/${a.id}/`}>{a.data.titre}</a>
-                  </>
-                ))}
-              </dd>
-            </div>
+        <ul class="mots">
+          {vitrine.map((m) => (
+            <li><a href={`/articles/mots-cles/#${ancre(m)}`}>{m}</a></li>
           ))}
-        </dl>
+        </ul>
+        {nombreMots > vitrine.length && (
+          <p class="liens">
+            <a href="/articles/mots-cles/">Les {nombreMots} mots-clés</a>
+          </p>
+        )}
       </section>
     )
   }

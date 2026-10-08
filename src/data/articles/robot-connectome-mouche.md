@@ -2,7 +2,7 @@
 titre: "Le robot piloté par une mouche morte : ce qui vient d'elle, ce qui vient de l'ingénieur"
 these: "Le robot « piloté par une mouche morte » n'abrite aucune mouche : il exécute la carte de ses connexions, et ce qu'il fait dépend autant de l'interface écrite par l'ingénieur que du câblage hérité de l'évolution."
 identifiant: "robot-connectome-mouche"
-rubrique: "sciences"
+rubriques: ["neurosciences", "robotique", "sciences"]
 date: 2026-10-05
 sources:
   - libelle: "Male CNS Connectome — HHMI Janelia, projet FlyEM"

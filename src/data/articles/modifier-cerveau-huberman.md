@@ -2,7 +2,7 @@
 titre: "Modifier le cerveau : ce que Huberman prédit, ce qui existe déjà"
 these: "Modifier le cerveau selon Huberman suppose trois pièces — neurones marqués, signal extérieur, IA qui règle : chacune a un précédent, leur assemblage chez une personne saine reste à prouver."
 identifiant: "modifier-cerveau-huberman"
-rubrique: "sciences"
+rubriques: ["neurosciences", "sante"]
 date: 2026-10-07
 sources:
   - libelle: "Colossus, « Reading and Writing the Brain », Invest Like the Best n° 494 (Patrick O'Shaughnessy et Andrew Huberman), 6 octobre 2026"

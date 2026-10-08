@@ -16,8 +16,9 @@ these: "…"
 # ★ La requête cible : minuscules, tirets, sans accent, cinq mots au plus.
 identifiant: "nom-du-fichier-sans-md"
 
-# methode | sources | heritage | sciences | livres
-rubrique: "sources"
+# Une à trois, la principale en tête. Liste et usage : src\content.config.ts (RUBRIQUES)
+# et COMMENT-FAIRE.md, « Les rubriques ». Exemple : ["robotique", "travail"]
+rubriques: ["sources"]
 
 date: 2026-09-14
 

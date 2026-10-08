@@ -60,7 +60,11 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   manifeste), puis « Ailleurs ». Tout y est calculé depuis le contenu publié : rien à y retoucher
   quand une pièce s'ajoute.
 - **Articles** (depuis le 5 octobre 2026) : `/articles/`, un fichier Markdown par article dans
-  `src/data/articles/`, 800 à 1 200 mots, sources affichées en fin d'article. Chaque article passe
+  `src/data/articles/`, 800 à 1 200 mots, sources affichées en fin d'article. Cartes 16:9, une à
+  trois rubriques par article (filtres et pages `/articles/rubrique/<id>/`), une sélection de
+  mots-clés en bas de `/articles/`, l'index complet sur `/articles/mots-cles/` ; à la lecture, un
+  panneau (`src/components/PanneauArticles.astro`) qui montre les rubriques et mots-clés de
+  l'article et quelques autres à découvrir, jamais la totalité. Chaque article passe
   d'abord par une fiche de structuration (`_gabarits/fiche-de-structuration.md`, copiée dans
   `_brouillons/`, jamais publiée). Voir `COMMENT-FAIRE.md`, « Écrire un article ».
 - **Rubriques en attente** (réalisations, documents) : leurs pages existent, mais une

@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+import { articlesPublies } from '../../lib/articles';
+import { indexMotsCles } from '../../lib/notes';
+
+// L'index complet : /articles/ n'en montre qu'une sélection. Les pastilles du panneau de
+// lecture et de la sélection mènent ici, à la ligne du mot (#ancre).
+const articles = await articlesPublies();
+const mots = indexMotsCles(articles);
+---
+<Base
+  titre={`Mots-clés des articles — ${AUTEUR}`}
+  description="Index des mots-clés des articles : pour chaque mot, les articles qui le traitent."
+>
+  <p class="etiquette"><a href="/articles/">Articles</a></p>
+  <h1>Mots-clés</h1>
+  <p class="chapeau">Pour chaque mot-clé, les articles qui le traitent.</p>
+
+  <dl class="index-mots">
+    {mots.map(({ mot, ancre, notes: liste }) => (
+      <div id={ancre}>
+        <dt>{mot}</dt>
+        <dd>
+          {liste.map((a, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={`/articles/${a.id}/`}>{a.data.titre}</a>
+            </>
+          ))}
+        </dd>
+      </div>
+    ))}
+  </dl>
+
+  <p class="liens"><a href="/articles/">Tous les articles</a></p>
+</Base>

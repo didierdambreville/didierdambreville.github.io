@@ -251,19 +251,42 @@ choses n'en fait adopter aucune.
 
 ### Les rubriques
 
-Cinq, pas huit : `methode`, `sources`, `heritage`, `sciences`, `livres`. Où tombent les sujets
-annoncés — théologie, archéologie, arts et culture vont dans `heritage` ; géopolitique, techniques
-et économie dans `sciences`. Pour en ajouter une, il suffit de deux lignes dans
-`src\content.config.ts`, mais attendez d'avoir vingt articles : une classification ne se corrige
-utilement qu'une fois qu'on sait ce qu'elle range.
+Un article se range dans **une à trois rubriques** (`rubriques: ["robotique", "travail"]`), la
+principale en tête : elle s'affiche la première sous la carte et en haut de l'article. Seize
+rubriques sont prévues — `methode`, `sources`, `intelligence-artificielle`, `robotique`,
+`informatique`, `electronique`, `fabrication`, `sciences`, `neurosciences`, `sante`, `travail`,
+`economie`, `entreprendre`, `ecologie`, `heritage`, `livres` ; ce que chacune range est écrit en
+tête de la liste, dans `src\content.config.ts`. Une rubrique sans article n'apparaît nulle part :
+ni filtre, ni page, ni entrée au plan du site.
+
+Pour en ajouter une : deux lignes dans `src\content.config.ts` (la liste et le libellé). Son
+identifiant fait l'adresse `/articles/rubrique/<identifiant>/` et ne change plus. Une quatrième
+rubrique sur un même article fait échouer la construction.
 
 ### Les mots-clés
 
-Cinq au plus par article (`motsCles`), en minuscules sauf nom propre. Avec la rubrique, ils
-s'affichent sous la carte de l'article dans `/articles/`, dans le panneau de droite à la lecture
-(ceux de l'article en évidence) et dans l'index des mots-clés, en bas de `/articles/`. Un même mot
-s'écrit toujours de la même façon : deux graphies (« Fablab », « fablab ») font échouer la
-construction, qui dit laquelle corriger.
+Cinq au plus par article (`motsCles`), en minuscules sauf nom propre. Ils ne s'affichent plus sous
+les cartes : `/articles/` n'en montre qu'une **sélection de huit**, en bas de page — les plus
+partagés entre articles, puis ceux qu'un article place en tête de sa liste, puis les plus récents
+(`motsClesEnVitrine`, `src\lib\articles.ts`). Tous figurent dans l'index `/articles/mots-cles/`.
+Placez donc en tête le mot qui résume l'article.
+
+### Le panneau de lecture
+
+À droite d'un article (dessous sur téléphone), le panneau ne montre jamais la totalité. Pour les
+rubriques comme pour les mots-clés : d'abord ceux de l'article lu, en évidence ; puis quelques
+autres « à découvrir » — quatre rubriques, six mots-clés —, pris d'abord chez les articles qui
+partagent ses rubriques (`rubriquesADecouvrir`, `motsClesADecouvrir`, `src\lib\articles.ts`) ;
+enfin un lien vers la liste complète : les filtres de `/articles/` pour les rubriques, l'index
+`/articles/mots-cles/` pour les mots-clés. Un même mot s'écrit toujours de la même façon : deux graphies (« Fablab »,
+« fablab ») font échouer la construction, qui dit laquelle corriger.
+
+### Les cartes
+
+Dans `/articles/` et les pages de rubrique, chaque article est une carte-titre couchée au format
+16:9 — deux de front sur un écran de bureau, une sur téléphone — : surtitre, titre (trois lignes au
+plus), thèse (deux à quatre lignes selon la largeur), date et durée de lecture. Ses rubriques
+suivent la carte, en liens.
 
 ### Une précaution sur la reprise de vos autres publications
 

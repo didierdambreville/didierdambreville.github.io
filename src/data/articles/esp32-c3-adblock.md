@@ -2,7 +2,7 @@
 titre: "L'ad-blocker qui se glisse derrière votre routeur tient dans 50 Ko de mémoire"
 these: "Un microcontrôleur à deux dollars filtre la publicité de toute une maison parce que son auteur a changé la représentation des données plutôt que le matériel."
 identifiant: "esp32-c3-adblock"
-rubrique: "sciences"
+rubriques: ["informatique", "electronique"]
 date: 2026-10-05
 sources:
   - libelle: "M-Abozaid, esp32-c3-adblock — dépôt GitHub et README"

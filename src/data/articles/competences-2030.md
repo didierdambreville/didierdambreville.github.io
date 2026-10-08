@@ -2,7 +2,7 @@
 titre: "Les compétences qui compteront en 2030 ne seront pas seulement techniques"
 these: "En 2030, l'IA ne rendra pas les compétences humaines secondaires : le Forum économique mondial les range dans le même carré que l'IA et le big data, et c'est leur assemblage qui fera la valeur d'un professionnel."
 identifiant: "competences-2030"
-rubrique: "methode"
+rubriques: ["travail", "intelligence-artificielle", "methode"]
 date: 2026-10-05
 sources:
   - libelle: "World Economic Forum, The Future of Jobs Report 2025, chapitre 3 « Skills outlook »"
