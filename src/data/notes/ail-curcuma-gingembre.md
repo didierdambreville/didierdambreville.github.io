@@ -2,7 +2,7 @@
 titre: "Ail, curcuma, gingembre — et le lait d'or"
 resume: "Trois aliments réputés pour la santé : ce que la recherche confirme, ce qu'elle ne confirme pas, les précautions à prendre avec les compléments — et la recette du lait d'or au curcuma."
 identifiant: "ail-curcuma-gingembre"
-categorie: "sante"
+categories: ["sante", "gastronomie"]
 motsCles: ["alimentation", "curcuma", "recette"]
 date: 2026-10-01
 ---

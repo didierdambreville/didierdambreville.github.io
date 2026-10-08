@@ -1,12 +1,17 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PanneauNotes from '../../components/PanneauNotes.astro';
-import { notesPubliees, grouper, indexMotsCles, ancre, dateNote } from '../../lib/notes';
+import ListeNotes from '../../components/ListeNotes.astro';
+import { notesPubliees, grouper, grouperParPrincipal, indexMotsCles, ancre, motsEnVitrine } from '../../lib/notes';
 import { AUTEUR, LICENCE } from '../../lib/identite';
 
 const notes = await notesPubliees();
 const dossiers = grouper(notes);
-const mots = indexMotsCles(notes);
+// Chaque note une seule fois, sous son dossier principal ; la page d'un dossier les donne toutes.
+const parPrincipal = grouperParPrincipal(notes);
+// Une sélection seulement : l'index complet a sa page, /notes/mots-cles/.
+const vitrine = motsEnVitrine(notes);
+const nombreMots = indexMotsCles(notes).length;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -37,43 +42,39 @@ const jsonLd = {
         dossier, retrouvées par mot-clé.
       </p>
 
+      <ul class="filtres" id="dossiers" aria-label="Dossiers">
+        <li><a href="/notes/" aria-current="true">Toutes</a></li>
+        {dossiers.map(({ categorie }) => (
+          <li><a href={`/notes/dossier/${categorie.id}/`}>{categorie.nom}</a></li>
+        ))}
+      </ul>
+
       {
-        dossiers.map(({ categorie, notes }) => (
+        parPrincipal.map(({ categorie, notes }) => (
           <section aria-labelledby={`dossier-${categorie.id}`}>
             <h2 id={`dossier-${categorie.id}`}>{categorie.nom}</h2>
-            <ul class="sommaire sommaire--serre">
-              {notes.map((n) => (
-                <li>
-                  <h3><a href={`/notes/${n.id}/`}>{n.data.titre}</a></h3>
-                  <p class="sommaire__these">{n.data.resume}</p>
-                  <p class="etiquette">Mise à jour le {dateNote(n.data.date)}</p>
-                </li>
-              ))}
-            </ul>
+            <ListeNotes notes={notes} dossier={categorie.id} />
           </section>
         ))
       }
 
-      <section id="mots-cles" aria-labelledby="titre-mots-cles">
-        <h2 id="titre-mots-cles">Mots-clés</h2>
-        <dl class="index-mots">
-          {
-            mots.map(({ mot, notes }) => (
-              <div id={ancre(mot)}>
-                <dt>{mot}</dt>
-                <dd>
-                  {notes.map((n, i) => (
-                    <>
-                      {i > 0 && ' · '}
-                      <a href={`/notes/${n.id}/`}>{n.data.titre}</a>
-                    </>
-                  ))}
-                </dd>
-              </div>
-            ))
-          }
-        </dl>
-      </section>
+      {
+        vitrine.length > 0 && (
+          <section class="vitrine-mots" aria-labelledby="titre-mots-cles">
+            <h2 id="titre-mots-cles">Mots-clés</h2>
+            <ul class="mots">
+              {vitrine.map((m) => (
+                <li><a href={`/notes/mots-cles/#${ancre(m)}`}>{m}</a></li>
+              ))}
+            </ul>
+            {nombreMots > vitrine.length && (
+              <p class="liens">
+                <a href="/notes/mots-cles/">Les {nombreMots} mots-clés</a>
+              </p>
+            )}
+          </section>
+        )
+      }
     </div>
 
     <PanneauNotes notes={notes} />

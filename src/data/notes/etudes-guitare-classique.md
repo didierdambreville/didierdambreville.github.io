@@ -2,7 +2,7 @@
 titre: "Études pour guitare classique — analyse (Sor, Giuliani, Carcassi…)"
 resume: "Ce qu'une étude fait travailler, ce que chaque auteur apporte — de Carulli à Coste —, une grille pour l'analyser et une méthode pour en faire un morceau."
 identifiant: "etudes-guitare-classique"
-categorie: "loisirs"
+categories: ["musique", "loisirs"]
 motsCles: ["guitare", "musique", "pédagogie"]
 date: 2026-10-01
 ---

@@ -2,8 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PanneauNotes from '../../components/PanneauNotes.astro';
-import { notesPubliees, ancre, dateNote } from '../../lib/notes';
-import { categorie } from '../../lib/classement-notes';
+import { notesPubliees, ancre, categoriesDe, dateNote } from '../../lib/notes';
 import { verifierIdentifiants } from '../../lib/identifiants';
 import { AUTEUR, LICENCE } from '../../lib/identite';
 
@@ -15,7 +14,7 @@ export async function getStaticPaths() {
 
 const { note, notes } = Astro.props;
 const d = note.data;
-const cat = categorie(d.categorie);
+const dossiers = categoriesDe(note);
 const { Content, headings } = await render(note);
 const sections = headings.filter((h) => h.depth === 2);
 const adresse = new URL(`/notes/${note.id}/`, Astro.site).href;
@@ -26,7 +25,7 @@ const jsonLd = {
   name: d.titre,
   description: d.resume,
   genre: 'Note',
-  about: cat.nom,
+  about: dossiers.map((c) => c.nom),
   keywords: d.motsCles.join(', '),
   inLanguage: 'fr',
   author: { '@type': 'Person', name: AUTEUR, url: Astro.site?.href },
@@ -40,13 +39,14 @@ const jsonLd = {
   <div class="notes">
     <article class="notes__contenu note">
       <p class="etiquette">
-        <a href="/notes/">Notes</a> · {cat.nom}
+        <a href="/notes/">Notes</a> ·
+        {dossiers.map((c, i) => <>{i > 0 && ', '}<a href={`/notes/dossier/${c.id}/`}>{c.nom}</a></>)}
         <a class="notes__saut" href="#favoris">Toutes les notes ↓</a>
       </p>
       <h1>{d.titre}</h1>
       <p class="chapeau">{d.resume}</p>
       <ul class="mots" aria-label="Mots-clés">
-        {d.motsCles.map((m) => <li><a href={`/notes/#${ancre(m)}`}>{m}</a></li>)}
+        {d.motsCles.map((m) => <li><a href={`/notes/mots-cles/#${ancre(m)}`}>{m}</a></li>)}
       </ul>
 
       <div class="note__corps">

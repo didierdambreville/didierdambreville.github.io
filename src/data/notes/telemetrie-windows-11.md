@@ -2,7 +2,7 @@
 titre: "Supprimer la télémétrie de Windows 11 (méthode Korben)"
 resume: "Réduire au minimum ce que Windows 11 envoie à Microsoft : réglages natifs, compte local, service de télémétrie, puis les outils libres recommandés par Korben.info."
 identifiant: "telemetrie-windows-11"
-categorie: "informatique"
+categories: ["informatique", "logiciel-libre"]
 motsCles: ["Windows 11", "vie privée", "télémétrie", "logiciel libre"]
 date: 2026-10-01
 ---

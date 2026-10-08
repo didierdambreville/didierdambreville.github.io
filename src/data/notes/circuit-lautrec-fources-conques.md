@@ -2,7 +2,7 @@
 titre: "Circuit — Lautrec, Fourcès et Conques"
 resume: "Une boucle de huit à dix jours au départ de Béziers : villages perchés du Tarn, bastides du Gers, Conques et le nord de l'Aveyron, retour par l'A75."
 identifiant: "circuit-lautrec-fources-conques"
-categorie: "voyages"
+categories: ["voyages", "patrimoine"]
 motsCles: ["Occitanie", "bastides", "villages"]
 date: 2026-10-01
 ---

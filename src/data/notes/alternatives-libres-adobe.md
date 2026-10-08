@@ -2,7 +2,7 @@
 titre: "Sept alternatives libres aux logiciels Adobe (Crafting Apps)"
 resume: "Sept logiciels libres publiés sur GitHub fin septembre 2026 pour remplacer Photoshop, Illustrator, Premiere Pro, Lightroom, Acrobat, After Effects et InDesign : ce qu'ils font, ce qui leur manque, comment les essayer."
 identifiant: "alternatives-libres-adobe"
-categorie: "informatique"
+categories: ["logiciel-libre", "informatique"]
 motsCles: ["logiciel libre", "Adobe", "graphisme", "GitHub", "intelligence artificielle"]
 date: 2026-10-07
 ---

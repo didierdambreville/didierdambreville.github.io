@@ -2,7 +2,7 @@
 titre: "Bibliographie de référence en gestion de projets"
 resume: "Les standards, les classiques et les grandes listes de la gestion de projets — PMI, PRINCE2, ISO, mégaprojets, agilité, valeur acquise — et les principaux ouvrages en français."
 identifiant: "bibliographie-gestion-de-projets"
-categorie: "methode"
+categories: ["methode", "documentation"]
 motsCles: ["gestion de projet", "bibliographie", "normes", "agilité", "mégaprojets"]
 date: 2026-10-01
 ---

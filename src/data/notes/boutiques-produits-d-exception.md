@@ -2,7 +2,7 @@
 titre: "Boutiques de produits d'exception (café, rhum, cigares, thé…)"
 resume: "Les maisons où acheter café, thé, chocolat, vin, whisky, rhum, cigares et produits japonais — et une sélection de grands rhums, agricoles et de mélasse."
 identifiant: "boutiques-produits-d-exception"
-categorie: "loisirs"
+categories: ["gastronomie", "loisirs"]
 motsCles: ["gastronomie", "boutiques", "rhum"]
 date: 2026-10-01
 ---

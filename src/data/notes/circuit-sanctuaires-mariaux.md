@@ -2,7 +2,7 @@
 titre: "Circuit — sanctuaires mariaux d'Occitanie"
 resume: "Sept sanctuaires de la Vierge, du Lauragais à Rocamadour par le Comminges et l'Ariège : ce qu'on y voit, quand s'y rendre, combien de route."
 identifiant: "circuit-sanctuaires-mariaux"
-categorie: "voyages"
+categories: ["voyages", "patrimoine"]
 motsCles: ["Occitanie", "pèlerinage", "Vierge Marie"]
 date: 2026-10-01
 ---

@@ -2,7 +2,7 @@
 titre: "Scénario d'éclairage circadien"
 resume: "Une teinte de lumière pour chaque moment des 24 heures — neutre au réveil, froide le jour, chaude le soir, rouge la nuit — et la façon de la programmer."
 identifiant: "eclairage-circadien"
-categorie: "maison"
+categories: ["maison", "informatique", "sante"]
 motsCles: ["domotique", "éclairage", "Home Assistant"]
 date: 2026-10-01
 ---

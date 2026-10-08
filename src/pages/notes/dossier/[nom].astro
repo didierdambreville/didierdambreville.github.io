@@ -1,0 +1,37 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ListeNotes from '../../../components/ListeNotes.astro';
+import { notesPubliees, grouper } from '../../../lib/notes';
+import { AUTEUR } from '../../../lib/identite';
+
+export async function getStaticPaths() {
+  const dossiers = grouper(await notesPubliees());
+  return dossiers.map((d) => ({ params: { nom: d.categorie.id }, props: { dossier: d, dossiers } }));
+}
+
+const { dossier, dossiers } = Astro.props;
+const { categorie, notes } = dossier;
+---
+<Base
+  titre={`${categorie.nom} — Notes · ${AUTEUR}`}
+  description={`Les notes du dossier « ${categorie.nom} » : listes, relevés et bibliographies tenus à jour.`}
+>
+  <p class="etiquette"><a href="/notes/">Notes</a></p>
+  <h1>{categorie.nom}</h1>
+
+  {/* Seuls les dossiers qui ont des notes : les autres n'ont pas de page. */}
+  <ul class="filtres" aria-label="Dossiers">
+    <li><a href="/notes/">Toutes</a></li>
+    {
+      dossiers.map(({ categorie: c }) => (
+        <li>
+          <a href={`/notes/dossier/${c.id}/`} aria-current={c.id === categorie.id ? 'true' : undefined}>
+            {c.nom}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ListeNotes notes={notes} dossier={categorie.id} />
+</Base>

@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import { AUTEUR } from '../../lib/identite';
+import { notesPubliees, indexMotsCles } from '../../lib/notes';
+
+// L'index complet : /notes/ n'en montre qu'une sélection. Les pastilles du panneau, de
+// l'en-tête d'une note et de la sélection mènent ici, à la ligne du mot (#ancre).
+const notes = await notesPubliees();
+const mots = indexMotsCles(notes);
+---
+<Base
+  titre={`Mots-clés des notes — ${AUTEUR}`}
+  description="Index des mots-clés des notes : pour chaque mot, les notes qui le traitent."
+>
+  <p class="etiquette"><a href="/notes/">Notes</a></p>
+  <h1>Mots-clés</h1>
+  <p class="chapeau">Pour chaque mot-clé, les notes qui le traitent.</p>
+
+  <dl class="index-mots">
+    {mots.map(({ mot, ancre, notes: liste }) => (
+      <div id={ancre}>
+        <dt>{mot}</dt>
+        <dd>
+          {liste.map((n, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={`/notes/${n.id}/`}>{n.data.titre}</a>
+            </>
+          ))}
+        </dd>
+      </div>
+    ))}
+  </dl>
+
+  <p class="liens"><a href="/notes/">Toutes les notes</a></p>
+</Base>

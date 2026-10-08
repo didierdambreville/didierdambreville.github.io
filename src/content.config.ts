@@ -284,8 +284,13 @@ const notes = defineCollection({
     resume: z.string().max(240),
     /** Permalien : /notes/<identifiant>/ ; égal au nom du fichier. */
     identifiant: z.string(),
-    categorie: z.enum(CATEGORIES_NOTE),
-    /** En minuscules, sauf nom propre. Chacun mène à l'index des mots-clés de /notes/. */
+    /** Un à trois dossiers, le principal en tête (src/lib/classement-notes.ts). */
+    categories: z
+      .array(z.enum(CATEGORIES_NOTE))
+      .min(1)
+      .max(3)
+      .refine((c) => new Set(c).size === c.length, { message: 'Dossier cité deux fois.' }),
+    /** En minuscules, sauf nom propre. Chacun mène à l'index /notes/mots-cles/. */
     motsCles: z.array(z.string()).min(1).max(5),
     /** Date de la dernière mise à jour. */
     date: z.coerce.date(),

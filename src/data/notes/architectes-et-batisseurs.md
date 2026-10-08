@@ -2,7 +2,7 @@
 titre: "Architectes et bâtisseurs de référence (XVIIe–XIXe siècles)"
 resume: "Quinze bâtisseurs — architectes, ingénieur, paysagistes, sculpteur — de Le Vau à Injalbert, avec leurs dates et une œuvre-repère."
 identifiant: "architectes-et-batisseurs"
-categorie: "patrimoine"
+categories: ["patrimoine"]
 motsCles: ["architecture", "patrimoine", "XIXe siècle", "jardins"]
 date: 2026-10-01
 ---

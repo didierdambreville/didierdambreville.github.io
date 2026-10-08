@@ -2,7 +2,7 @@
 titre: "Sélection de cigares (15 à 25 €)"
 resume: "Trois havanes de force moyenne à corsée, entre 21 et 24 € l'unité, dans l'ordre où les découvrir — et quelques valeurs sûres pour moins cher."
 identifiant: "selection-de-cigares"
-categorie: "loisirs"
+categories: ["loisirs", "gastronomie"]
 motsCles: ["cigares", "gastronomie", "dégustation"]
 date: 2026-10-01
 ---

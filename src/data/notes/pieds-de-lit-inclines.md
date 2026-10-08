@@ -2,7 +2,7 @@
 titre: "Pieds de lit inclinés — Inclined Bed Therapy (160×200 et 90×200)"
 resume: "Fabriquer quinze pieds en bois pour incliner deux lits de 15 cm, tête plus haute : hauteurs, matériaux, débit, montage — et une variante sans fabrication."
 identifiant: "pieds-de-lit-inclines"
-categorie: "maison"
+categories: ["maison", "fabrication", "sante"]
 motsCles: ["bricolage", "menuiserie", "sommeil"]
 date: 2026-10-01
 ---

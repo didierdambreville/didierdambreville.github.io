@@ -1195,6 +1195,12 @@ section[id] { scroll-margin-top: 1rem; }
 }
 .favoris__tous { margin: 0.7rem 0.4rem 0 1.4rem; font-size: 0.8rem; }
 .favoris__tous a { color: var(--accent); }
+/* Panneau d'une note : les légendes et le lien des dossiers sont au premier niveau. */
+.favoris__legende--racine { margin: 0.2rem 0.4rem 0.2rem; }
+.favoris__tous--racine { margin: 0.5rem 0.4rem 0; }
+.favoris > div + div,
+.favoris > div + .favoris__dossier,
+.favoris__tous--racine + .favoris__dossier { margin-top: 0.8rem; }
 
 /* Mots-clés : pastilles, dans le panneau, sous le titre d'une note et dans l'index. */
 .mots {

@@ -144,7 +144,7 @@ Ajouter une note : copier une note existante, la renommer, remplacer l'en-tête 
 | `titre` | le titre, 90 signes au plus |
 | `resume` | une phrase : ce que la note rassemble — elle sert de chapeau et de description |
 | `identifiant` | le nom du fichier, sans `.md` — le site refuse de se construire s'ils diffèrent |
-| `categorie` | le dossier du panneau : `methode`, `documentation`, `informatique`, `maison`, `sante`, `patrimoine`, `voyages` ou `loisirs` |
+| `categories` | un à trois dossiers, le principal en tête, ex. `["maison", "informatique", "sante"]` — parmi `methode`, `documentation`, `informatique`, `logiciel-libre`, `fabrication`, `maison`, `sante`, `gastronomie`, `patrimoine`, `voyages`, `nature`, `musique`, `loisirs` |
 | `motsCles` | de un à cinq mots, en minuscules sauf nom propre, ex. `["web", "archives"]` |
 | `date` | la date de la dernière mise à jour, `AAAA-MM-JJ` |
 
@@ -152,9 +152,24 @@ Sous l'en-tête, le texte commence directement : ni titre ni chapeau, la page le
 `resume`. Les intertitres `##` deviennent les sections affichées sous la note dans le panneau (à
 partir de trois). Un tableau Markdown se lit en colonnes sur ordinateur et en fiches sur téléphone.
 
-Un nouveau dossier : l'ajouter à la liste de `src\lib\classement-notes.ts`, rien d'autre. Un même
-mot-clé doit toujours s'écrire de la même façon : « Patrimoine » et « patrimoine » dans deux notes
-font échouer la construction, qui vous dit lequel corriger.
+**Les dossiers.** `/notes/` range chaque note une seule fois, sous son dossier principal, et
+signale les autres (« Aussi dans … ») ; chaque dossier a sa page, `/notes/dossier/<identifiant>/`,
+qui donne toutes ses notes. Ce que range chaque dossier est écrit en tête de
+`src\lib\classement-notes.ts` ; un nouveau dossier s'ajoute à cette liste, rien d'autre. Un
+dossier sans note n'apparaît nulle part ; un quatrième dossier sur une même note fait échouer la
+construction.
+
+**Les mots-clés.** `/notes/` n'en montre qu'une sélection de huit, en bas de page (même règle que
+pour les articles) ; l'index complet est `/notes/mots-cles/`. Un même mot-clé doit toujours
+s'écrire de la même façon : « Patrimoine » et « patrimoine » dans deux notes font échouer la
+construction, qui vous dit lequel corriger.
+
+**Le panneau.** À côté d'une note, jamais la totalité : ses dossiers, ouverts (la note en
+évidence, ses sections sous le dossier principal), puis quatre autres « à découvrir », repliés ;
+ses mots-clés, puis six autres ; enfin un lien vers chaque liste complète. Les dossiers et
+mots-clés à découvrir sont pris d'abord chez les notes qui partagent ses dossiers
+(`dossiersADecouvrir`, `motsADecouvrir`, `src\lib\notes.ts`). Sur `/notes/`, qui liste déjà
+tout, le panneau montre les dossiers repliés et la sélection de mots-clés.
 
 ---
 

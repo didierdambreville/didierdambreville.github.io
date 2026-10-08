@@ -2,7 +2,7 @@
 titre: "Remèdes monastiques et élixirs"
 resume: "Liqueurs nées dans les abbayes, vieux élixirs de pharmacie et bières trappistes : d'où vient chacun, et les dix brasseries qui portent aujourd'hui le label trappiste."
 identifiant: "remedes-monastiques-et-elixirs"
-categorie: "sante"
+categories: ["sante", "gastronomie", "patrimoine"]
 motsCles: ["monastères", "liqueurs", "bières trappistes"]
 date: 2026-10-01
 ---

@@ -2,7 +2,7 @@
 titre: "50 sites web fascinants à explorer"
 resume: "Cinquante sites pour sortir des cinq que l'algorithme vous met sous le nez : la Terre en direct, des cartes, l'espace, des données, des bibliothèques, des musées et de la musique."
 identifiant: "50-sites-web-fascinants"
-categorie: "documentation"
+categories: ["documentation"]
 motsCles: ["web", "données ouvertes", "cartes", "archives"]
 date: 2026-10-01
 ---

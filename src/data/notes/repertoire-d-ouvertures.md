@@ -2,7 +2,7 @@
 titre: "Construire son répertoire d'ouvertures"
 resume: "Un plan en six étapes pour bâtir un répertoire d'ouvertures qui grandit avec le joueur, au lieu de l'enfermer : diagnostic, défenses contre 1.e4 et 1.d4, répertoire des Blancs, entretien, outils."
 identifiant: "repertoire-d-ouvertures"
-categorie: "loisirs"
+categories: ["loisirs"]
 motsCles: ["échecs", "ouvertures", "entraînement"]
 date: 2026-10-01
 ---

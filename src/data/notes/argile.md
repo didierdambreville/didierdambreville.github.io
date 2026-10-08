@@ -2,7 +2,7 @@
 titre: "Argile — bienfaits et usages"
 resume: "Ce que l'argile sait faire — absorber, s'appliquer en cataplasme, traiter la diarrhée sous forme de médicament —, ce qu'on lui prête à tort, et les précautions."
 identifiant: "argile"
-categorie: "sante"
+categories: ["sante"]
 motsCles: ["argile", "remèdes traditionnels"]
 date: 2026-10-01
 ---

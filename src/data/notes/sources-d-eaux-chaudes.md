@@ -2,7 +2,7 @@
 titre: "Sources d'eaux chaudes naturelles (11 sites)"
 resume: "Onze sources chaudes en France — Pyrénées, Alpes, Auvergne, Vosges, Aude : lesquelles sont libres, lesquelles payantes, lesquelles à voir seulement, et comment s'y rendre."
 identifiant: "sources-d-eaux-chaudes"
-categorie: "voyages"
+categories: ["voyages", "nature"]
 motsCles: ["sources chaudes", "randonnée", "baignade"]
 date: 2026-10-01
 ---

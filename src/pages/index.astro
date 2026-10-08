@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { mementosPublies, grouper as grouperMementos } from '../lib/mementos';
 import { affichesPubliees } from '../lib/affiches';
-import { notesPubliees, grouper as grouperNotes } from '../lib/notes';
+import { notesPubliees, grouper as grouperNotes, grouperParPrincipal } from '../lib/notes';
 import { MANIFESTE, documentsManifeste } from '../lib/manifeste';
 import { AUTEUR, RESEAUX, ARSCRIPTA, SPECULA, DEPOT_PRAXIS, LICENCE } from '../lib/identite';
 
@@ -18,6 +18,8 @@ const affiches = await affichesPubliees();
 const formatsAffiches = [...new Set(affiches.map((a) => a.data.format))].sort().join(' et ');
 const notes = await notesPubliees();
 const dossiers = grouperNotes(notes);
+// Le résumé de l'accueil range chaque note une fois, sous son dossier principal.
+const dossiersPrincipaux = grouperParPrincipal(notes);
 const documents = documentsManifeste();
 
 const articles = (await getCollection('articles', (e) => !e.data.brouillon))
@@ -136,7 +138,7 @@ const jsonLd = {
         </p>
         <dl class="ac-liste">
           {
-            dossiers.map(({ categorie, notes }) => (
+            dossiersPrincipaux.map(({ categorie, notes }) => (
               <div>
                 <dt>{categorie.nom}</dt>
                 <dd>

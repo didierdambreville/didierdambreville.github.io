@@ -2,7 +2,7 @@
 titre: "Plages — Galice, Saint-Sébastien et Riviera ligure"
 resume: "Les plages retenues sur deux côtes : la Costa da Morte et Saint-Sébastien en Espagne, la Ligurie de Vintimille aux Cinque Terre — ce qu'elles offrent et comment les enchaîner."
 identifiant: "plages-galice-saint-sebastien-ligurie"
-categorie: "voyages"
+categories: ["voyages", "nature"]
 motsCles: ["plages", "Espagne", "Italie"]
 date: 2026-10-01
 ---

@@ -50,11 +50,12 @@ Node 22 ou plus est requis (Astro 6 a abandonné Node 18 et 20).
   les sources HTML avec Brave, numérote le sommaire, vérifie que couverture et dos sont bleu nuit,
   puis copie les PDF ici. Les schémas se régénèrent avec `../manifeste/2026-10-01_5_schemas-trifab-site_v1.0.0.py`.
 - **Notes** (depuis le 1er octobre 2026) : `/notes/`, une note par fichier Markdown dans
-  `src/data/notes/`. Panneau de gauche à la manière d'un gestionnaire de favoris
-  (`src/components/PanneauNotes.astro`) : un dossier par catégorie (`src/lib/classement-notes.ts`),
-  un signet par note, les sections de la note ouverte, puis les mots-clés, qui mènent à l'index de
-  `/notes/#mots-cles`. Aucun script : les dossiers se plient avec `<details>`. Voir
-  `COMMENT-FAIRE.md`, « Les notes ».
+  `src/data/notes/`, un à trois dossiers par note (`src/lib/classement-notes.ts`), une page par
+  dossier (`/notes/dossier/<id>/`), une sélection de mots-clés en bas de `/notes/` et l'index
+  complet sur `/notes/mots-cles/`. Panneau à la manière d'un gestionnaire de favoris
+  (`src/components/PanneauNotes.astro`) : à côté d'une note, ses dossiers et mots-clés et quelques
+  autres à découvrir, jamais la totalité. Aucun script : les dossiers se plient avec `<details>`.
+  Voir `COMMENT-FAIRE.md`, « Les notes ».
 - **Accueil** (refait le 1er octobre 2026) : `src/pages/index.astro` — bandeau d'identité, le site en
   chiffres, un résumé de chaque rubrique (mémentos par famille, notes par dossier, affiches,
   manifeste), puis « Ailleurs ». Tout y est calculé depuis le contenu publié : rien à y retoucher

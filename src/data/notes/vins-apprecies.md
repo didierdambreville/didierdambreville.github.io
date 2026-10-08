@@ -2,7 +2,7 @@
 titre: "Vins appréciés"
 resume: "Domaines et cuvées appréciés : le Languedoc d'abord, terroir par terroir, puis le Roussillon, Bordeaux, le Jura, la Loire et le Piémont."
 identifiant: "vins-apprecies"
-categorie: "loisirs"
+categories: ["gastronomie", "loisirs"]
 motsCles: ["vin", "gastronomie", "Languedoc"]
 date: 2026-10-01
 ---

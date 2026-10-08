@@ -2,7 +2,7 @@
 titre: "50 dépôts open source pour équiper un FabLab"
 resume: "Cinquante projets libres pour un atelier de fabrication numérique : conception, électronique, impression 3D, CNC, laser, machines open hardware, gestion d'atelier — liens et activité vérifiés."
 identifiant: "50-depots-github-fablab"
-categorie: "informatique"
+categories: ["fabrication", "logiciel-libre", "informatique"]
 motsCles: ["FabLab", "logiciel libre", "open hardware", "fabrication numérique", "GitHub"]
 date: 2026-10-05
 ---

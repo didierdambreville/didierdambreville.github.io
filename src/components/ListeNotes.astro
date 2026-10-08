@@ -1,0 +1,31 @@
+---
+import { categoriesDe, dateNote, type Note } from '../lib/notes';
+
+/**
+ * Une liste de notes, sur /notes/ et sur la page d'un dossier : titre, résumé, date, et les
+ * autres dossiers de la note (« Aussi dans »), en liens vers leur page.
+ */
+interface Props {
+  notes: Note[];
+  /** Le dossier sous lequel la liste s'affiche : il n'est pas répété dans « Aussi dans ». */
+  dossier: string;
+}
+const { notes, dossier } = Astro.props;
+---
+<ul class="sommaire sommaire--serre">
+  {
+    notes.map((n) => {
+      const autres = categoriesDe(n).filter((c) => c.id !== dossier);
+      return (
+        <li>
+          <h3><a href={`/notes/${n.id}/`}>{n.data.titre}</a></h3>
+          <p class="sommaire__these">{n.data.resume}</p>
+          <p class="etiquette">
+            Mise à jour le {dateNote(n.data.date)}
+            {autres.length > 0 && <> · Aussi dans {autres.map((c, i) => <>{i > 0 && ', '}<a href={`/notes/dossier/${c.id}/`}>{c.nom}</a></>)}</>}
+          </p>
+        </li>
+      );
+    })
+  }
+</ul>
